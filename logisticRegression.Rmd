@@ -15,14 +15,23 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-1. Motivation: binäre Zielvariable
-```{r}
+\newpage
 
-```
+1. Motivation
+
+Die logistische Regession (ebenfalls als Logit-Modell oder logistisches Regressionsmodell bekannt) ist eine Klassifikationsmethode für diskrete Zielvariable. In der Statistik lassen sich Logit-Modelle in binäre, multinomiale und kumulative Logit-Modelle aufteilen, je nachdem ob die abhängige Variable nominal oder ordinalskaliert sind <QUELLE>. Diese Arbeit beschäftigt sich mit dem binären/binomialen Logit-Modell, welches den Zusammenhang zwischen einer binären abhängigen Variable und einer/mehreren unabhängigen Variablen untersucht. Eine interessierende Variable Y heißt binär, wenn sie lediglich zwei Werte annehmen kann: ja oder nein, erfolgreich oder nicht erfolgreich, männlich oder weiblich etc. Oft wird binäre Variable als 0/1-Variable kodiert. 
+
+Die theoretische Fragestellung, welche durch das Logit-Modell beantworten werden soll, lautet: *Wie stark ist der Einfluss von den unabhängigen Variablen auf die Wahrscheinlichkeit, dass die abhängige Variable eintritt (bzw. den Wert 1 annimmt)?* In der Praxis kann die Frage beispielsweise so formuliert werden: "Haben Alter, Geschlecht, Berufe oder andere Merkmale der Kunden Einfluss auf die Wahrscheinlichkeit, dass sie ein Kredit rechtzeitig zurückzahlen?"" oder "Lässt sich die Wahrscheinlichkeit, dass es regnet, durch die Temparatur, die Windstärke oder Sonnenstrahlungsintensität vorhersagen?". 
 
 2. Modellformulierung
+
+Die Grundidee vom Logit-Modell steht hinter der klassischen linearen Regression. Um dies zu veranschaulichen 
+
+
 3. Maximum Likelihood Schätzung
-4. Implementierung
+
+
+4. Implementierung mit R
 
 
 
