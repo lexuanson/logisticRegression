@@ -1,0 +1,29 @@
+---
+title: <h1> __Logistische Regression__ </h1>
+author: "Xuan Son Le (4669361), Freie Universität Berlin"
+date: "3/13/2018"
+output: 
+  pdf_document: 
+    keep_tex: yes
+    latex_engine: pdflatex
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Motivation: binäre Zielvariable
+```{r}
+
+```
+
+2. Modellformulierung
+3. Maximum Likelihood Schätzung
+4. Implementierung
+
+
+
+
