@@ -33,6 +33,142 @@ Die Grundidee vom Logit-Modell steht hinter der klassischen linearen Regression.
 
 4. Implementierung mit R
 
+Ein Beispieldatensatz wird verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie der Ruf von der angestrebten Institution. 
+
+Um mögliche Fehler zu vermeiden, wurde der Datensatz in Bezug auf Missing Values bereingit. Zur Vereinfachung wird an dieser Stelle alle Beobachtungen entfernt, welche fehlende Werte beinhalten. Ebenfalls werden wegen hoher Anzahl nicht alle unabhängigen Variablen miteinbezogen. 
+
+Zunächst wird der Datensatz geladen.
+```{r Datendatz einlesen}
+df <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+
+#df$admit <- factor(df$admit)
+df$rank <- factor(df$rank)
+
+y <- df$admit
+X <- cbind(1, df$gre, df$gpa, rank)
+```
+
+Implementieren Maximum Likelihood Schätzung
+
+```{r Parameter berechnen}
+# calculate_Parameter <- function(beta) {
+#     
+#     #eta <- X%*%beta #
+#     eta <- beta%*%X
+#     
+#     exp_eta <- exp(eta) # 
+#     
+#     pi_wkt <- exp_eta / (1 + exp_eta) # 
+#     
+#     assign("eta", value = eta, envir = .GlobalEnv)
+#     assign("exp_eta", value = exp_eta, envir = .GlobalEnv)
+#     assign("pi_wkt", value = pi_wkt, envir = .GlobalEnv)
+# }
+
+```
+
+
+```{r Likelihood Funktion}
+likelihood <- function(beta) {
+    
+    eta <- X%*%beta #
+
+    exp_eta <- exp(eta) # 
+    
+    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    
+    result <- prod((pi_wkt^y)*((1-pi_wkt)^(1-y)))
+    
+    return(result)
+}
+
+loglike <- function(beta) {
+    
+    return (log(likelihood(beta)))
+    
+    # or just sum (crossprod(y,eta) - sum(log(1+exp(eta))))
+}
+
+
+###### Test the results
+# y <- matrix(c(1,0,1), ncol = 1)
+# X <- matrix(c(1,4,7,1,5,8,1,6,9), ncol = 3, byrow = TRUE)
+# beta <- matrix(c(1,1,1), ncol = 1)
+# eta <- (X%*%beta)
+# t(y)%*%eta
+# crossprod(y,eta)
+# exp_eta <- exp(eta) 
+# pi_wkt <- exp_eta / (1 + exp_eta) 
+# 
+# 
+# likelihood(beta)
+# loglike(beta)
+# - sum( t(y)%*%log(pi_wkt) + (t(1-y))%*%(log(1 - pi_wkt)) )
+# - sum(-y*log(1 + exp(-(X%*%beta))) - (1-y)*log(1 + exp(X%*%beta)))
+
+```
+
+```{r Score Funktion}
+score <- function(beta) {
+    
+    eta <- X%*%beta #
+
+    exp_eta <- exp(eta) # 
+    
+    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    
+    result <- sum (crossprod((y - pi_wkt), X))
+    
+    return(result)
+}
+
+logit.gr <- function(beta) {
+
+    grad <- beta*0
+
+    eta <- X%*%beta #
+
+    exp_eta <- exp(eta) # 
+    
+    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    
+    for (k in 1:as.numeric(ncol(X))) { 
+      grad[k] <- sum(X[,k] * (y - pi_wkt))
+      }
+    
+    return (-grad)
+}
+
+```
+
+Alles auf einmal zusammenfassen:
+```{r}
+# logitModell <- function(formula, data) {
+#     loglike(beta)
+#     
+# }
+```
+
+
+```{r}
+startvalue.model <- lm(formula = modell, data = df)
+startv <- startvalue.model$coefficients
+
+optim(startv, fn = loglike, gr = logit.gr, method="BFGS", control=list(trace=TRUE, REPORT=1), hessian=TRUE)
+
+modell <- as.formula("admit ~ gre + gpa + rank")
+glm <- glm(formula = modell, family = "binomial", data = df)
+
+summary(glm)
+```
+
+```{r}
+outcome <- rownames(attr(terms(modell),"factors"))[1]
+as.numeric(as.matrix(df[,match(outcome,colnames(df))]))
+```
+
+
+
 
 
 
