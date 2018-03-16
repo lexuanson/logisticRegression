@@ -1,7 +1,7 @@
 ---
 title: <h1> __Logistische Regression__ </h1>
 author: "Xuan Son Le (4669361), Freie Universität Berlin"
-date: "3/13/2018"
+date: "04/04/2018"
 output: 
   pdf_document: 
     keep_tex: yes
@@ -40,117 +40,14 @@ Um mögliche Fehler zu vermeiden, wurde der Datensatz in Bezug auf Missing Value
 Zunächst wird der Datensatz geladen.
 ```{r Datendatz einlesen}
 df <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
-df$gre <- df$gre/100
+#df$gre <- df$gre/100
 
 ```
 
 Implementieren Maximum Likelihood Schätzung
 
-```{r Parameter berechnen}
-# calculate_Parameter <- function(beta) {
-#     
-#     #eta <- X%*%beta #
-#     eta <- beta%*%X
-#     
-#     exp_eta <- exp(eta) # 
-#     
-#     pi_wkt <- exp_eta / (1 + exp_eta) # 
-#     
-#     assign("eta", value = eta, envir = .GlobalEnv)
-#     assign("exp_eta", value = exp_eta, envir = .GlobalEnv)
-#     assign("pi_wkt", value = pi_wkt, envir = .GlobalEnv)
-# }
-
-
-```
-
-
-```{r (Log)-Likelihood Funktion}
-loglike_1 <- function(beta) {
-    
-    eta <- X%*%beta #
-
-    exp_eta <- exp(eta) # 
-    
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
-    
-    result <- log(prod((pi_wkt^y)*((1-pi_wkt)^(1-y))))
-    
-    return(-result) #becaue minimizing
-}
-
-loglike <- function(beta) {
-    
-    #return (log(likelihood(beta)))
-    
-    # or just sum (crossprod(y,eta) - sum(log(1+exp(eta))))
-    
-    eta <- X%*%beta #
-
-    exp_eta <- exp(eta) # 
-    
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
-    
-    result <- sum (crossprod(y,eta) - sum(log(1+exp(eta))))
-    
-    return (-result) #becaue minimizing
-}
-
-
-## Test the results ###################################
-# y <- matrix(c(1,0,1), ncol = 1)
-# X <- matrix(c(1,4,7,1,5,8,1,6,9), ncol = 3, byrow = TRUE)
-# beta <- matrix(c(1,1,1), ncol = 1)
-# eta <- (X%*%beta)
-# t(y)%*%eta
-# crossprod(y,eta)
-# pi_wkt <- exp(eta) / (1 + exp(eta))
-# 
-# loglike_1(beta)
-# loglike(beta)
-# - sum( t(y)%*%log(pi_wkt) + (t(1-y))%*%(log(1 - pi_wkt)) )
-# - sum(-y*log(1 + exp(-(X%*%beta))) - (1-y)*log(1 + exp(X%*%beta)))
-# -sum(y*(X %*% beta - log(1+exp(X %*% beta))) + (1-y)*(-log(1 + exp(X %*% beta))))
-
-```
-
-
-```{r Score Funktion}
-score <- function(beta) {
-    
-    eta <- X%*%beta #
-
-    exp_eta <- exp(eta) # 
-    
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
-    
-    result <- sum (crossprod((y - pi_wkt), X))
-    
-    return(result)
-}
-
-logit.gr <- function(beta) {
-
-    grad <- beta*0
-
-    eta <- X%*%beta #
-
-    exp_eta <- exp(eta) # 
-    
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
-    
-    for (k in 1:as.numeric(ncol(X))) { 
-      grad[k] <- sum(X[,k] * (y - pi_wkt))
-      }
-    
-    return (-grad)
-}
-
-```
-
-
 ```{r Logit Modell}
-logitModell <- function(formula, data) {
+maxLikelihood <- function(formula, data) {
     
     outcome <- rownames(attr(terms(formula),"factors"))[1]
     
@@ -170,11 +67,27 @@ logitModell <- function(formula, data) {
         return (-result) 
     }
     
-    linReg <- lm(formula, data)
-    initial_beta <- linReg$coefficients
+    logit.gr <- function(beta) {
+
+        grad <- beta*0
     
-    mle = optim(initial_beta, fn = loglike, method="BFGS", 
-                control=list(trace=TRUE, REPORT=1), hessian=TRUE)
+        eta <- X%*%beta #
+    
+        exp_eta <- exp(eta) # 
+        
+        pi_wkt <- exp_eta / (1 + exp_eta) # 
+        
+        for (k in 1:as.numeric(ncol(X))) { 
+          grad[k] <- sum(X[,k] * (y - pi_wkt))
+          }
+        
+        return (-grad) 
+    }
+    
+    initial_beta <- rep(0, times = ncol(X))
+    
+    mle = optim(initial_beta, fn = loglike, gr = logit.gr, method="BFGS", 
+                control=list(trace = TRUE, maxit = 1000), hessian=TRUE)
     
     #out = list(beta=mle$par,vcov=solve(mle$hessian),ll=2*mle$value)
     
@@ -185,28 +98,11 @@ df$rank = factor(df$rank)
 
 modell <- as.formula("admit ~ gre + gpa + rank")
 
-logitModell(modell,df)
-
-## Test the results ############################################################
-
-#outcome <- rownames(attr(terms(modell),"factors"))[1]
-# y = as.matrix(df[,match(outcome,colnames(df))])
-# X = as.matrix(model.matrix(modell,df))
-# beta = matrix(c(0,0,0,0,0,0), ncol = 1)
-# 
-# loglike_1(beta)
-# loglike(beta)
-# score(beta)
-# 
-# startvalue.model <- lm(modell, df)
-# startv <- startvalue.model$coefficients
-# 
-# optim(startv, fn = loglike, gr = logit.gr, method="BFGS", control=list(trace=TRUE, REPORT=1), hessian=TRUE)
-
+maxLikelihood(modell,df)
 ```
 
 
-```{r Standard glm}
+```{r Standard Logit-Modell von R}
 glm <- glm(admit ~ gre + gpa + rank, family = binomial, data = df)
 coef(glm)
 ```

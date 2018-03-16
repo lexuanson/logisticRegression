@@ -1,0 +1,99 @@
+---
+title: "Funktionen"
+author: "Xuan Son Le"
+date: "16/03/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+######################################################################################
+
+```{r (Log)-Likelihood Funktion}
+loglike_1 <- function(beta) {
+    
+    eta <- X%*%beta #
+
+    exp_eta <- exp(eta) # 
+    
+    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    
+    result <- log(prod((pi_wkt^y)*((1-pi_wkt)^(1-y))))
+    
+    return(-result) #becaue minimizing
+}
+
+loglike <- function(beta) {
+    
+    #return (log(likelihood(beta)))
+    
+    # or just sum (crossprod(y,eta) - sum(log(1+exp(eta))))
+    
+    eta <- X%*%beta #
+
+    exp_eta <- exp(eta) # 
+    
+    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    
+    result <- sum (crossprod(y,eta) - sum(log(1+exp(eta))))
+    
+    return (-result) #becaue minimizing
+}
+
+
+## Test the results ###################################
+# y <- matrix(c(1,0,1), ncol = 1)
+# X <- matrix(c(1,4,7,1,5,8,1,6,9), ncol = 3, byrow = TRUE)
+# beta <- matrix(c(1,1,1), ncol = 1)
+# eta <- (X%*%beta)
+# t(y)%*%eta
+# crossprod(y,eta)
+# pi_wkt <- exp(eta) / (1 + exp(eta))
+# 
+# loglike_1(beta)
+# loglike(beta)
+# - sum( t(y)%*%log(pi_wkt) + (t(1-y))%*%(log(1 - pi_wkt)) )
+# - sum(-y*log(1 + exp(-(X%*%beta))) - (1-y)*log(1 + exp(X%*%beta)))
+# -sum(y*(X %*% beta - log(1+exp(X %*% beta))) + (1-y)*(-log(1 + exp(X %*% beta))))
+
+
+```
+
+
+```{r Score Funktion}
+score <- function(beta) {
+    
+    eta <- X%*%beta #
+
+    exp_eta <- exp(eta) # 
+    
+    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    
+    result <- sum (crossprod((y - pi_wkt), X))
+    
+    return(result)
+}
+
+logit.gr <- function(beta) {
+
+    grad <- beta*0
+
+    eta <- X%*%beta #
+
+    exp_eta <- exp(eta) # 
+    
+    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    
+    for (k in 1:as.numeric(ncol(X))) { 
+      grad[k] <- sum(X[,k] * (y - pi_wkt))
+      }
+    
+    return (-grad)
+}
+
+
+```
+
