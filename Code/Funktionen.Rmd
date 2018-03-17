@@ -15,13 +15,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r (Log)-Likelihood Funktion}
 loglike_1 <- function(beta) {
     
-    eta <- X%*%beta #
+    eta <- X %*% beta #
 
     exp_eta <- exp(eta) # 
     
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    p <- exp_eta / (1 + exp_eta) # 
     
-    result <- log(prod((pi_wkt^y)*((1-pi_wkt)^(1-y))))
+    result <- log(prod((p^y)*((1 - p)^(1 - y))))
     
     return(-result) #becaue minimizing
 }
@@ -32,15 +32,15 @@ loglike <- function(beta) {
     
     # or just sum (crossprod(y,eta) - sum(log(1+exp(eta))))
     
-    eta <- X%*%beta #
+    eta <- X %*% beta #
 
     exp_eta <- exp(eta) # 
     
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    p <- exp_eta / (1 + exp_eta) # 
     
-    result <- sum (crossprod(y,eta) - sum(log(1+exp(eta))))
+    result <- sum (crossprod(y,eta) - sum(log(1 + exp(eta))))
     
-    return (-result) #becaue minimizing
+    return(-result) #becaue minimizing
 }
 
 
@@ -51,11 +51,11 @@ loglike <- function(beta) {
 # eta <- (X%*%beta)
 # t(y)%*%eta
 # crossprod(y,eta)
-# pi_wkt <- exp(eta) / (1 + exp(eta))
+# p <- exp(eta) / (1 + exp(eta))
 # 
 # loglike_1(beta)
 # loglike(beta)
-# - sum( t(y)%*%log(pi_wkt) + (t(1-y))%*%(log(1 - pi_wkt)) )
+# - sum( t(y)%*%log(p) + (t(1-y))%*%(log(1 - p)) )
 # - sum(-y*log(1 + exp(-(X%*%beta))) - (1-y)*log(1 + exp(X%*%beta)))
 # -sum(y*(X %*% beta - log(1+exp(X %*% beta))) + (1-y)*(-log(1 + exp(X %*% beta))))
 
@@ -66,13 +66,13 @@ loglike <- function(beta) {
 ```{r Score Funktion}
 score <- function(beta) {
     
-    eta <- X%*%beta #
+    eta <- X %*% beta #
 
     exp_eta <- exp(eta) # 
     
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    p <- exp_eta / (1 + exp_eta) # 
     
-    result <- sum (crossprod((y - pi_wkt), X))
+    result <- sum(crossprod((y - p), X))
     
     return(result)
 }
@@ -81,19 +81,58 @@ logit.gr <- function(beta) {
 
     grad <- beta*0
 
-    eta <- X%*%beta #
+    eta <- X %*% beta #
 
     exp_eta <- exp(eta) # 
     
-    pi_wkt <- exp_eta / (1 + exp_eta) # 
+    p <- exp_eta / (1 + exp_eta) # 
     
     for (k in 1:as.numeric(ncol(X))) { 
-      grad[k] <- sum(X[,k] * (y - pi_wkt))
+      grad[k] <- sum(X[,k] * (y - p))
       }
     
-    return (-grad)
+    return(-grad)
 }
-
-
 ```
+
+
+```{r Logit Modell}
+
+logitModell <- function(beta) {
+        
+        eta <- X %*% beta
+
+        exp_eta <- exp(eta)
+
+        p <- exp_eta / (1 + exp_eta)
+        
+        result <- sum(crossprod(y,eta) - sum(log(1 + exp(eta))))
+        
+        return(-result) 
+    }
+    
+    score <- function(beta) {
+
+        grad <- beta*0
+    
+        eta <- X %*% beta #
+    
+        exp_eta <- exp(eta) # 
+        
+        p <- exp_eta / (1 + exp_eta) # 
+        
+        for (k in 1:as.numeric(ncol(X))) { 
+          grad[k] <- sum(X[,k] * (y - p))
+          }
+        
+        return(-grad) 
+    }
+    
+# mle = optim(initial_beta, fn = logLikelihood, gr = logit.gr, method = "BFGS", 
+#             control = list(trace = TRUE, maxit = 1000), hessian = TRUE)
+#mle$par
+
+#out = list(beta=mle$par,vcov=solve(mle$hessian),ll=2*mle$value)
+```
+
 
