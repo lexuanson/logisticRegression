@@ -45,11 +45,17 @@ loglike <- function(beta) {
 
 
 ## Test the results ###################################
-# y <- matrix(c(1,0,1), ncol = 1)
-# X <- matrix(c(1,4,7,1,5,8,1,6,9), ncol = 3, byrow = TRUE)
-# beta <- matrix(c(1,1,1), ncol = 1)
-# eta <- (X%*%beta)
-# t(y)%*%eta
+#y <- matrix(c(1,0,1), ncol = 1)
+#X <- matrix(c(1,4,7,1,5,8,1,6,9,4,5,6,7,8,9), ncol = 5, byrow = TRUE)
+beta <- rep(1, times = ncol(X))
+eta <- X %*% beta
+exp_eta <- exp(eta)
+p <- exp_eta / (1 + exp_eta)
+eta <- (X %*% beta)
+t(y) %*% eta
+
+t(X) %*% beta
+
 # crossprod(y,eta)
 # p <- exp(eta) / (1 + exp(eta))
 # 
@@ -135,4 +141,22 @@ logitModell <- function(beta) {
 #out = list(beta=mle$par,vcov=solve(mle$hessian),ll=2*mle$value)
 ```
 
+```{r}
+
+XFull <- (X)
+betaFull <- rep(0, times = nrow(X))
+
+XNull <- X
+betaNull <- rep(0, times = nrow(X))
+
+llSaturated <- loglike(X = XFull,
+                       y = t(model.response(testModelFrame)),
+                       beta = betaFull)
+
+llNull <- loglike(X_Null,
+                  y = model.response(testModelFrame), 
+                  beta = betaNull)
+
+nullDeviance <- 2*abs(llSaturated - llNull)
+```
 

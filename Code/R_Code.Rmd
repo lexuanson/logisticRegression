@@ -19,9 +19,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r Datendatz einlesen}
 testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+testData <- testData[1:100,]
 testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
 testModelFrame <- model.frame(testModell, testData)
-
 ```
 
 2. Maximum Likelihood Schätzung
@@ -38,6 +39,20 @@ calculate_p <- function(X, y, beta) {
     
     return(as.vector(p))
 }
+
+
+# loglike <- function(X, y, beta) {
+#     
+#     eta <- X %*% beta #
+# 
+#     exp_eta <- exp(eta) # 
+#     
+#     p <- exp_eta / (1 + exp_eta) # 
+#     
+#     result <- sum(crossprod(y,eta) - sum(log(1 + exp(eta))))
+#     
+#     return(result)
+# }
 
 maxLikeEst <- function(X, y, tolerance, maxIteration) {
     
@@ -64,27 +79,30 @@ maxLikeEst <- function(X, y, tolerance, maxIteration) {
             diff <- sum(abs(beta_change))
             
             i <- i + 1
-
     }
-    
-    df <- nrow(X) - ncol(X)   # degrees of freedem = observations - params
-    #resid <- as.numeric(y - X %*% beta)
-    #sigma <- sqrt(sum(resid^2) / df)  # compute resid std error
+
+    dfRes <- nrow(X) - ncol(X)   # degrees of freedom = observations - params
+    dfNull <- nrow(X) - 1 
+        
     vcov <- solve(t(X) %*% M %*% X)  # compute cov matrix
     
-        
+    residualDeviance <- ((y - X %*% beta)) 
+
     result <- list(coefficients = beta,
-                   vcov = vcov, 
-                   df = df) ### hier noch residuals, sigma,... berechnen
+                   vcov = vcov,
+                   dfRes = dfRes,
+                   residualDeviance = residualDeviance) 
+    
+    ### hier noch residuals, sigma,... berechnen
     
     return(result)
     
-    }
+}
 
-rawResult <- maxLikeEst(model.matrix(modell, testModelFrame), 
-                        model.response(testModelFrame), 
+rawResult <- maxLikeEst(X = model.matrix(testModell, testModelFrame), 
+                        y = model.response(testModelFrame), 
                         tolerance = exp(-20),
-                        maxIteration = 1000)
+                        maxIteration = 5000)
 
 ```
 
@@ -92,14 +110,20 @@ rawResult <- maxLikeEst(model.matrix(modell, testModelFrame),
 
 ```{r Standard Logit-Modell von R}
 standardLogit <- stats::glm(testModell, family = binomial, data = testData)
+str(standardLogit)
 
 all(all.equal(standardLogit$coefficients, as.numeric(rawResult$coefficients),
               check.attributes = FALSE),
     all.equal(vcov(standardLogit), rawResult$vcov,
-              check.attributes = FALSE, tolerance = exp(-10)),
+              check.attributes = FALSE, tolerance = exp(-5)),
     #all.equal(sigma(standardLogit), rawResult$sigma),
-    all.equal(standardLogit$df.residual, rawResult$df))
+    all.equal(standardLogit$df.residual, rawResult$dfRes))
 
+modelFrame <- model.frame(testModelFrame, testData)
+X <- model.matrix(testModelFrame, modelFrame)
+y <- model.response(modelFrame)
+beta <- standardLogit$coefficients
+as.numeric(y - X %*% beta)
 
 ```
 
@@ -111,7 +135,7 @@ logMod <- function(formula, data) {
     X <- model.matrix(formula, modelFrame)
     y <- model.response(modelFrame)
     
-    result <- maxLikeEst(X, y, tolerance = exp(-10), maxIteration = 1000)
+    result <- maxLikeEst(X, y, tolerance = exp(-20), maxIteration = 5000)
     
     result$formula <- formula
     result$call <- match.call()
@@ -119,28 +143,35 @@ logMod <- function(formula, data) {
     class(result) <- "logMod"
     
     return(result)
-   
+    
 }
 
 logitModell <- logMod(formula = admit ~ gre + gpa + rank, data = testData)
 
 ```
 
-4. S3 Methoden definieren
+5. S3 Methoden definieren
 
 ```{r S3 Print Methode}
 print.logMod <- function(x, ...){
     
-    cat("Call: ", paste0(deparse(x$call)))
+    cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
     
     cat("\n\nCoefficients:\n")
     
-     # coef(x)[,1] in order to "transpose" vector
     print.default(format(coef(x)[,1], digits = 4L),
                 print.gap = 1L, quote = FALSE, right = TRUE)
     
+    cat("\n\nDegrees of Freedom: ", x$dfNull, " Total (i.e. Null); ",
+        x$dfFull, " Residual")
+    
+    #cat("\nNull Deviance:\t", nullDeviance)
+    
+    #cat("\nResidual Deviance:", resDeviance)
+    
     # invisibly return linMod object
     invisible(x)
+
 }
 
 logitModell <- logMod(testModell, testData)
@@ -149,5 +180,33 @@ print(logitModell)
 
 ```{r S3 Summary Methode}
 
+summary.logMod <- function(x, ...) {
+    
+    coef_standard_error <- sqrt(diag(x$vcov))
+    
+}
+    
 ```
+
+```{r Vergleichen}
+
+nullModellGlm <- glm(formula = admit ~ 1, data = testData, family = binomial)
+sum((nullModellGlm$residuals)^2)
+vcov(nullModellGlm)   
+deviance(nullModellGlm)
+
+nullModell <- logMod(formula = admit ~ 1, data = testData)
+nullModell$vcov 
+
+
+modelFrame <- model.frame(as.formula(admit ~ 1), testData)
+X <- model.matrix(as.formula(admit ~ 1), modelFrame)
+y <- model.response(modelFrame)
+
+maxLikeEst(X, y, tolerance = exp(-20), maxIteration = 5000)
+
+
+```
+
+
 
