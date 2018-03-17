@@ -40,19 +40,31 @@ calculate_p <- function(X, y, beta) {
     return(as.vector(p))
 }
 
+loglike <- function(X, y, beta) {
 
-# loglike <- function(X, y, beta) {
-#     
-#     eta <- X %*% beta #
-# 
-#     exp_eta <- exp(eta) # 
-#     
-#     p <- exp_eta / (1 + exp_eta) # 
-#     
-#     result <- sum(crossprod(y,eta) - sum(log(1 + exp(eta))))
-#     
-#     return(result)
-# }
+    eta <- X %*% beta #
+
+    #exp_eta <- exp(eta) #
+    #p <- exp_eta / (1 + exp_eta) #
+
+    result <- sum((y * eta) - (log(1 + exp(eta))))
+
+    return(result)
+}
+
+calculate_Deviance_Residuals <- function(X, y, beta) {
+    
+    eta <- X %*% beta #
+
+    s <- y
+    
+    s[s == 0] = -1
+
+    d = s * sqrt(-2*((y * eta) - (log(1 + exp(eta)))))
+    
+    return(d)
+}
+
 
 maxLikeEst <- function(X, y, tolerance, maxIteration) {
     
@@ -86,51 +98,43 @@ maxLikeEst <- function(X, y, tolerance, maxIteration) {
         
     vcov <- solve(t(X) %*% M %*% X)  # compute cov matrix
     
-    residualDeviance <- ((y - X %*% beta)) 
-
     result <- list(coefficients = beta,
                    vcov = vcov,
                    dfRes = dfRes,
-                   residualDeviance = residualDeviance) 
+                   dfNull = dfNull) 
     
     ### hier noch residuals, sigma,... berechnen
     
     return(result)
     
 }
+```
+
+3. Vergleich mit dem Standard Logit-Modell von R
+
+```{r Standard Logit-Modell von R}
 
 rawResult <- maxLikeEst(X = model.matrix(testModell, testModelFrame), 
                         y = model.response(testModelFrame), 
                         tolerance = exp(-20),
                         maxIteration = 5000)
 
-```
-
-3. Vergleich mit dem Standard Logit-Modell von R
-
-```{r Standard Logit-Modell von R}
 standardLogit <- stats::glm(testModell, family = binomial, data = testData)
-str(standardLogit)
 
 all(all.equal(standardLogit$coefficients, as.numeric(rawResult$coefficients),
               check.attributes = FALSE),
     all.equal(vcov(standardLogit), rawResult$vcov,
               check.attributes = FALSE, tolerance = exp(-5)),
-    #all.equal(sigma(standardLogit), rawResult$sigma),
     all.equal(standardLogit$df.residual, rawResult$dfRes))
 
-modelFrame <- model.frame(testModelFrame, testData)
-X <- model.matrix(testModelFrame, modelFrame)
-y <- model.response(modelFrame)
-beta <- standardLogit$coefficients
-as.numeric(y - X %*% beta)
-
+summary(standardLogit)
 ```
 
-4. Logistisches Modell manuell implementieren
+4. Logistisches Modell class
 
 ```{r Manuelles Logit Modell}
 logMod <- function(formula, data) {
+    
     modelFrame <- model.frame(formula, data)
     X <- model.matrix(formula, modelFrame)
     y <- model.response(modelFrame)
@@ -147,7 +151,6 @@ logMod <- function(formula, data) {
 }
 
 logitModell <- logMod(formula = admit ~ gre + gpa + rank, data = testData)
-
 ```
 
 5. S3 Methoden definieren
@@ -163,7 +166,7 @@ print.logMod <- function(x, ...){
                 print.gap = 1L, quote = FALSE, right = TRUE)
     
     cat("\n\nDegrees of Freedom: ", x$dfNull, " Total (i.e. Null); ",
-        x$dfFull, " Residual")
+        x$dfRes, " Residual")
     
     #cat("\nNull Deviance:\t", nullDeviance)
     
@@ -175,6 +178,7 @@ print.logMod <- function(x, ...){
 }
 
 logitModell <- logMod(testModell, testData)
+
 print(logitModell)
 ```
 
@@ -182,7 +186,24 @@ print(logitModell)
 
 summary.logMod <- function(x, ...) {
     
-    coef_standard_error <- sqrt(diag(x$vcov))
+    beta_standard_error <- sqrt(diag(x$vcov))
+    
+    beta <- x$coefficients
+    zStat <- beta / beta_standard_error
+    x$zStat <- zStat
+    
+    #### edit
+    pValue <- 2 * (1 - pt(abs(zStat), x$dfRes))
+    x$pValue
+    
+    result <- c(beta_standard_error = beta_standard_error,
+                zStat = zStat,
+                pValue <- pValue)
+}
+
+print(summary(logitModell))
+
+print.summary.logMod <- function(x, ...) {
     
 }
     
