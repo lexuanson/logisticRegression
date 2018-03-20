@@ -19,42 +19,50 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Abstrakt
 
-Die klassische lineare Regression ...
-
-Diese Arbeit besteht aus zwei großen Hauptteilen: der Theorieteil, wobei die Methode zum Logit-Modell auseinandergesetzt wird und der Anwendungsteil, wobei das selbst entwickelte Paket vorgestellt wird.
+Im Rahmen der Abschlussarbeit des Moduls "Programmieren mit R" im Wintersemester 2017/2018 an der Freie Universität Berlin wird für diese Arbeit die statistische Methode **binäres Logit-Modell** ausgewählt. Diese Arbeit besteht aus zwei großen Hauptteilen: der Theorieteil, wobei die ausgewählte Methode theoretisch vorgestellt wird und der Implementierungsteil, welcher die Erklärung der Funktionalität vom selbst entwickelten Paket beinhaltet. Im Theorieteil wird zunächst ein Überblick über die grundliegende Funktionsweise vom (binären) Logit-Modell widergegeben. Die Grundidee von Generalisierten linearen Modellen wird anschließend kurz eingeführt, bevor der Aufbau vom binären Logit-Modell durch das Maximum Likelihood Verfahren vorgenommen wird. Demzufolge folgt die Interpretation der Koeffizienten und der Lösungsgüte vom binären Logit-Modell. Schließlich werden im Implementierungsteil alle Funktionen vom R-Paket schritterweise vorgestellt.
 
 Schlüsselwörter: Logit-Modell, logistische Regression, Paket, R
 
-------------------------------------------------------------------------------------------------------------------------------------
-
-I. Einführung
-
-Das Logit-Modell (ebenfalls als logistische Regression oder logistisches Regressionsmodell bekannt) ist eine Klassifikationsmethode für diskrete Zielvariable. Diese Arbeit beschäftigt sich mit dem binären Logit-Modell, welches den Zusammenhang zwischen einer binären abhängigen Variable und einer/mehreren unabhängigen Variablen untersucht. In der Statistik lassen sich Logit-Modelle noch in multinomiale und kumulative Logit-Modelle aufteilen, je nachdem ob die abhängige Variable multinominal- oder ordinalskaliert sind <QUELLE>. Bei allen Arten von Logit-Modellen können die unabhängige Variablen beliebig skaliert sein.
-
-Die interessierende Variable Y heißt binär (binomial oder dichotom), wenn sie lediglich zwei Werte annehmen kann: ja oder nein, erfolgreich oder nicht erfolgreich, männlich oder weiblich etc. Oft wird binäre Variable als 0/1-Variable kodiert. Im Unterschied zu der klassischen linearen Regression, welche den Wert einer Zielvariable vorhersagt, interessiert sich das binäre Logit-Modell eher für die Wahrscheinlichkeit, dass die Zielvariable den Wert 1 annimmt. Die Anwendung von der linearen Regression ist für binäre Zielvariable nicht geeignet, denn der Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 liegt, während die Zielvariable von der linearen Regression metrisch ist, das heißt sie kann beliebige Werte annehmen. Wenn man die Annahmen von der linearen Regression, ergeben sich darüber hinaus beim Versuch, binäre Variable durch lineare Regression zu modellieren, noch folgende Probleme:
-*
-*
-*
-
-Die theoretische Fragestellung, welche durch das Logit-Modell beantworten werden soll, lautet: *Wie stark ist der Einfluss von den unabhängigen Variablen auf die Wahrscheinlichkeit, dass die abhängige Variable eintritt (bzw. den Wert 1 annimmt)?* In der Praxis kann diese Fragestellung beispielsweise so formuliert werden: "Haben Alter, Geschlecht, Berufe oder andere Merkmale der Kunden Einfluss auf die Wahrscheinlichkeit, dass sie ein Kredit rechtzeitig zurückzahlen?"" oder "Lässt sich die Wahrscheinlichkeit, dass es regnet, durch die Temparatur, die Windstärke oder Sonnenstrahlungsintensität vorhersagen?". Das Hauptziel vom Logit-Modell ist es, die Wahrscheinlichkeit für den Eintritt der Zielvariable vorherzusagen. 
+\newpage
 
 ------------------------------------------------------------------------------------------------------------------------------------
-II. Das binäre Logit-Modell
+I. Theorieteil
+
+1. Motivation
+
+Die Anwendung von der linearen Regression ist für binäre (binomiale oder dichotome) Zielvariable, welche lediglich zwei Werte (ja/nein, mänlich/weiblich, erfolgreich/nicht erfolgreich, etc.) annehmen kann, nicht mehr geeignet, da die Zielvariable von der linearen Regression metrisch skaliert ist. Oft wird binäre Variable als 0/1-Variable kodiert, das heißt sie nimmt nur den Wert 0 oder 1 an. Abbildung .. stellt den Ansatz graphisch dar, binäre Variable durch lineare Regression zu modellieren:
+
+            #############################################
+            #############################################    
+            #############################################
+            
+Wenn man die Annahmen von der linearen Regression noch in Betracht zieht, ergeben sich darüber hinaus noch folgende Probleme: 
+*
+*
+*
+
+Aus diesen Gründen wird ein ganz anderer Ansatz benötigt, um binäre Zielvariable zu modellieren, nämlich das binäre Logit-Modell, welches ebenfalls als binäre logistische Regression oder binäres logistisches Regressionsmodell bekannt ist. In der Statistik lassen sich Logit-Modelle noch in multinomiale und kumulative Logit-Modelle aufteilen, je nachdem ob die abhängige Variable multinominal- oder ordinalskaliert sind <QUELLE>. Diese Arbeit beschäftigt sich mit dem binären Logit-Modell, welches den Zusammenhang zwischen einer binären abhängigen Variable und einer/mehreren unabhängigen Variablen untersucht. Bei allen Arten von Logit-Modellen können die unabhängige Variablen beliebig skaliert sein.
+
+Im Unterschied zu der klassischen linearen Regression, welche den wahren Wert einer Zielvariable vorhersagt, interessiert sich das binäre Logit-Modell eher für die Wahrscheinlichkeit, dass die Zielvariable den Wert 1 annimmt. Das Hauptziel vom binären Logit-Modell ist es, die Wahrscheinlichkeit für den Eintritt der Zielvariable vorherzusagen. Dadurch soll die folgende theoretische Fragestellung beantwortet werden: *Wie stark ist der Einfluss von den unabhängigen (erklärenden) Variablen auf die Wahrscheinlichkeit, dass die abhängige (zu erklärende / Response) Variable eintritt beziehungsweise den Wert 1 annimmt?* In der Praxis kann diese Fragestellung beispielsweise so formuliert werden: "Haben Alter, Geschlecht, Berufe oder andere Merkmale der Kunden Einfluss auf die Wahrscheinlichkeit, dass sie ein Kredit rechtzeitig zurückzahlen?" oder "Lässt sich die Wahrscheinlichkeit, dass es regnet, durch die Temparatur, die Windstärke oder Sonnenstrahlungsintensität vorhersagen?". 
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+2. Das binäre Logit-Modell
 
 2.1 Modellspezifikation
 
-Das Logit-Modell gehört zu den sogenannten Generalisierten Linearen Modellen, welche ...
-
+Das Logit-Modell ist eine Methode aus den sogenannten Generalisierten Linearen Modellen, welche eine Verallgemeinerung des klassischen linearen Regressionsmodells anstrebt.
 
 2.2 Maximum Likelihood Schätzung
 
-Die klassische 
 
 2.3 Intepretation der Koeffizienten
 
 ------------------------------------------------------------------------------------------------------------------------------------
-III. Implementierung mit R
-Im Folgenden werden die Funktionalität von dem Package ... schritterweise erklärt, welches zum Ziel setzt, das 
+
+II. Implementierung in R
+
+Im Folgenden wird die Funktionalität von dem Package ... erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären Logit-Modell programmiert darzustellen.  
 
 
 Ein Beispieldatensatz wird verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie der Ruf von der angestrebten Institution. 
