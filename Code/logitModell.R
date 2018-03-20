@@ -1,61 +1,59 @@
-# Funktion zum Berechnen von Wahrscheinlichkeit 
-calculate_p <- function(X, y, beta) {
-    
-    eta <- X %*% beta
-    exp_eta <- exp(eta)
-    
-    p <- exp_eta / (1 + exp_eta)
-    
-    return(as.vector(p))
-}
-
-
-# Funktion zum Berechnen des Deviance Residuals
-calculate_Deviance_Residuals <- function(X, y, beta) {
-    
-    eta <- X %*% beta #
-    s <- y
-    s[s == 0] = -1
-    
-    d = s * sqrt(-2*((y * eta) - (log(1 + exp(eta)))))
-    
-    return(as.numeric(d))
-}
-
-
 # Funktion zum Berechnung des Maximalen Likelihoods
 maxLikeEst <- function(X, y) {
     
+    # initialisiere beta
     beta <- rep(0, times = ncol(X))
+    
+    # initialisiere ...
     M <- diag(nrow = nrow(X))
+    
+    # setze Abbruchskriterien
     tolerance <- exp(-20)
     diff <- 10 * abs(tolerance)
     maxIteration <- 5000
     i <- 0
     
+    # Solange Abbruchskriterien nicht erreicht
     while (diff > tolerance || i < maxIteration) {
         
-        p <- calculate_p(X, y, beta)
+        # berechne die Wahrscheinlichkeit
+        eta <- X %*% beta
+        exp_eta <- exp(eta)
+        p <- as.vector(exp_eta / (1 + exp_eta))
+        
+        # aktualisiere ...
         M <- diag(p * (1 - p))
+        
+        # berechne die Änderung von Beta
         beta_change <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
+        
+        # aktualisiere Beta
         beta <- beta + beta_change
+        
+        # berechne die totale Änderung von Beta
         diff <- sum(abs(beta_change))
+        
+        # nächste Iteration
         i <- i + 1
     }
     
-    # degrees of freedom = observations - params
-    dfRes <- nrow(X) - ncol(X)   
-    dfNull <- nrow(X) - 1 
+    # Freiheitsgrad = Anzahl an Beobachtungen - Anzahl an Parameter
+    dfRes <- nrow(X) - ncol(X)  # ResiduensFreiheitsgrad 
+    dfNull <- nrow(X) - 1       # Nullmodell Freiheitsgrad
     
-    # cov matrix
+    # Kovarianzmatrix
     vcov <- solve(t(X) %*% M %*% X) 
     
-    # Deviance Residual
-    devianceResidual <- calculate_Deviance_Residuals(X, y, beta)
+    # Devianz Residual
+    #eta <- X %*% beta #
+    s <- y
+    s[s == 0] = -1
+    devianceResidual = as.numeric(s * sqrt(-2*((y * eta) - (log(1 + exp(eta))))))
     
     # Maximumwert der Log Likelihood Funktion
     maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
     
+    # Liste der zurückgegebenen Werte
     result <- list(coefficients = beta,
                    vcov = vcov,
                    devianceResidual = devianceResidual,
@@ -67,32 +65,33 @@ maxLikeEst <- function(X, y) {
     
 }
 
-
 # Funktion zum Erstellen des Logit-Modells mit der Klasse LogitMod
 logitMod <- function(formula, data) {
     
+    # initialisiere y (Zielvariable) und X (Matrix enthält alle erklärenden Variablen)
     modelFrame <- model.frame(formula, data)
     X <- model.matrix(formula, modelFrame)
     y <- model.response(modelFrame)
     
+    # erstelle eine Liste als Ergebnis der maxLikeEst-Funktion
     result <- maxLikeEst(X, y)
     
-    # Null Modell
+    # erstelle das Null Modell und speichere es in die Ergebnisliste
     nullModell <- maxLikeEst(X = matrix(rep(1, times = nrow(X)), ncol = 1), y = y)
-    
     result$nullModell <- nullModell
+    
+    # speichere notwendige Parameter in die Ergebnisliste
     result$formula <- formula
     result$call <- match.call()
     result$X <- X
     result$y <- y
     
+    # ordne die Ergebnisliste der Klasse "logitMod" zu
     class(result) <- "logitMod"
     
     return(result)
     
 }
-logitModell <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
-
 
 # Funktion für die Print-Methode der Klasse logitMod
 print.logitMod <- function(x, ...){
@@ -123,9 +122,6 @@ print.logitMod <- function(x, ...){
     invisible(x)
     
 }
-logitModell <- logitMod(admit ~ gre + gpa + rank, testData)
-print(logitModell)
-
 
 # Funktion für die Summary-Methode der Klasse logitMod
 summary.logitMod <- function(x, ...) {
@@ -194,5 +190,28 @@ print.summary.logitMod <- function(x, ...) {
     invisible(x)
 }
 
-
 # Funktion für die Plot-Methode der Klasse logitMod
+plot.logitMod <- function(x, ...) {
+    
+    #1
+    plot(y = x$devianceResidual, x = (x$X %*% x$coefficients),
+         main = "Residuals vs Fitted",
+         ylab = "Residuals",
+         xlab = paste("Predicted Values\n",
+                      deparse(logitModell$call)))
+    abline(a = 0, b = 0, lty = 3)
+    
+    #2
+    qqnorm(x$devianceResidual, 
+           main = "Normal Q-Q", 
+           ylab = "Std. deviance resid.",
+           xlab = paste("Theoretical Quantiles\n", deparse(logitModell$call))) 
+    qqline(x$devianceResidual, lty = 3)
+    
+    #3
+    plot(y = sqrt(abs(x$devianceResidual)), x = (x$X %*% x$coefficients),
+         main = "Scale Location",
+         ylab = expression(sqrt("|Std. deviance resid.|")),
+         xlab = paste("Predicted Values\n", deparse(logitModell$call)))
+    
+}
