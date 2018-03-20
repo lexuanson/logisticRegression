@@ -51,7 +51,7 @@ Im Unterschied zu der klassischen linearen Regression, welche den wahren Wert ei
 
 2. Das binäre Logit-Modell
 
-2.1 Modellspezifikation
+2.1 Modellspezifikation 
 
 Das Logit-Modell ist eine Methode aus den sogenannten Generalisierten Linearen Modellen, welche eine Verallgemeinerung des klassischen linearen Regressionsmodells anstrebt.
 
