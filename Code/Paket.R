@@ -1,35 +1,4 @@
----
-title: __R Code Logistische Regression__
-author: "Xuan Son Le (4669361), Freie Universität Berlin"
-date: "04/04/2018"
-output: 
-  ptestData_document: 
-    keep_tex: yes
-    latex_engine: ptestDatalatex
-    number_sections: yes
-    toc: yes
-    toc_depth: 3
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-1. Datensatz einlesen
-
-```{r Datendatz einlesen}
-testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
-testData <- testData[1:100,]
-testData$rank <- factor(testData$rank)
-#testModell <- as.formula("admit ~ gre + gpa + rank")
-testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
-```
-
-2. Maximum Likelihood Schätzung
-
-```{r Maximum Likelihood Schätzung}
-
-# Binäres Logit Modell für die Wahrscheinlichkeit, dass y(i) den Wert 1 annimmt ####
+# Funktion zum Berechnen von Wahrscheinlichkeit 
 calculate_p <- function(X, y, beta) {
     
     eta <- X %*% beta
@@ -40,31 +9,21 @@ calculate_p <- function(X, y, beta) {
     return(as.vector(p))
 }
 
-# loglike <- function(X, y, beta) {
-# 
-#     eta <- X %*% beta #
-# 
-#     #exp_eta <- exp(eta) #
-#     #p <- exp_eta / (1 + exp_eta) #
-# 
-#     result <- sum((y * eta) - (log(1 + exp(eta))))
-# 
-#     return(result)
-# }
 
-# Funktion zum Berechnen des Deviance Residuals ####
+# Funktion zum Berechnen des Deviance Residuals
 calculate_Deviance_Residuals <- function(X, y, beta) {
     
     eta <- X %*% beta #
     s <- y
     s[s == 0] = -1
-
+    
     d = s * sqrt(-2*((y * eta) - (log(1 + exp(eta)))))
     
     return(as.numeric(d))
 }
 
-# Funktion zum Berechnung des maximalen Likelihoods ####
+
+# Funktion zum Berechnung des Maximalen Likelihoods
 maxLikeEst <- function(X, y) {
     
     beta <- rep(0, times = ncol(X))
@@ -73,17 +32,17 @@ maxLikeEst <- function(X, y) {
     diff <- 10 * abs(tolerance)
     maxIteration <- 5000
     i <- 0
-
+    
     while (diff > tolerance || i < maxIteration) {
-            
-            p <- calculate_p(X, y, beta)
-            M <- diag(p * (1 - p))
-            beta_change <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
-            beta <- beta + beta_change
-            diff <- sum(abs(beta_change))
-            i <- i + 1
+        
+        p <- calculate_p(X, y, beta)
+        M <- diag(p * (1 - p))
+        beta_change <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
+        beta <- beta + beta_change
+        diff <- sum(abs(beta_change))
+        i <- i + 1
     }
-
+    
     # degrees of freedom = observations - params
     dfRes <- nrow(X) - ncol(X)   
     dfNull <- nrow(X) - 1 
@@ -103,35 +62,13 @@ maxLikeEst <- function(X, y) {
                    dfRes = dfRes,
                    dfNull = dfNull,
                    maxLogLikeValue = maxLogLikeValue) 
-
+    
     return(result)
     
 }
-```
 
-3. Vergleich mit dem Standard Logit-Modell von R
 
-```{r Standard Logit-Modell von R}
-
-rawResult <- maxLikeEst(X = model.matrix(testModell, testModelFrame), 
-                        y = model.response(testModelFrame))
-
-standardLogit <- glm(admit ~ gre + gpa + rank, family = binomial, data = testData)
-
-all(all.equal(standardLogit$coefficients, as.numeric(rawResult$coefficients),
-              check.attributes = FALSE),
-    all.equal(vcov(standardLogit), rawResult$vcov,
-              check.attributes = FALSE, tolerance = exp(-5)),
-    all.equal(residuals(standardLogit), as.numeric(rawResult$devianceResidual),
-              check.attributes = FALSE),
-    all.equal(standardLogit$df.residual, rawResult$dfRes),
-    all.equal(standardLogit$df.null, rawResult$dfNull))
-
-```
-
-4. Logistisches Modell 
-
-```{r Manuelles Logit Modell}
+# Funktion zum Erstellen des Logit-Modells mit der Klasse LogitMod
 logitMod <- function(formula, data) {
     
     modelFrame <- model.frame(formula, data)
@@ -152,16 +89,12 @@ logitMod <- function(formula, data) {
     class(result) <- "logitMod"
     
     return(result)
-
+    
 }
-
 logitModell <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
-```
 
-5. S3 Methoden definieren
 
-```{r S3 Print Methode}
-
+# Funktion für die Print-Methode der Klasse logitMod
 print.logitMod <- function(x, ...){
     
     cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
@@ -169,7 +102,7 @@ print.logitMod <- function(x, ...){
     cat("\n\nCoefficients:\n")
     
     print.default(format(coef(x)[,1], digits = 4L),
-                print.gap = 1L, quote = FALSE, right = TRUE)
+                  print.gap = 1L, quote = FALSE, right = TRUE)
     
     cat("\nDegrees of Freedom: ", x$dfNull, " Total (i.e. Null); ",
         x$dfRes, " Residual")
@@ -188,17 +121,13 @@ print.logitMod <- function(x, ...){
     
     # invisibly return linMod object
     invisible(x)
-
+    
 }
-
 logitModell <- logitMod(admit ~ gre + gpa + rank, testData)
-
 print(logitModell)
-print(standardLogit)
-```
 
-```{r S3 Summary Methode}
 
+# Funktion für die Summary-Methode der Klasse logitMod
 summary.logitMod <- function(x, ...) {
     
     # Koeffizienten Standardfehler
@@ -223,10 +152,10 @@ summary.logitMod <- function(x, ...) {
     
     # Zusammenfassung der Werte für die Koeffizienten
     x$coefficients <- cbind("Estimate" = x$coefficients[,],
-                       "Std. error" = x$betaStandardError[,],
-                       "z value" = x$zStat[,],
-                       "Pr(>|z|)" = x$pValue[,])
-                       #" " = x$sigCode[,])
+                            "Std. error" = x$betaStandardError[,],
+                            "z value" = x$zStat[,],
+                            "Pr(>|z|)" = x$pValue[,])
+    #" " = x$sigCode[,])
     
     # Berechnung von nullDeviance, residualDeviance & aic
     nullDeviance <- sum(x$nullModell$devianceResidual^2)
@@ -241,12 +170,6 @@ summary.logitMod <- function(x, ...) {
     return(x)
     
 }
-
-str(summary(logitModell))
-
-```
-
-```{r Print Summary Methode}
 print.summary.logitMod <- function(x, ...) {
     
     cat("Call: ", deparse(x$call), fill = TRUE)
@@ -271,29 +194,5 @@ print.summary.logitMod <- function(x, ...) {
     invisible(x)
 }
 
-summary(logitModell)
 
-```
-
-```{r}
-plot(standardLogit)
-```
-
-```{r}
-plot.logitMod <- function(x, ...) {
-    
-    qqnorm(x$devianceResidual, main = "Normal Q-Q", ylab = "Std. deviance resid.",
-           xlab = paste("Theoretical Quantiles\n", 
-                        deparse(logitModell$call))) 
-    qqline(x$devianceResidual, lty = 3)
-  
-    plot(y = x$devianceResidual, x = (x$X %*% x$coefficients))
-}
-
-plot(logitModell)
-
-
-```
-
-
-
+# Funktion für die Plot-Methode der Klasse logitMod

@@ -26,6 +26,7 @@ Schlüsselwörter: Logit-Modell, logistische Regression, Paket, R
 \newpage
 
 ------------------------------------------------------------------------------------------------------------------------------------
+
 I. Theorieteil
 
 1. Motivation
