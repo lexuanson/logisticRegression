@@ -1,3 +1,17 @@
+#' @title Draw a histogram of a normal distribution sample
+#' @description This function just draws a damn histogram
+#' @param sampleSize number of observations
+#' @param title the title of the histogram
+#' @param colour the color of the histogram
+#' @examples histoNormGg(1000, "Just a histogram", colour = "red")
+#' @export
+#' @importFrom ggplot2 ggplot geom_histogram aes_string labs
+#' @importFrom stats rnorm
+
+
+
+
+
 # Funktion zum Berechnung des Maximalen Likelihoods
 maxLikeEst <- function(X, y) {
     
