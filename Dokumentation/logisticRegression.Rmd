@@ -38,6 +38,7 @@ Die Anwendung von der linearen Regression ist für binäre (binomiale oder dicho
             #############################################
             
 Wenn man die Annahmen von der linearen Regression noch in Betracht zieht, ergeben sich darüber hinaus noch folgende Probleme: 
+
 *
 *
 *
