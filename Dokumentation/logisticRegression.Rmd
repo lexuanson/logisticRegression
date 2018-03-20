@@ -17,25 +17,26 @@ knitr::opts_chunk$set(echo = TRUE)
 
 \newpage
 
-1. Motivation
+I. Einführung
 
-Die logistische Regession (ebenfalls als Logit-Modell oder logistisches Regressionsmodell bekannt) ist eine Klassifikationsmethode für diskrete Zielvariable. In der Statistik lassen sich Logit-Modelle in binäre, multinomiale und kumulative Logit-Modelle aufteilen, je nachdem ob die abhängige Variable nominal oder ordinalskaliert sind <QUELLE>. Diese Arbeit beschäftigt sich mit dem binären/binomialen Logit-Modell, welches den Zusammenhang zwischen einer binären abhängigen Variable und einer/mehreren unabhängigen Variablen untersucht. Eine interessierende Variable Y heißt binär, wenn sie lediglich zwei Werte annehmen kann: ja oder nein, erfolgreich oder nicht erfolgreich, männlich oder weiblich etc. Oft wird binäre Variable als 0/1-Variable kodiert. 
+Das Logit-Modell (ebenfalls als logistische Regression oder logistisches Regressionsmodell bekannt) ist eine Klassifikationsmethode für diskrete Zielvariable. Diese Arbeit beschäftigt sich mit dem binären/binomialen Logit-Modell, welches den Zusammenhang zwischen einer binären abhängigen Variable und einer/mehreren unabhängigen Variablen untersucht. In der Statistik lassen sich Logit-Modelle noch in multinomiale und kumulative Logit-Modelle aufteilen, je nachdem ob die abhängige Variable multinominal- oder ordinalskaliert sind <QUELLE>. 
 
-Die theoretische Fragestellung, welche durch das Logit-Modell beantworten werden soll, lautet: *Wie stark ist der Einfluss von den unabhängigen Variablen auf die Wahrscheinlichkeit, dass die abhängige Variable eintritt (bzw. den Wert 1 annimmt)?* In der Praxis kann die Frage beispielsweise so formuliert werden: "Haben Alter, Geschlecht, Berufe oder andere Merkmale der Kunden Einfluss auf die Wahrscheinlichkeit, dass sie ein Kredit rechtzeitig zurückzahlen?"" oder "Lässt sich die Wahrscheinlichkeit, dass es regnet, durch die Temparatur, die Windstärke oder Sonnenstrahlungsintensität vorhersagen?". 
-
-2. Modellformulierung
-
-Die Grundidee vom Logit-Modell steht hinter der klassischen linearen Regression. Um dies zu veranschaulichen 
+Die interessierende Variable Y heißt binär, wenn sie lediglich zwei Werte annehmen kann: ja oder nein, erfolgreich oder nicht erfolgreich, männlich oder weiblich etc. Oft wird binäre Variable als 0/1-Variable kodiert. Im Unterschied zu der klassischen linearen Regression, welche den Wert einer Zielvariable vorhersagt, interessiert sich das binäre Logit-Modell eher für die Wahrscheinlichkeit, dass die Zielvariable den Wert 1 annimmt. Die Anwendung von der linearen Regression ist für binäre Zielvariable nicht geeignet, denn der Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 liegt, während die Zielvariable von der linearen Regression metrisch ist, das heißt sie kann beliebige Werte annehmen. Wenn man die Annahmen von der linearen Regression, ergeben sich darüber hinaus beim Versuch, binäre Variable durch lineare Regression zu modellieren, noch folgende Probleme:
 
 
-3. Maximum Likelihood Schätzung
+II. Das binäre Logit-Modell
 
+2.1 Modellspezifikation
 
-4. Implementierung mit R
+Die theoretische Fragestellung, welche durch das Logit-Modell beantworten werden soll, lautet: *Wie stark ist der Einfluss von den unabhängigen Variablen auf die Wahrscheinlichkeit, dass die abhängige Variable eintritt (bzw. den Wert 1 annimmt)?* In der Praxis kann diese Fragestellung beispielsweise so formuliert werden: "Haben Alter, Geschlecht, Berufe oder andere Merkmale der Kunden Einfluss auf die Wahrscheinlichkeit, dass sie ein Kredit rechtzeitig zurückzahlen?"" oder "Lässt sich die Wahrscheinlichkeit, dass es regnet, durch die Temparatur, die Windstärke oder Sonnenstrahlungsintensität vorhersagen?". 
+
+2.2 Maximum Likelihood Schätzung
+
+2.3 Intepretation der 
+
+III. Implementierung mit R
 
 Ein Beispieldatensatz wird verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie der Ruf von der angestrebten Institution. 
-
-Um mögliche Fehler zu vermeiden, wurde der Datensatz in Bezug auf Missing Values bereingit. Zur Vereinfachung wird an dieser Stelle alle Beobachtungen entfernt, welche fehlende Werte beinhalten. Ebenfalls werden wegen hoher Anzahl nicht alle unabhängigen Variablen miteinbezogen. 
 
 
 
