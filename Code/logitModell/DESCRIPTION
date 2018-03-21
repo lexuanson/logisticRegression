@@ -1,0 +1,10 @@
+Package: logitModell
+Type: Package
+Title: Binary Logistic Regression
+Version: 1.0
+Date: 2018-04-02
+Author: Xuan Son Le
+Maintainer: Xuan Son Le <lexuanson1992@gmail.com>
+Description: Creates a manual implementation of the binary logistic regression
+License: GPL-2
+RoxygenNote: 6.0.1

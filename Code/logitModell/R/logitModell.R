@@ -8,9 +8,8 @@
 #' testData$rank <- factor(testData$rank)
 #' testModell <- as.formula("admit ~ gre + gpa + rank")
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
-#' maxLikeEst(y = model.response(testModelFrame), X = model.matrix(testModell, testModelFrame))
-#' @export()
-#' 
+#' maxLikeEst(X = model.matrix(testModell, testModelFrame), y = model.response(testModelFrame))
+#' @export
 maxLikeEst <- function(y, X) {
     
     # initialisiere beta
@@ -89,6 +88,7 @@ maxLikeEst <- function(y, X) {
 #' testData$rank <- factor(testData$rank)
 #' testModell <- as.formula("admit ~ gre + gpa + rank")
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+#' logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' @export
 logitMod <- function(formula, data) {
     
@@ -130,6 +130,8 @@ logitMod <- function(formula, data) {
 #' testData$rank <- factor(testData$rank)
 #' testModell <- as.formula("admit ~ gre + gpa + rank")
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+#' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+#' print(logm)
 #' @export
 print.logitMod <- function(x, ...){
     
@@ -174,6 +176,8 @@ print.logitMod <- function(x, ...){
 #' testData$rank <- factor(testData$rank)
 #' testModell <- as.formula("admit ~ gre + gpa + rank")
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+#' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+#' summary(logm)
 #' @export
 summary.logitMod <- function(x, ...) {
     
@@ -231,6 +235,8 @@ summary.logitMod <- function(x, ...) {
 #' testData$rank <- factor(testData$rank)
 #' testModell <- as.formula("admit ~ gre + gpa + rank")
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+#' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+#' summary(logm)
 #' @export
 print.summary.logitMod <- function(x, ...) {
     
@@ -269,6 +275,8 @@ print.summary.logitMod <- function(x, ...) {
 #' testData$rank <- factor(testData$rank)
 #' testModell <- as.formula("admit ~ gre + gpa + rank")
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+#' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+#' plot(logm)
 #' @export
 plot.logitMod <- function(x, ...) {
     
