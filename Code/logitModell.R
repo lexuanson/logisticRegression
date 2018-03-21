@@ -309,21 +309,21 @@ plot.logitMod <- function(x, ...) {
          main = "Residuals vs Fitted",
          ylab = "Residuals",
          xlab = paste("Predicted Values\n",
-                      deparse(logitModell$call)))
+                      deparse(x$call)))
     abline(a = 0, b = 0, lty = 3)
     
     #2
     qqnorm(x$devianceResidual, 
            main = "Normal Q-Q", 
            ylab = "Std. deviance resid.",
-           xlab = paste("Theoretical Quantiles\n", deparse(logitModell$call))) 
+           xlab = paste("Theoretical Quantiles\n", deparse(x$call))) 
     qqline(x$devianceResidual, lty = 3)
     
     #3
     plot(y = sqrt(abs(x$devianceResidual)), x = (x$X %*% x$coefficients),
          main = "Scale Location",
          ylab = expression(sqrt("|Std. deviance resid.|")),
-         xlab = paste("Predicted Values\n", deparse(logitModell$call)))
+         xlab = paste("Predicted Values\n", deparse(x$call)))
     
 }
 
