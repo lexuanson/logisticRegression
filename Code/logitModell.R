@@ -1,9 +1,8 @@
-#' @title Draw a histogram of a normal distribution sample
-#' @description This function just draws a damn histogram
-#' @param sampleSize number of observations
-#' @param title the title of the histogram
-#' @param colour the color of the histogram
-#' @examples histoNormGg(1000, "Just a histogram", colour = "red")
+#' @title Berechne das Maximum Likelihood
+#' @description Diese Funktion 
+#' @param y Matrix beinhaltet die Zielvariable
+#' @param X Matrix beinhaltet den Interzept und alle unabhängigen Variablen
+#' @examples maxLikeEst(y = c(0,1,1,0), x = cbind(1,c(20,16,18,10),c(100,)))
 #' @export
 #' @importFrom ggplot2 ggplot geom_histogram aes_string labs
 #' @importFrom stats rnorm
@@ -13,7 +12,7 @@
 
 
 # Funktion zum Berechnung des Maximalen Likelihoods
-maxLikeEst <- function(X, y) {
+maxLikeEst <- function(y, X) {
     
     # initialisiere beta
     beta <- rep(0, times = ncol(X))
