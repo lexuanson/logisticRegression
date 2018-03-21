@@ -18,10 +18,9 @@ knitr::opts_chunk$set(echo = TRUE)
 1. Datensatz einlesen
 
 ```{r Datendatz einlesen}
-testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
-testData <- testData[1:100,]
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
 testData$rank <- factor(testData$rank)
-#testModell <- as.formula("admit ~ gre + gpa + rank")
+testModell <- as.formula("admit ~ gre + gpa + rank")
 testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
 ```
 
@@ -30,15 +29,6 @@ testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
 ```{r Maximum Likelihood Schätzung}
 
 # Binäres Logit Modell für die Wahrscheinlichkeit, dass y(i) den Wert 1 annimmt ####
-calculate_p <- function(X, y, beta) {
-    
-    eta <- X %*% beta
-    exp_eta <- exp(eta)
-    
-    p <- exp_eta / (1 + exp_eta)
-    
-    return(as.vector(p))
-}
 
 # loglike <- function(X, y, beta) {
 # 
@@ -59,7 +49,7 @@ calculate_Deviance_Residuals <- function(X, y, beta) {
     s <- y
     s[s == 0] = -1
 
-    d = s * sqrt(-2*((y * eta) - (log(1 + exp(eta)))))
+    d = as.numeric(s * sqrt(-2*((y * eta) - (log(1 + exp(eta))))))
     
     return(as.numeric(d))
 }
@@ -69,19 +59,22 @@ maxLikeEst <- function(X, y) {
     
     beta <- rep(0, times = ncol(X))
     M <- diag(nrow = nrow(X))
-    tolerance <- exp(-20)
+    tolerance <- exp(-10)
     diff <- 10 * abs(tolerance)
-    maxIteration <- 5000
+    maxIteration <- 1000
     i <- 0
 
     while (diff > tolerance || i < maxIteration) {
-            
-            p <- calculate_p(X, y, beta)
-            M <- diag(p * (1 - p))
-            beta_change <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
-            beta <- beta + beta_change
-            diff <- sum(abs(beta_change))
-            i <- i + 1
+        
+        eta <- X %*% beta
+        exp_eta <- exp(eta)
+        p <-as.vector(exp_eta / (1 + exp_eta))
+        
+        M <- diag(p * (1 - p))
+        beta_change <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
+        beta <- beta + beta_change
+        diff <- sum(abs(beta_change))
+        i <- i + 1
     }
 
     # degrees of freedom = observations - params
@@ -92,7 +85,10 @@ maxLikeEst <- function(X, y) {
     vcov <- solve(t(X) %*% M %*% X) 
     
     # Deviance Residual
-    devianceResidual <- calculate_Deviance_Residuals(X, y, beta)
+    #eta <- X %*% beta #
+    s <- y
+    s[s == 0] = -1
+    devianceResidual <- as.numeric(s * sqrt(-2*((y * eta) - (log(1 + exp(eta))))))
     
     # Maximumwert der Log Likelihood Funktion
     maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
@@ -107,6 +103,7 @@ maxLikeEst <- function(X, y) {
     return(result)
     
 }
+
 ```
 
 3. Vergleich mit dem Standard Logit-Modell von R

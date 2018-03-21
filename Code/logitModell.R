@@ -1,17 +1,16 @@
-#' @title Berechne das Maximum Likelihood
-#' @description Diese Funktion 
-#' @param y Matrix beinhaltet die Zielvariable
-#' @param X Matrix beinhaltet den Interzept und alle unabhängigen Variablen
-#' @examples maxLikeEst(y = c(0,1,1,0), x = cbind(1,c(20,16,18,10),c(100,)))
-#' @export
-#' @importFrom ggplot2 ggplot geom_histogram aes_string labs
-#' @importFrom stats rnorm
+#' @title Maximum Likelihood
+#' @description This function calculates the maximum likelihood for binary logistic regression
+#' @param y a matrix/vector containing the dependent variable
+#' @param X a matrix containing the intercept and all independent variables
+#' @return a list with maximum likelihood estimation results
+#' @examples 
+#' testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+#' testData$rank <- factor(testData$rank)
+#' testModell <- as.formula("admit ~ gre + gpa + rank")
+#' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+#' maxLikeEst(y = model.response(testModelFrame), X = model.matrix(testModell, testModelFrame))
+#' @export 
 
-
-
-
-
-# Funktion zum Berechnung des Maximalen Likelihoods
 maxLikeEst <- function(y, X) {
     
     # initialisiere beta
@@ -21,9 +20,9 @@ maxLikeEst <- function(y, X) {
     M <- diag(nrow = nrow(X))
     
     # setze Abbruchskriterien
-    tolerance <- exp(-20)
+    tolerance <- exp(-10)
     diff <- 10 * abs(tolerance)
-    maxIteration <- 5000
+    maxIteration <- 1000
     i <- 0
     
     # Solange Abbruchskriterien nicht erreicht
@@ -58,7 +57,6 @@ maxLikeEst <- function(y, X) {
     vcov <- solve(t(X) %*% M %*% X) 
     
     # Devianz Residual
-    #eta <- X %*% beta #
     s <- y
     s[s == 0] = -1
     devianceResidual = as.numeric(s * sqrt(-2*((y * eta) - (log(1 + exp(eta))))))
@@ -78,7 +76,25 @@ maxLikeEst <- function(y, X) {
     
 }
 
-# Funktion zum Erstellen des Logit-Modells mit der Klasse LogitMod
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+
+maxLikeEst(y = model.response(testModelFrame),
+           X = model.matrix(testModell, testModelFrame))
+
+
+#' @title Interface for an alternative logistic regression implementation
+#' @description This function computes coefficients of a binary logistic regression
+#' and contructs an object of "logitMod" class
+#' @param formula a formula object. Matrix or array are not accepted
+#' @param data a data frame contains all variables
+#' @return a list of class "logitMod" containing the coefficients, a null model, formula, call,
+#' the dependent variable and all independent variables.
+#' @examples 
+#' 
+
 logitMod <- function(formula, data) {
     
     # initialisiere y (Zielvariable) und X (Matrix enthält alle erklärenden Variablen)
@@ -87,7 +103,7 @@ logitMod <- function(formula, data) {
     y <- model.response(modelFrame)
     
     # erstelle eine Liste als Ergebnis der maxLikeEst-Funktion
-    result <- maxLikeEst(X, y)
+    result <- maxLikeEst(y, X)
     
     # erstelle das Null Modell und speichere es in die Ergebnisliste
     nullModell <- maxLikeEst(X = matrix(rep(1, times = nrow(X)), ncol = 1), y = y)
@@ -106,7 +122,26 @@ logitMod <- function(formula, data) {
     
 }
 
-# Funktion für die Print-Methode der Klasse logitMod
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+
+maxLikeEst(y = model.response(testModelFrame),
+           X = model.matrix(testModell, testModelFrame))
+
+logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+
+
+#' @title Printing method for logitMod estimations
+#' @description Printing method for class "logitMod"
+#' @param x an object of class "logitMod"
+#' @param ... unused parameter, methods are required to have same
+#' arguments as their generic functions
+#' @return a standard print output equivalent to the built in binary logistic regression
+#' @examples 
+#' 
+
 print.logitMod <- function(x, ...){
     
     cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
@@ -136,7 +171,28 @@ print.logitMod <- function(x, ...){
     
 }
 
-# Funktion für die Summary-Methode der Klasse logitMod
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+
+maxLikeEst(y = model.response(testModelFrame),
+           X = model.matrix(testModell, testModelFrame))
+
+logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+print(logm)
+
+
+#' @title Summary method for "logitMod" estimations
+#' @description Summary method for class "logitMod"
+#' @param x an object of class "logitMod"
+#' @param ... unused parameter, methods are required to have same
+#' arguments as their generic functions
+#' @return a list of all necessary values equivalent to the summary output of the
+#' built in binary logistic regression
+#' @examples 
+#' 
+
 summary.logitMod <- function(x, ...) {
     
     # Koeffizienten Standardfehler
@@ -179,6 +235,27 @@ summary.logitMod <- function(x, ...) {
     return(x)
     
 }
+
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+
+maxLikeEst(y = model.response(testModelFrame),
+           X = model.matrix(testModell, testModelFrame))
+
+logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+summary(logm)
+
+
+#' @title Printing method for the summary of "logitMod" estimations
+#' @description Printing method for summary of class "logitMod"
+#' @param x an object of class "logitMod"
+#' @param ... unused parameter, methods are required to have same
+#' arguments as their generic functions
+#' @return an equivalent output to the summary of the built in binary logistic regression
+#' @examples 
+#' 
 print.summary.logitMod <- function(x, ...) {
     
     cat("Call: ", deparse(x$call), fill = TRUE)
@@ -202,6 +279,27 @@ print.summary.logitMod <- function(x, ...) {
     # invisibly return summary 
     invisible(x)
 }
+
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+
+maxLikeEst(y = model.response(testModelFrame),
+           X = model.matrix(testModell, testModelFrame))
+
+logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+summary(logm)
+
+
+#' @title Plotting method for "logitMod" objects
+#' @description Plotting method for objects of class "logitMod"
+#' @param x an object of class "logitMod"
+#' @param ... unused parameter, methods are required to have same
+#' arguments as their generic functions
+#' @return equivalent plots to those of the built in binary logistic regression
+#' @examples 
+#' 
 
 # Funktion für die Plot-Methode der Klasse logitMod
 plot.logitMod <- function(x, ...) {
@@ -228,3 +326,14 @@ plot.logitMod <- function(x, ...) {
          xlab = paste("Predicted Values\n", deparse(logitModell$call)))
     
 }
+
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+
+maxLikeEst(y = model.response(testModelFrame),
+           X = model.matrix(testModell, testModelFrame))
+
+logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
+plot(logm)
