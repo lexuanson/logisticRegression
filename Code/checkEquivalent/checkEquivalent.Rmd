@@ -1,0 +1,41 @@
+---
+title: "Check equivalent"
+author: "Xuan Son Le"
+date: "21 März 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Preparing data}
+#install.packages("logitModell")
+library(logitModell)
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+maxLikeEst(y = model.response(testModelFrame), X = model.matrix(testModell, testModelFrame))
+
+fittedLogModell <- logitMod(formula = testModell, data = testData)
+standardLogModell <- glm(formula = admit ~ gre + gpa + rank, family = binomial, data = testData)
+```
+
+
+```{r Print}
+fittedLogModell
+standardLogModell
+```
+
+
+```{r Summary}
+summary(fittedLogModell)
+summary(standardLogModell)
+```
+
+
+```{r Plot}
+plot(fittedLogModell)
+plot(standardLogModell)
+```
