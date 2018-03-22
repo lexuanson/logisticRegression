@@ -1,7 +1,7 @@
 ---
 title: "Check equivalent"
 author: "Xuan Son Le"
-date: "21 März 2018"
+date: "2018-04-02"
 output: pdf_document
 ---
 
@@ -12,14 +12,25 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r Preparing data}
 #install.packages("logitModell")
 library(logitModell)
+
 testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")[1:100,]
 testData$rank <- factor(testData$rank)
 testModell <- as.formula("admit ~ gre + gpa + rank")
 testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
-maxLikeEst(y = model.response(testModelFrame), X = model.matrix(testModell, testModelFrame))
+maxLikeEst(X = model.matrix(testModell, testModelFrame), y = model.response(testModelFrame))
+
+# data(cats, package = "MASS")
+# testData <- cats[1:100,]
+# testData$Sex <- factor(testData$Sex, labels = c(0,1))
+# #testData$Sex <- as.numeric(as.character(testData$Sex))
+# testModell <- as.formula("Sex ~ Bwt + Hwt")
+# testModelFrame <- model.frame(Sex ~ Bwt + Hwt, testData)
+# maxLikeEst(X = model.matrix(testModell, testModelFrame),
+#            y = (model.response(testModelFrame)))
+
 
 fittedLogModell <- logitMod(formula = testModell, data = testData)
-standardLogModell <- glm(formula = admit ~ gre + gpa + rank, family = binomial, data = testData)
+standardLogModell <- glm(formula = Sex ~ Bwt + Hwt, family = binomial, data = testData)
 ```
 
 

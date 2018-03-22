@@ -1,6 +1,6 @@
 #' @title Maximum Likelihood
 #' @description This function calculates the maximum likelihood for binary logistic regression
-#' @param y a matrix/vector containing the dependent variable
+#' @param y a vector containing the dependent variable
 #' @param X a matrix containing the intercept and all independent variables
 #' @return a list with maximum likelihood estimation results
 #' @examples  
@@ -13,6 +13,9 @@
 #' 
 maxLikeEst <- function(y, X) {
     
+    # 
+    y <- as.numeric(as.character(y))
+
     # initialisiere beta
     beta <- rep(0, times = ncol(X))
     
@@ -292,5 +295,8 @@ plot.logitMod <- function(x, ...) {
          main = "Scale Location",
          ylab = expression(sqrt("|Std. deviance resid.|")),
          xlab = paste("Predicted Values\n", deparse(x$call)))
+    
+    #4
+    
     
 }

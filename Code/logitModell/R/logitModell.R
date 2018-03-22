@@ -12,6 +12,9 @@
 #' @export
 maxLikeEst <- function(y, X) {
     
+    # falls y als factor eingegeben wird
+    y <- as.numeric(as.character(y))
+    
     # initialisiere beta
     beta <- rep(0, times = ncol(X))
     

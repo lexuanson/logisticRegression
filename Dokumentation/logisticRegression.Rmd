@@ -33,10 +33,19 @@ I. Einführung in das binäre Logit-Modell
 
 Die Anwendung von der klassischen linearen Regression ist für binäre (binomiale oder dichotome) Zielvariable, welche lediglich zwei Werte (ja/nein, mänlich/weiblich, erfolgreich/nicht erfolgreich, etc.) annehmen kann, nicht mehr geeignet, da die Zielvariable von der linearen Regression metrisch skaliert ist. Oft wird binäre Variable als 0/1-Variable kodiert, das heißt sie nimmt nur den Wert 0 oder 1 an. Die folgende Grafik stellt den Ansatz graphisch dar, binäre Variable durch lineare Regression zu modellieren:
 
-            #############################################
-            #############################################    
-            #############################################
-            
+```{r fig.height=2, fig.width=4, include=FALSE}
+library(ggplot2)
+data(cats, package = "MASS")
+cats$Sex <- as.numeric(factor(cats$Sex, labels = c(0,1))) - 1
+ggplot(cats, aes(y = Sex, x = Bwt)) + 
+    geom_point(size = 2.6) +
+    geom_smooth(method = "lm", se = F, fullrange = T) +
+    scale_x_continuous(limits = c(1,4)) +
+    scale_y_continuous(limits = c(-0.25,1.5), breaks = c(0,1)) +
+    labs(x = "x1", y = "y")
+
+```
+
 Wenn man die Annahmen von der linearen Regression noch in Betracht zieht, ergeben sich darüber hinaus noch folgende Probleme: 
 
 *
