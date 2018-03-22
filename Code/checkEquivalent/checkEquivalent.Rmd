@@ -30,7 +30,7 @@ maxLikeEst(X = model.matrix(testModell, testModelFrame), y = model.response(test
 
 
 fittedLogModell <- logitMod(formula = testModell, data = testData)
-standardLogModell <- glm(formula = Sex ~ Bwt + Hwt, family = binomial, data = testData)
+standardLogModell <- glm(formula = admit ~ gre + gpa + rank, family = binomial, data = testData)
 ```
 
 

@@ -66,13 +66,19 @@ maxLikeEst <- function(y, X) {
     # Maximumwert der Log Likelihood Funktion
     maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
     
+    # Fitted Values
+    fittedWerte <- p
+    M <- M
+    
     # Liste der zurückgegebenen Werte
     result <- list(coefficients = beta,
                    vcov = vcov,
                    devianceResidual = devianceResidual,
                    dfRes = dfRes,
                    dfNull = dfNull,
-                   maxLogLikeValue = maxLogLikeValue) 
+                   maxLogLikeValue = maxLogLikeValue,
+                   fittedWerte = fittedWerte,
+                   M = M) 
     
     return(result)
     
@@ -304,4 +310,9 @@ plot.logitMod <- function(x, ...) {
          ylab = expression(sqrt("|Std. deviance resid.|")),
          xlab = paste("Predicted Values\n", deparse(x$call)))
     
+    #4 shittt
+    pearsonResidual <- 
+        (x$y - x$fittedWerte)/sqrt(x$fittedWerte*(1 - x$fittedWerte))
+    plot(y = pearsonResidual, x = diag(x$M))
+
 }
