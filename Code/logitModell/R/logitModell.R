@@ -127,7 +127,6 @@ logitMod <- function(formula, data) {
 }
 
 
-
 #' @title Printing method for logitMod estimations
 #' @description Printing method for class "logitMod"
 #' @param x an object of class "logitMod"
@@ -172,10 +171,9 @@ print.logitMod <- function(x, ...){
 }
 
 
-
 #' @title Summary method for "logitMod" estimations
 #' @description Summary method for class "logitMod"
-#' @param x an object of class "logitMod"
+#' @param object an object of class "logitMod"
 #' @param ... unused parameter, methods are required to have same
 #' arguments as their generic functions
 #' @return a list of all necessary values equivalent to the summary output of the
@@ -188,19 +186,19 @@ print.logitMod <- function(x, ...){
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' summary(logm)
 #' @export
-summary.logitMod <- function(x, ...) {
+summary.logitMod <- function(object, ...) {
     
     # Koeffizienten Standardfehler
-    betaStandardError <- as.matrix(sqrt(diag(x$vcov)))
-    x$betaStandardError <- betaStandardError
+    betaStandardError <- as.matrix(sqrt(diag(object$vcov)))
+    object$betaStandardError <- betaStandardError
     
     # z-Statistik
-    zStat <- x$coefficients / betaStandardError
-    x$zStat <- zStat
+    zStat <- object$coefficients / betaStandardError
+    object$zStat <- zStat
     
     # p-Werte
     pValue <- 2 * pnorm(-abs(zStat))
-    x$pValue <- pValue
+    object$pValue <- pValue
     
     # sigCode <- pValue
     # sigCode[0 <= sigCode && sigCode < 0.001] <- "***"
@@ -208,29 +206,28 @@ summary.logitMod <- function(x, ...) {
     # sigCode[0.01 <= sigCode && sigCode < 0.5] <- "*"
     # sigCode[0.05 <= sigCode && sigCode < 0.1] <- "."
     # sigCode[0.1 <= sigCode && sigCode <= 1] <- ""
-    # x$sigCode <- sigCode
+    # object$sigCode <- sigCode
     
     # Zusammenfassung der Werte für die Koeffizienten
-    x$coefficients <- cbind("Estimate" = x$coefficients[,],
-                            "Std. error" = x$betaStandardError[,],
-                            "z value" = x$zStat[,],
-                            "Pr(>|z|)" = x$pValue[,])
-    #" " = x$sigCode[,])
+    object$coefficients <- cbind("Estimate" = object$coefficients[,],
+                            "Std. error" = object$betaStandardError[,],
+                            "z value" = object$zStat[,],
+                            "Pr(>|z|)" = object$pValue[,])
+    #" " = object$sigCode[,])
     
     # Berechnung von nullDeviance, residualDeviance & aic
-    nullDeviance <- sum(x$nullModell$devianceResidual^2)
-    x$nullDeviance <- nullDeviance
-    residualDeviance <- sum(x$devianceResidual^2)
-    x$residualDeviance <- residualDeviance
-    x_AIC <- (-2*x$maxLogLikeValue + 2*ncol(x$X))
-    x$AIC <- x_AIC
+    nullDeviance <- sum(object$nullModell$devianceResidual^2)
+    object$nullDeviance <- nullDeviance
+    residualDeviance <- sum(object$devianceResidual^2)
+    object$residualDeviance <- residualDeviance
+    x_AIC <- (-2*object$maxLogLikeValue + 2*ncol(object$X))
+    object$AIC <- x_AIC
     
-    class(x) <- "summary.logitMod"
+    class(object) <- "summary.logitMod"
     
-    return(x)
+    return(object)
     
 }
-
 
 
 #' @title Printing method for the summary of "logitMod" estimations
@@ -272,7 +269,6 @@ print.summary.logitMod <- function(x, ...) {
 }
 
 
-
 #' @title Plotting method for "logitMod" objects
 #' @description Plotting method for objects of class "logitMod"
 #' @param x an object of class "logitMod"
@@ -310,9 +306,9 @@ plot.logitMod <- function(x, ...) {
          ylab = expression(sqrt("|Std. deviance resid.|")),
          xlab = paste("Predicted Values\n", deparse(x$call)))
     
-    #4 shittt
-    pearsonResidual <- 
-        (x$y - x$fittedWerte)/sqrt(x$fittedWerte*(1 - x$fittedWerte))
-    plot(y = pearsonResidual, x = diag(x$M))
+    # #4 shittt
+    # pearsonResidual <- 
+    #     (x$y - x$fittedWerte)/sqrt(x$fittedWerte*(1 - x$fittedWerte))
+    # plot(y = pearsonResidual, x = diag(x$M))
 
 }

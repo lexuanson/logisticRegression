@@ -1,0 +1,66 @@
+---
+title: "Logistic Regression"
+author: "Xuan Son Le (4669361), Freie Universität Berlin"
+date: "04/04/2018"
+output: 
+    rmarkdown::html_vignette:
+            fig_width: 4
+            fig_height: 4
+vignette: >
+  %\VignetteIndexEntry{Logistic Regression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This vignette contains an example of a binary logistic regression. 
+
+### Data preparing
+```{r Preparing data}
+#install.packages("logitModell")
+library(logitModell)
+
+testData <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+testData <- testData[1:100,]
+testData$rank <- factor(testData$rank)
+testModell <- as.formula("admit ~ gre + gpa + rank")
+testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
+
+# Alternatively one can use the following code to test the result on another data set. This data set is default built in R.
+
+# data(cats, package = "MASS")
+# testData <- cats[1:100,]
+# testData$Sex <- factor(testData$Sex, labels = c(0,1))
+# #testData$Sex <- as.numeric(as.character(testData$Sex))
+# testModell <- as.formula("Sex ~ Bwt + Hwt")
+# testModelFrame <- model.frame(Sex ~ Bwt + Hwt, testData)
+```
+
+### Fit binary logit model  
+```{r Fit logit model}
+fittedLogModell <- logitMod(formula = testModell, data = testData)
+```
+
+### Print method  
+```{r Print method}
+print(fittedLogModell)
+```
+
+### Summary method  
+```{r Summary method}
+summary(fittedLogModell)
+```
+
+### Plot method  
+```{r Plot method}
+plot(fittedLogModell)
+```
+
+
+
+
+
+
