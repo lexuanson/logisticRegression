@@ -68,8 +68,25 @@ Für diese Arbeit wird $\pi_i = (\pi_1, \pi_2, ..., \pi_n)$ als die Eintrittwahr
 \]
 Die dazugehörige lineare Regressionsgleichung lautet: $\mathbf{Y} = \mathbf{X}.\beta + \epsilon$ mit $\epsilon = (\epsilon_1, \epsilon_2, \epsilon_3, ..., \epsilon_n)$ als die Abweichung der einzelnen Schätzungen gegenüber dem wahren Wert. Die einzelne Beobachtung lässt sich wie folgt darstellen: $$y_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} + \epsilon_i \qquad \forall_i = 1,2,3,...,n$$ 
 
-Um die Werte im Bereich der reellen Zahlen von der linearen Regression auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu beschränken, sollte die rechte Seite der Gleichung transformiert werden. Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion) zu finden, deren Wertebereich in [0,1] liegt: $\pi_i = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} + \epsilon_i) = F(\eta_i)$. Der lineare Prädikator $\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} + \epsilon_i$ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen Variablen erfolgt wird. 
+Um die Werte im Bereich der reellen Zahlen von der linearen Regression auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu beschränken, sollte die rechte Seite der Gleichung transformiert werden. Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion) zu finden, deren Wertebereich in [0,1] liegt: $\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}) = F(\eta_i)$. Der lineare Prädikator $\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}$ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der Responsefunktion die standardisierte logistische Verteilung verwendet:
+$$
+F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} 
+$$
+Da durch die Responsefunktion die Eintrittwahrscheinlichkeit $\pi_i$ modelliert werden soll, ergibt sich die Gleichung für das binäre Logit-Modell wie folgt:
+$$
+\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})}
+$$
+Dabei kann $\pi_i$ maximal den Wert 1 nehmen, wenn $\exp(\eta_i)$ sehr groß ist und minimal den Wert 0, wenn $\exp(\eta_i)$ sehr nah rechts von 0 liegt. $\exp(\eta_i)$ kann nicht negativ sein. Diese Gleichung erfüllt somit die Anforderung bezüglich dem Wertebereich von Wahrscheinlichkeiten.
 
+Soll die Gleichung nach dem linearen Prädikator $\eta_i$ gelöst werden, ergibt sich:
+$$
+\pi_i . (1 + \exp(\eta_i)) = \exp(\eta_i) \\
+\Leftrightarrow \pi_i + \pi_i.\exp(\eta_i) = \exp(\eta_i) \\
+\Leftrightarrow \pi_i = \exp(\eta_i) - \pi_i.\exp(\eta_i)  \\
+\Leftrightarrow \pi_i = \exp(\eta_i).(1-\pi_i) \\
+\Leftrightarrow \exp(\eta_i) = \frac{\pi_i}{1-\pi_i} \\
+\Leftrightarrow \eta_i = \ln(\frac{\pi_i}{1-\pi_i}) = \boldsymbol{\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}
+$$
 
 ## Maximum Likelihood Schätzung
 
