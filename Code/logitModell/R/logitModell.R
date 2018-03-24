@@ -12,9 +12,6 @@
 #' @export
 maxLikeEst <- function(y, X) {
     
-    # falls y als factor eingegeben wird
-    y <- as.numeric(as.character(y))
-    
     # initialisiere beta
     beta <- rep(0, times = ncol(X))
     
@@ -105,6 +102,12 @@ logitMod <- function(formula, data) {
     modelFrame <- model.frame(formula, data)
     X <- model.matrix(formula, modelFrame)
     y <- model.response(modelFrame)
+    
+    # falls y nicht als 0-1/Variable eingegeben wird
+    if (!(0 %in% y && 1 %in% y)) {
+        y <- factor(y, labels = c(0,1))
+    }
+    y <- as.numeric(as.character(y))
     
     # erstelle eine Liste als Ergebnis der maxLikeEst-Funktion
     result <- maxLikeEst(y, X)

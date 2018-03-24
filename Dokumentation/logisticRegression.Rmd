@@ -55,27 +55,42 @@ Das Logit-Modell ist eine Methode aus der Algorithmenklasse namens *Generalisier
 
 ## Maximum Likelihood Schätzung
 
-Während bei der klassischen linearen Regression die Methode der Kleinsten Quadrate (engl. *method of least squares*) genutzt wird, um die "beste" Regressionslinie zu bestimmen, findet 
+Während bei der klassischen linearen Regression die Methode der Kleinsten Quadrate (engl. *method of least squares*) genutzt wird, um eine Regressionslinie zu bestimmen, welche die Summe der quadratischen Abweichungen minimiert, wird bei dem binären Logit-Modell die sogenannte Maximum Likelihood Schätzung eingesetzt. 
 
 ## Intepretation der Koeffizienten
 
 # Implementierung in R
 
-Im Folgenden wird die Funktionalität von dem Package ... erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären Logit-Modell programmiert darzustellen.  
+Im Folgenden wird die Funktionalität von dem Paket **logitModell** erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären Logit-Modell programmiert darzustellen. Das Paket besteht aus dem R-Code, welcher anhand dem manuell berechneten Maximum Likelihood ein Objekt von der Klasse *logitMod* erstellt und anschließend drei S3 Methoden für diese Klasse (print, summary und plot) definiert, und einer Vignette, welche den R-Code anhand einem konkreten Beispiel ausführt. Dieser Beispieldatensatz wird im Folgenden verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell *glm(..., family = "binomial")* zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie dem Ruf von der angestrebten Institution. 
 
-Ein Beispieldatensatz wird verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie der Ruf von der angestrebten Institution. 
+## Beispieldatensatz
+
+Zunächst wird der Datensatz importiert. Dabei wird die Zielvariable aus dem Datensatz entnommen und in einem Vektor gespeichert. Da diese schon als 0/1-Variable vorgegeben wird, besteht es in diesem Fall keine Notwendigkeit, die Zielvariable zu faktorisieren. Der Code funktioniert allerdings ebenfalls mit Zielvariable, welche zum Beispiel als weiblich/männlich oder Erfolg/kein Erfolg kodiert wird und transformiert diese in eine 0/1-Variable. 
+
+```{r eval = FALSE, results="hide"} 
+# sei y die eingegebene Zielvariable
+if (!(0 %in% y && 1 %in% y)) {
+    y <- factor(y, labels = c(0,1))
+}
+y <- as.numeric(as.character(y))
+```
+
+Es muss immer vorab überprüft werden, in welcher Art die Zielvariable eingegeben wird, denn das Maximum Likelihood braucht als Input numerische Vektoren für weitere Berechnungen. Dieser Schritt wird extra gemacht, damit sich das manuelle Modell im Hinblick auf den Input gleich verhält wie das Standardmodell. 
+
+## Maximum Likelihood Schätzung
+
+Bevor das eigentliche Logit-Modell erstellt wird, wird in diesem Abschnitt die Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der Code dazu ist auf Basis von dem betroffenen theoretischen Teil (siehe Abschnitt ...) aufgebaut. Schrittweise werden die einzelnen Parameter definiert. Daraus wird in der Newton-Raphson-Schleife das Maximum Likelihood berechnet.
+
+
+
+
+
 
 
 Das gerade ausgeführte Beispiel kann direkt in R geladen werden. Dafür wird in das Paket ein Vignette eingebaut, so dass wenn den folgenden Code ausgeführt wird, wird das Beispiel in der Help-Seite von R angezeigt. 
 
-```{r eval = FALSE, results="hide", warning = FALSE, message = FALSE}
+```{r eval = FALSE, results = 'hide', warning = FALSE, message = FALSE}
 setwd("~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell")
 devtools::install(build_vignettes = TRUE)
 vignette("logitModell")
 ```
-
-
-
-
-
-
