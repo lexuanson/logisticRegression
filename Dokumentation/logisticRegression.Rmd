@@ -3,6 +3,7 @@ output:
   pdf_document: 
     keep_tex: yes
     latex_engine: pdflatex
+    number_sections: yes
 title: <h2> __Logistische Regression__ </h2>
 author: "Xuan Son Le (4669361), Freie Universität Berlin"
 date: "02/04/2018"

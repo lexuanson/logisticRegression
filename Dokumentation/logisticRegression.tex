@@ -86,7 +86,7 @@
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
+\setcounter{secnumdepth}{5}
 % Redefines (sub)paragraphs to behave more like sections
 \ifx\paragraph\undefined\else
 \let\oldparagraph\paragraph
@@ -128,21 +128,19 @@
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
-\textbf{Abstract}
-
-Im Rahmen der Abschlussarbeit des Moduls Programmieren mit R im
-Wintersemester 2017/2018 an der Freie Universität Berlin wird für diese
-Arbeit die statistische Methode namens binäres Logit-Modell ausgewählt.
-Diese Arbeit besteht aus zwei großen Hauptteilen: der Theorieteil, wobei
-die ausgewählte Methode theoretisch vorgestellt wird und der
-Implementierungsteil, welcher die Erklärung der Funktionalität vom
-selbst entwickelten Paket beinhaltet. Im Theorieteil wird zunächst ein
-Überblick über die grundliegende Funktionsweise vom (binären)
-Logit-Modell widergegeben. Die Grundidee von Generalisierten linearen
-Modellen wird anschließend kurz eingeführt, bevor der Aufbau vom binären
-Logit-Modell durch das Maximum Likelihood Verfahren vorgenommen wird.
-Demzufolge folgt die Interpretation der Koeffizienten und der
-Lösungsgüte vom binären Logit-Modell. Schließlich werden im
+\textbf{Abstract}: Im Rahmen der Abschlussarbeit des Moduls
+Programmieren mit R im Wintersemester 2017/2018 an der Freie Universität
+Berlin wird für diese Arbeit die statistische Methode namens binäres
+Logit-Modell ausgewählt. Diese Arbeit besteht aus zwei großen
+Hauptteilen: der Theorieteil, wobei die ausgewählte Methode theoretisch
+vorgestellt wird und der Implementierungsteil, welcher die Erklärung der
+Funktionalität vom selbst entwickelten Paket beinhaltet. Im Theorieteil
+wird zunächst ein Überblick über die grundliegende Funktionsweise vom
+(binären) Logit-Modell widergegeben. Die Grundidee von Generalisierten
+linearen Modellen wird anschließend kurz eingeführt, bevor der Aufbau
+vom binären Logit-Modell durch das Maximum Likelihood Verfahren
+vorgenommen wird. Demzufolge folgt die Interpretation der Koeffizienten
+und der Lösungsgüte vom binären Logit-Modell. Schließlich werden im
 Implementierungsteil alle Funktionen vom R-Paket schritterweise
 vorgestellt.
 
@@ -168,13 +166,8 @@ lineare Regression zu modellieren:
 Graphisch lässt sich festlegen, dass die lineare Regression den
 Wertebereich {[}0,1{]} von binären Responsevariablen sehr schnell
 verlässt. Wenn die Annahmen von der linearen Regression noch in Betracht
-gezogen werden, ergeben sich darüber hinaus noch folgende Probleme:
-
-\begin{itemize}
-\item
-\item
-\item
-\end{itemize}
+gezogen werden, ergeben sich darüber hinaus noch folgende Probleme (vgl.
+\ldots{}): \emph{ } *
 
 Aus diesen Gründen wird ein ganz anderer Ansatz benötigt, um binäre
 Zielvariable zu modellieren, nämlich das binäre Logit-Modell, welches
@@ -225,16 +218,18 @@ binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
 
 Für diese Arbeit wird \(\pi_i = (\pi_1, \pi_2, ..., \pi_n)\) als die
 Eintrittwahrscheinlichkeit von der einzelnen \(\mathbf{Y}_i\) benannt.
-Weiterhin seien k erklärende Variablen \(x_1\),..,\(x_k\) mit jeweils n
-unabhängigen Beobachtungen \(x_{i1}\), \(x_{i2}\),\ldots{}, \(x_{ik}\)
-mit i \(\in\) \{1,2,..,n\} gegeben. Daraus ergeben sich p Koeffizienten
+Weiterhin seien p erklärende Variablen
+\(\mathbf{X}_0,\mathbf{X}_1,..,\mathbf{X}_k\) gegeben mit jeweils n
+unabhängigen Beobachtungen
+\(\mathbf{X}_j = (x_{1j}, x_{2j},..., x_{nj})\) mit j \(\in\)
+\{1,2,..,k\} gegeben. Daraus ergeben sich p Koeffizienten
 \(\beta = (\beta_0, \beta_1, \beta_2,..., \beta_p)\), welche die Stärke
 den Zusammenhang zwischen die einzelne erklärende Variable mit der
 Zielvariable widerspiegeln. Dabei ist es sinnvoll, diese in einer
 Designmatrix \(\mathbf{X}\) zu speichern. Da der Interzept (\(\beta_0\))
-ebenfalls geschätzt werden soll, muss in der Designmatrix manuell ein
-Vektor von Einsen hinzugefügt werden. Zusammengefasst lässt sich die
-Designmatrix wie folgt darstellen: \[
+ebenfalls geschätzt werden soll, sind alle Werte der ersten Spalte von X
+gleich Eins, also \(x_{10} = x_{20} = ... = x_{n0} = 1\).
+Zusammengefasst lässt sich die Designmatrix wie folgt darstellen: \[
 \mathbf{X} =
  \begin{pmatrix}
     1 & x_{11} & x_{12} & \cdots & x_{1k} \\
@@ -243,30 +238,24 @@ Designmatrix wie folgt darstellen: \[
     \vdots  & \vdots  & \vdots & \ddots & \vdots \\
     1 & x_{n1} & x_{n2} & \cdots & x_{nk}
  \end{pmatrix}
-\]
+\] Die dazugehörige lineare Regressionsgleichung lautet:
+\(\mathbf{Y} = \mathbf{X}.\beta + \epsilon\) mit
+\(\epsilon = (\epsilon_1, \epsilon_2, \epsilon_3, ..., \epsilon_n)\) als
+die Abweichung der einzelnen Schätzungen gegenüber dem wahren Wert. Die
+einzelne Beobachtung lässt sich wie folgt darstellen:
+\[y_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} + \epsilon_i \qquad \forall_i = 1,2,3,...,n\]
 
-Die dazugehörige lineare Regressionsgleichung lautet: \[
-\begin{pmatrix}
-    y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_n 
- \end{pmatrix} = 
- \begin{pmatrix}
-    1 & x_{11} & x_{12} & \cdots & x_{1p} \\
-    1 & x_{21} & x_{22} & \cdots & x_{2p} \\
-    1 & x_{31} & x_{32} & \cdots & x_{3p} \\
-    \vdots  & \vdots  & \vdots & \ddots & \vdots \\
-    1 & x_{n1} & x_{n2} & \cdots & x_{np}
- \end{pmatrix} \cdot
- \begin{pmatrix}
-    \beta_1 \\ \beta_2 \\ \beta_3 \\ \vdots \\ \beta_k  
- \end{pmatrix} +
- \begin{pmatrix}
-    \epsilon_1 \\ \epsilon_2 \\ \epsilon_3 \\ \vdots \\ \epsilon_n  
- \end{pmatrix}
-\]
-
-Oder zusammengefasst:\(\mathbf{Y} = \mathbf{X} \times \beta + \epsilon\)
-mit \(\epsilon = (\epsilon_1, \epsilon_2, \epsilon_3, ..., \epsilon_n)\)
-als die Abweichung der einzelnen Schätzungen gegenüber dem wahren Wert.
+Um die Werte im Bereich der reellen Zahlen von der linearen Regression
+auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu
+beschränken, sollte die rechte Seite der Gleichung transformiert werden.
+Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion)
+zu finden, deren Wertebereich in {[}0,1{]} liegt:
+\(\pi_i = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} + \epsilon_i) = F(\eta_i)\).
+Der lineare Prädikator
+\(\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} + \epsilon_i\)
+wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung
+(Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen
+Variablen erfolgt wird.
 
 \subsection{Maximum Likelihood
 Schätzung}\label{maximum-likelihood-schatzung}
@@ -348,6 +337,25 @@ angezeigt.
 \KeywordTok{vignette}\NormalTok{(}\StringTok{"logitModell"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\[
+\begin{pmatrix}
+    y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_n 
+ \end{pmatrix} = 
+ \begin{pmatrix}
+    1 & x_{11} & x_{12} & \cdots & x_{1p} \\
+    1 & x_{21} & x_{22} & \cdots & x_{2p} \\
+    1 & x_{31} & x_{32} & \cdots & x_{3p} \\
+    \vdots  & \vdots  & \vdots & \ddots & \vdots \\
+    1 & x_{n1} & x_{n2} & \cdots & x_{np}
+ \end{pmatrix} \cdot
+ \begin{pmatrix}
+    \beta_1 \\ \beta_2 \\ \beta_3 \\ \vdots \\ \beta_k  
+ \end{pmatrix} +
+ \begin{pmatrix}
+    \epsilon_1 \\ \epsilon_2 \\ \epsilon_3 \\ \vdots \\ \epsilon_n  
+ \end{pmatrix}
+\]
 
 
 \end{document}
