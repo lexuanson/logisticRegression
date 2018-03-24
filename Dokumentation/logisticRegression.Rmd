@@ -35,7 +35,6 @@ ggplot(cats, aes(y = Sex, x = Bwt)) +
     scale_x_continuous(limits = c(1,4)) +
     scale_y_continuous(limits = c(-0.25,1.5), breaks = c(0,1)) +
     labs(x = "x1", y = "y")
-
 ```
 
 Graphisch lässt sich festlegen, dass die lineare Regression den Wertebereich [0,1] von binären Responsevariablen sehr schnell verlässt. Wenn die Annahmen von der linearen Regression noch in Betracht gezogen werden, ergeben sich darüber hinaus noch folgende Probleme (vgl. ...):
@@ -53,9 +52,7 @@ Im Unterschied zu der klassischen linearen Regression, welche den wahren Wert ei
 
 Das Logit-Modell ist eine Methode aus der Algorithmenklasse namens *Generalisierte Lineare Modelle* (engl. generalized linear model, kurz GLM), welche eine Verallgemeinerung des klassischen linearen Regressionsmodells anstrebt. Dazu gehören noch die klassische lineare Regression, Probitmodell und Poisson-Regression. Die Grundidee von GLM ist die Transformation der linearen Regressionsgleichung, so dass der Wertebereich der vorhergesagten Zielvariable dem gewünschten entspricht. Ein GLM besteht aus drei Hauptelementen: die systematische Komponente, die Link-Funktion und die Zufallskomponente. 
 
-Gegeben seien n unabhängige Beobachtungen $y_1, y_2, ...,y_n$ der binären Zielvariable $\mathbf{Y}$. Ein Verteilungsmodell für $\mathbf{Y}$ ist die Binomialverteilung: $\mathbf{Y}_i \sim B(1, \pi_i)$ mit $\pi_i = P(Y_i = 1)$
-
-Für diese Arbeit wird $\pi_i = (\pi_1, \pi_2, ..., \pi_n)$ als die Eintrittwahrscheinlichkeit von der einzelnen $\mathbf{Y}_i$ benannt. Weiterhin seien p erklärende Variablen $\mathbf{X}_0,\mathbf{X}_1,..,\mathbf{X}_k$ gegeben mit jeweils n unabhängigen Beobachtungen $\mathbf{X}_j = (x_{1j}, x_{2j},..., x_{nj})$ mit j $\in$ {1,2,..,k} gegeben. Daraus ergeben sich p Koeffizienten $\beta = (\beta_0, \beta_1, \beta_2,..., \beta_p)$, welche die Stärke den Zusammenhang zwischen die einzelne erklärende Variable mit der Zielvariable widerspiegeln. Dabei ist es sinnvoll, diese in einer Designmatrix $\mathbf{X}$ zu speichern. Da der Interzept ($\beta_0$) ebenfalls geschätzt werden soll, sind alle Werte der ersten Spalte von X gleich Eins, also $x_{10} = x_{20} = ... = x_{n0} = 1$. Zusammengefasst lässt sich die Designmatrix wie folgt darstellen: 
+Gegeben seien n unabhängige Beobachtungen $y_1, y_2, ...,y_n$ der binären Zielvariable $\mathbf{Y}$. Ein Verteilungsmodell für $\mathbf{Y}$ ist die Binomialverteilung: $\mathbf{Y}_i \sim B(1, \pi_i)$ mit $\pi_i = P(Y_i = 1)$.Für diese Arbeit wird $\pi_i = (\pi_1, \pi_2, ..., \pi_n)$ als die Eintrittwahrscheinlichkeit von der einzelnen $\mathbf{Y}_i$ benannt. Weiterhin seien p erklärende Variablen $\mathbf{X}_0,\mathbf{X}_1,..,\mathbf{X}_k$ gegeben mit jeweils n unabhängigen Beobachtungen $\mathbf{X}_j = (x_{1j}, x_{2j},..., x_{nj})$ mit j $\in$ {1,2,..,k} gegeben. Daraus ergeben sich p Koeffizienten $\beta = (\beta_0, \beta_1, \beta_2,..., \beta_p)$, welche die Stärke den Zusammenhang zwischen die einzelne erklärende Variable mit der Zielvariable widerspiegeln. Dabei ist es sinnvoll, diese in einer Designmatrix $\mathbf{X}$ zu speichern. Da der Interzept ($\beta_0$) ebenfalls geschätzt werden soll, sind alle Werte der ersten Spalte von X gleich Eins, also $x_{10} = x_{20} = ... = x_{n0} = 1$. Zusammengefasst lässt sich die Designmatrix wie folgt darstellen: 
 \[
 \mathbf{X} =
  \begin{pmatrix}
@@ -80,19 +77,39 @@ Dabei kann $\pi_i$ maximal den Wert 1 nehmen, wenn $\exp(\eta_i)$ sehr groß ist
 
 Soll die Gleichung nach dem linearen Prädikator $\eta_i$ gelöst werden, ergibt sich:
 $$
-\pi_i . (1 + \exp(\eta_i)) = \exp(\eta_i) \\
-\Leftrightarrow \pi_i + \pi_i.\exp(\eta_i) = \exp(\eta_i) \\
-\Leftrightarrow \pi_i = \exp(\eta_i) - \pi_i.\exp(\eta_i)  \\
-\Leftrightarrow \pi_i = \exp(\eta_i).(1-\pi_i) \\
-\Leftrightarrow \exp(\eta_i) = \frac{\pi_i}{1-\pi_i} \\
-\Leftrightarrow \eta_i = \ln(\frac{\pi_i}{1-\pi_i}) = \boldsymbol{\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}
+\begin{aligned}
+\pi_i.(1 + \exp(\eta_i)) &= \exp(\eta_i) \\
+\Leftrightarrow \pi_i + \pi_i.\exp(\eta_i) &= \exp(\eta_i) \\
+\Leftrightarrow \pi_i &= \exp(\eta_i) - \pi_i.\exp(\eta_i)  \\
+\Leftrightarrow \pi_i &= \exp(\eta_i).(1-\pi_i) \\
+\Leftrightarrow \exp(\eta_i) &= \frac{\pi_i}{1-\pi_i} \\
+\Leftrightarrow \eta_i &= \ln(\frac{\pi_i}{1-\pi_i}) \\
+\end{aligned}
 $$
 
 ## Maximum Likelihood Schätzung
 
-Während bei der klassischen linearen Regression die Methode der Kleinsten Quadrate (engl. *method of least squares*) genutzt wird, um eine Regressionslinie zu bestimmen, welche die Summe der quadratischen Abweichungen minimiert, wird bei dem binären Logit-Modell die sogenannte Maximum Likelihood Schätzung eingesetzt. 
+Während bei der klassischen linearen Regression die Methode der Kleinsten Quadrate (engl. *method of least squares*, kurz KQ-Methode) genutzt wird, um eine Regressionslinie zu bestimmen, welche die Summe der quadratischen Abweichungen minimiert, wird bei dem binären Logit-Modell die sogenannte Maximum Likelihood Schätzung eingesetzt. Abbildung .. zeigt ein Beispiel mit zwei mögliche binäre logistiche Regressionskurven.
+
+```{r echo=FALSE, fig.height=3, fig.width=6}
+library(ggplot2)
+data(cats, package = "MASS")
+cats$Sex <- as.numeric(as.character(factor(cats$Sex, labels = c(0,1))))
+ggplot(cats, aes(y = Sex, x = Bwt)) + 
+    geom_point(size = 2.6) +
+    geom_smooth(method = "glm", se = F, fullrange = T,
+                method.args = list(family = "binomial")) +
+    geom_smooth(data = cats[1:95,], method = "glm", se = F, fullrange = T,
+                method.args = list(family = "binomial"), color = "red") +
+    scale_x_continuous(limits = c(1,4)) +
+    scale_y_continuous(limits = c(-0.25,1.5), breaks = c(0,1)) +
+    labs(x = "x1", y = "y")
+```
+
+Im Unterschied zu der KQ-Schätzung 
 
 ## Intepretation der Koeffizienten
+Die Bruchrechnung $\frac{\pi_i}{1-\pi_i}$ spielt bei dem binären Logit-Modell eine besondere Rolle, weil sie mit der Eintrittswahrscheinlichkeit sehr 
 
 # Implementierung in R
 
@@ -115,12 +132,6 @@ Es muss immer vorab überprüft werden, in welcher Art die Zielvariable eingegeb
 ## Maximum Likelihood Schätzung
 
 Bevor das eigentliche Logit-Modell erstellt wird, wird in diesem Abschnitt die Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der Code dazu ist auf Basis von dem betroffenen theoretischen Teil (siehe Abschnitt ...) aufgebaut. Schrittweise werden die einzelnen Parameter definiert. Daraus wird in der Newton-Raphson-Schleife das Maximum Likelihood berechnet.
-
-
-
-
-
-
 
 Das gerade ausgeführte Beispiel kann direkt in R geladen werden. Dafür wird in das Paket ein Vignette eingebaut, so dass wenn den folgenden Code ausgeführt wird, wird das Beispiel in der Help-Seite von R angezeigt. 
 
