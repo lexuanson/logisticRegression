@@ -67,11 +67,11 @@ Die dazugehörige lineare Regressionsgleichung lautet: $\mathbf{Y} = \mathbf{X}.
 
 Um die Werte im Bereich der reellen Zahlen von der linearen Regression auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu beschränken, sollte die rechte Seite der Gleichung transformiert werden. Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion) zu finden, deren Wertebereich in [0,1] liegt: $\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}) = F(\eta_i)$. Der lineare Prädikator $\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}$ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der Responsefunktion die standardisierte logistische Verteilung verwendet:
 $$
-F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} 
+F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \quad (1)
 $$
 Da durch die Responsefunktion die Eintrittwahrscheinlichkeit $\pi_i$ modelliert werden soll, ergibt sich die Gleichung für das binäre Logit-Modell wie folgt:
 $$
-\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})}
+\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})} \quad (2)
 $$
 Dabei kann $\pi_i$ maximal den Wert 1 nehmen, wenn $\exp(\eta_i)$ sehr groß ist und minimal den Wert 0, wenn $\exp(\eta_i)$ sehr nah rechts von 0 liegt. $\exp(\eta_i)$ kann nicht negativ sein. Diese Gleichung erfüllt somit die Anforderung bezüglich dem Wertebereich von Wahrscheinlichkeiten.
 
@@ -83,13 +83,13 @@ $$
 \Leftrightarrow \pi_i &= \exp(\eta_i) - \pi_i.\exp(\eta_i)  \\
 \Leftrightarrow \pi_i &= \exp(\eta_i).(1-\pi_i) \\
 \Leftrightarrow \exp(\eta_i) &= \frac{\pi_i}{1-\pi_i} \\
-\Leftrightarrow \eta_i &= \ln(\frac{\pi_i}{1-\pi_i}) \\
-\end{aligned}
+\Leftrightarrow \eta_i &= \ln(\frac{\pi_i}{1-\pi_i}) \quad (3)\\
+\end{aligned} 
 $$
 
 Es gilt nämlich:
 $$
-\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} = \ln(\frac{\pi_i}{1-\pi_i})
+\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} = \ln(\frac{\pi_i}{1-\pi_i}) \quad (4)
 $$
 
 ## Maximum Likelihood Schätzung
@@ -115,21 +115,38 @@ Das Ziel der ML-Schätzung besteht darin, die (Log-)Likelihood-Funktion zu maxim
 
 Gegeben sei $y_i = 1$ mit der Eintrittswahrscheinlichkeit $\pi_i$, und $y_i = 0$ mit der Gegenwahrscheinlichkeit $(1-\pi_i)$. Die Likelihood-Funktion lässt sich wie folgt definieren:
 $$
-\mathbf{L}(\beta) = {\prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i}}
+\mathcal{L}(\beta) = {\prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i}} \quad (5)
 $$
 Wenn $y_i$ gleich 1 ist, ergibt sich für die betroffene Beobachtung die Eintrittswahrscheinlichkeit $\pi_i$ und umgekehrt. Das Likelihood ist gleich die Multiplikation der Wahrscheinlichkeiten von allen Beobachtungen. Dieses soll maximiert werden.
 
 Da $\pi_i$ von dem linearen Prädikator $\eta_i$ anhängt, ist die Likelihood-Funktion von $\beta$ abhängig. Wird $\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)}$ in die Likelihood-Funktion eingesetzt, ergibt sich:
 
 $$
-\mathcal{L}(\beta) = {\prod_{i=1}^{n} \Bigg[ \Big( \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big)^{y_i}.\Big(1-\frac{\exp(\eta_i)}{1 + \exp(\eta_i)}\Big)^{1-y_i}}\Bigg]
+\mathcal{L}(\beta) = {\prod_{i=1}^{n} \Bigg[ \Big( \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big)^{y_i}.\Big(1-\frac{\exp(\eta_i)}{1 + \exp(\eta_i)}\Big)^{1-y_i}}\Bigg] \quad (6)
 $$
 
-Der Versuch, diese Gleichung zu differenzieren und nach $\beta$ zu lösen, um die Nullpunkt zu lösen, ist extrem aufwendig. Wegen den exponentialen Komponenten kann die logistische Funktion aus der Mathematik zur Vereinfachung der Likelihood-Funktion Einsatz finden. Da die logistische Funktion eine monotone Funktion ist, entspricht jedes Maximum von der Likelihood-Funktion dem Maximum von der Log-Likelihood-Funktion und umgekehrt. Dementsprechend lässt die Likelihood-Funktion wie folgt logarithmisieren:
+Der Versuch, diese Gleichung zu differenzieren und nach $\beta$ zu lösen, um die Nullpunkt zu lösen, ist extrem aufwendig. Wegen den exponentialen Komponenten kann die logistische Funktion aus der Mathematik zur Vereinfachung der Likelihood-Funktion Einsatz finden. Da die logistische Funktion eine monotone Funktion ist, entspricht jedes Maximum von der Likelihood-Funktion dem Maximum von der Log-Likelihood-Funktion und umgekehrt. Es gelgen für den Logarithmus folgende Regelungen (seien alle Vorzeichenvoraussetzungen für den Logarithmus erfüllt):
 $$
-\ell(\beta) = \ln(\mathcal{L}(\beta)) = 
+\begin{aligned}
+(7) \quad &\ln(\prod_{i=1}^{n}x_i) = \ln(x_1.x_2...x_n) = \ln(x_1) + \ln(x_2) + \ ... \ + \ln(x_n) = \sum_{i=1}^{n} \ln(x_i) \\
+(8) \quad &\ln(x^\alpha) = \alpha.\ln(x) \\
+(9) \quad &\ln(\frac{x}{y}) = \ln(x) - \ln(y)
+\end{aligned} 
 $$
 
+Dementsprechend lässt die Likelihood-Funktion wie folgt logarithmisieren:
+$$
+\begin{aligned}
+\ell(\beta) = \ln(\mathcal{L}(\beta)) = \quad &\ln \Bigg( \prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i} \Bigg) \\
+\mathrel{\overset{(7)}{=}} \quad &\sum_{i = 1}^{n} \ln \Big(\pi_i^{y_i}.(1-\pi_i)^{1-y_i}\Big) \\
+\mathrel{\overset{(8)}{=}} \quad &\sum_{i = 1}^{n} \Big( y_i.\ln(\pi_i) + (1-y_i).\ln(1-\pi_i) \Big) \\
+= \quad &\sum_{i = 1}^{n} \Big( y_i.\ln(\pi_i) - y_i.\ln(1-\pi_i) + \ln(1-\pi_i) \Big) \\
+\mathrel{\overset{(9)}{=}} \quad &\sum_{i = 1}^{n} \Bigg( y_i.\ln \Big(\frac{\pi_i}{1-\pi_i}\Big) + \ln(1-\pi_i) \Bigg) \\
+\mathrel{\overset{(3),(2)}{=}} \ &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + \ln \Big( 1- \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big) \Bigg) \\
+= \quad &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + ln \Big( \frac{1}{1+\exp(\eta_i)}\Big) \Bigg) \\
+= \quad &\sum_{i = 1}^{n} \Big( y_i.\eta_i - ln (1 + exp(\eta_i)) \Big) \quad (10)
+\end{aligned}
+$$
 
 ## Intepretation der Koeffizienten
 Die Bruchrechnung $\frac{\pi_i}{1-\pi_i}$ spielt bei dem binären Logit-Modell eine besondere Rolle, weil sie mit der Eintrittswahrscheinlichkeit sehr 
