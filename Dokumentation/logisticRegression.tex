@@ -212,14 +212,14 @@ Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt.
 Gegeben seien n unabhängige Beobachtungen \(y_1, y_2, ...,y_n\) der
 binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
 \(\mathbf{Y}\) ist die Binomialverteilung:
-\(\mathbf{Y}_i \sim B(1, \pi_i)\) mit \(\pi_i = P(Y_i = 1)\).Für diese
+\(\mathbf{Y}_i \sim B(1, \pi_i)\) mit \(\pi_i = P(Y_i = 1)\). Für diese
 Arbeit wird \(\pi_i = (\pi_1, \pi_2, ..., \pi_n)\) als die
 Eintrittwahrscheinlichkeit von der einzelnen \(\mathbf{Y}_i\) benannt.
 Weiterhin seien p erklärende Variablen
-\(\mathbf{X}_0,\mathbf{X}_1,..,\mathbf{X}_k\) gegeben mit jeweils n
+\(\mathbf{X}_0,\mathbf{X}_1,..,\mathbf{X}_p\) gegeben mit jeweils n
 unabhängigen Beobachtungen
-\(\mathbf{X}_j = (x_{1j}, x_{2j},..., x_{nj})\) mit j \(\in\)
-\{1,2,..,k\} gegeben. Daraus ergeben sich p Koeffizienten
+\(\mathbf{X}_j = (x_{1j}, x_{2j},..., x_{nj})\) - j \(\in\)
+\{0,1,2,..,p\} - gegeben. Daraus ergeben sich p Koeffizienten
 \(\beta = (\beta_0, \beta_1, \beta_2,..., \beta_p)\), welche die Stärke
 den Zusammenhang zwischen die einzelne erklärende Variable mit der
 Zielvariable widerspiegeln. Dabei ist es sinnvoll, diese in einer
@@ -229,37 +229,46 @@ gleich Eins, also \(x_{10} = x_{20} = ... = x_{n0} = 1\).
 Zusammengefasst lässt sich die Designmatrix wie folgt darstellen: \[
 \mathbf{X} =
  \begin{pmatrix}
-    1 & x_{11} & x_{12} & \cdots & x_{1k} \\
-    1 & x_{21} & x_{22} & \cdots & x_{2k} \\
-    1 & x_{31} & x_{32} & \cdots & x_{3k} \\
+    1 & x_{11} & x_{12} & \cdots & x_{1p} \\
+    1 & x_{21} & x_{22} & \cdots & x_{2p} \\
+    1 & x_{31} & x_{32} & \cdots & x_{3p} \\
     \vdots  & \vdots  & \vdots & \ddots & \vdots \\
-    1 & x_{n1} & x_{n2} & \cdots & x_{nk}
+    1 & x_{n1} & x_{n2} & \cdots & x_{np}
  \end{pmatrix}
 \] Die dazugehörige lineare Regressionsgleichung lautet:
 \(\mathbf{Y} = \mathbf{X}.\beta + \epsilon\) mit
 \(\epsilon = (\epsilon_1, \epsilon_2, \epsilon_3, ..., \epsilon_n)\) als
-die Abweichung der einzelnen Schätzungen gegenüber dem wahren Wert. Die
-einzelne Beobachtung lässt sich wie folgt darstellen:
-\[y_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} + \epsilon_i \qquad \forall_i = 1,2,3,...,n\]
+die Abweichung der einzelnen Schätzungen gegenüber dem wahren Wert,
+wobei \(\mathbf{Y}\) ein (nx1)-Vektor, \(\mathbf{X}\) ein (nxp) und
+\(\beta_i\) sowie \(\epsilon_i\) ein (px1)-Vektor ist.
+
+Die einzelne Beobachtung lässt sich wie folgt darstellen: \[
+y_i = \beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip} + \epsilon_i = \mathbf{x'}_i.\beta + \epsilon_i \qquad \forall_i = 1,2,3,...,n
+\] Wobei \(\mathbf{x}_i\) der i-ten Zeile der Designmatrix
+\(\mathbf{X}\) entspricht. Da bei der Multiplikation A.B die Regel gilt,
+dass die Spaltenanzahl von A der Zeilenanzahl von B entsprechen muss. Da
+\(\beta\) ein (px1)-Vektor ist, muss \(\mathbf{x}_i\) (px1-Vektor) in
+\(\mathbf{x'}_i\) (1xp-Vektor) transponiert werden, damit die
+Multiplikation durchführbar ist.
 
 Um die Werte im Bereich der reellen Zahlen von der linearen Regression
 auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu
 beschränken, sollte die rechte Seite der Gleichung transformiert werden.
 Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion)
 zu finden, deren Wertebereich in {[}0,1{]} liegt:
-\(\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}) = F(\eta_i)\).
+\(\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip}) = F(\eta_i)\).
 Der lineare Prädikator
-\(\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik}\)
+\(\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \mathbf{x'}_i.\beta \ \ (1)\)
 wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung
 (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen
 Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der
 Responsefunktion die standardisierte logistische Verteilung verwendet:
 \[
-F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} 
+F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \quad (2)
 \] Da durch die Responsefunktion die Eintrittwahrscheinlichkeit
 \(\pi_i\) modelliert werden soll, ergibt sich die Gleichung für das
 binäre Logit-Modell wie folgt: \[
-\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik})}
+\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \quad (3)
 \] Dabei kann \(\pi_i\) maximal den Wert 1 nehmen, wenn \(\exp(\eta_i)\)
 sehr groß ist und minimal den Wert 0, wenn \(\exp(\eta_i)\) sehr nah
 rechts von 0 liegt. \(\exp(\eta_i)\) kann nicht negativ sein. Diese
@@ -274,12 +283,12 @@ werden, ergibt sich schließlich die Logit-Linkfunktion: \[
 \Leftrightarrow \pi_i &= \exp(\eta_i) - \pi_i.\exp(\eta_i)  \\
 \Leftrightarrow \pi_i &= \exp(\eta_i).(1-\pi_i) \\
 \Leftrightarrow \exp(\eta_i) &= \frac{\pi_i}{1-\pi_i} \\
-\Leftrightarrow \eta_i &= \ln(\frac{\pi_i}{1-\pi_i}) \\
-\end{aligned}
+\Leftrightarrow \eta_i &= \ln(\frac{\pi_i}{1-\pi_i}) \quad (4)\\
+\end{aligned} 
 \]
 
 Es gilt nämlich: \[
-\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_k.x_{ik} = \ln(\frac{\pi_i}{1-\pi_i})
+\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \ln(\frac{\pi_i}{1-\pi_i}) \quad (5)
 \]
 
 \subsection{Maximum Likelihood
@@ -299,7 +308,7 @@ bei der linearen Regression. Die Koeffizienten müssen anders geschätzt
 werden. Dementsprechend wird bei dem binären Logit-Modell die sogenannte
 Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung
 .. zeigt ein Beispiel mit zwei mögliche binäre logistiche
-Regressionskurven, die durch die Maximum Likelihood optimiert werden
+Regressionskurven, die durch das Maximum Likelihood optimiert werden
 sollen.
 
 \includegraphics{logisticRegression_files/figure-latex/unnamed-chunk-2-1.pdf}
@@ -311,7 +320,7 @@ Log-Likelihood-Funktion wiedergegeben.
 Gegeben sei \(y_i = 1\) mit der Eintrittswahrscheinlichkeit \(\pi_i\),
 und \(y_i = 0\) mit der Gegenwahrscheinlichkeit \((1-\pi_i)\). Die
 Likelihood-Funktion lässt sich wie folgt definieren: \[
-\mathcal{L}(\beta) = {\prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i}}
+\mathcal{L}(\beta) = {\prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i}} \quad (6)
 \] Wenn \(y_i\) gleich 1 ist, ergibt sich für die betroffene Beobachtung
 die Eintrittswahrscheinlichkeit \(\pi_i\) und umgekehrt. Das Likelihood
 ist gleich die Multiplikation der Wahrscheinlichkeiten von allen
@@ -323,35 +332,99 @@ Likelihood-Funktion von \(\beta\) abhängig. Wird
 Likelihood-Funktion eingesetzt, ergibt sich:
 
 \[
-\mathcal{L}(\beta) = {\prod_{i=1}^{n} \Bigg[ \Big( \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big)^{y_i}.\Big(1-\frac{\exp(\eta_i)}{1 + \exp(\eta_i)}\Big)^{1-y_i}}\Bigg]
+\mathcal{L}(\beta) = {\prod_{i=1}^{n} \Bigg[ \Big( \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big)^{y_i}.\Big(1-\frac{\exp(\eta_i)}{1 + \exp(\eta_i)}\Big)^{1-y_i}}\Bigg] \quad (7)
 \]
 
-Der Versuch, diese Gleichung zu differenzieren und nach \(\beta\) zu
-lösen, um die Nullpunkt zu lösen, ist extrem aufwendig. Wegen den
-exponentialen Komponenten kann die logistische Funktion aus der
-Mathematik zur Vereinfachung der Likelihood-Funktion Einsatz finden. Da
-die logistische Funktion eine monotone Funktion ist, entspricht jedes
-Maximum von der Likelihood-Funktion dem Maximum von der
-Log-Likelihood-Funktion und umgekehrt. Es gelgen für den Logarithmus
-folgende Regelungen: \[
+Der Versuch, Gleichung (6) zu differenzieren und nach \(\beta\) zu
+lösen, um die Extremwerte zu finden, ist extrem aufwendig, weil sie eine
+Serie von Multiplikationen enthält. Wegen den exponentialen Komponenten
+kann die logistische Funktion aus der Mathematik zur Vereinfachung der
+Likelihood-Funktion Einsatz finden. Da die logistische Funktion eine
+monotone Funktion ist, entspricht jedes Maximum von der
+Likelihood-Funktion dem Maximum von der Log-Likelihood-Funktion und
+umgekehrt. Es gelgen für den Logarithmus folgende Regelungen (seien alle
+Vorzeichenvoraussetzungen für den Logarithmus erfüllt): \[
 \begin{aligned}
-(1) \quad &\ln(\prod_{i=1}^{n}x_i) = \ln(x_1.x_2...x_n.) = \ln(x_1) + \ln(x_2) + ... + \ln(x_n) = \sum_{i=1}^{n} \ln(x_i) \\
-(2) \quad &\ln(x^\alpha) = \alpha.\ln(x) \\
-(3) \quad &\ln(\frac{x}{y}) = \ln(x) - \ln(y) \\
-\end{aligned}
+(8) \quad &\ln(\prod_{i=1}^{n}x_i) = \ln(x_1.x_2...x_n) = \ln(x_1) + \ln(x_2) + \ ... \ + \ln(x_n) = \sum_{i=1}^{n} \ln(x_i) \\
+(9) \quad &\ln(x^\alpha) = \alpha.\ln(x) \\
+(10) \quad &\ln(\frac{x}{y}) = \ln(x) - \ln(y)
+\end{aligned} 
 \]
 
 Dementsprechend lässt die Likelihood-Funktion wie folgt
-logarithmisieren: \$\$
+logarithmisieren: \[
+\begin{aligned}
+\ell(\beta) = \ln(\mathcal{L}(\beta)) = \quad &\ln \Bigg( \prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i} \Bigg) \\
+\mathrel{\overset{(8)}{=}} \quad &\sum_{i = 1}^{n} \ln \Big(\pi_i^{y_i}.(1-\pi_i)^{1-y_i}\Big) \\
+\mathrel{\overset{(9)}{=}} \quad &\sum_{i = 1}^{n} \Big( y_i.\ln(\pi_i) + (1-y_i).\ln(1-\pi_i) \Big) \\
+= \quad &\sum_{i = 1}^{n} \Big( y_i.\ln(\pi_i) - y_i.\ln(1-\pi_i) + \ln(1-\pi_i) \Big) \\
+\mathrel{\overset{(10)}{=}} \quad &\sum_{i = 1}^{n} \Bigg( y_i.\ln \Big(\frac{\pi_i}{1-\pi_i}\Big) + \ln(1-\pi_i) \Bigg) \\
+\mathrel{\overset{(4),(3)}{=}} \ &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + \ln \Big( 1- \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big) \Bigg) \\
+= \quad &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + \ln \Big( \frac{1}{1+\exp(\eta_i)}\Big) \Bigg) \\
+= \quad &\sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + exp(\eta_i)) \Big) \quad (11)
+\end{aligned}
+\]
 
-\$\$
+Zum Herausfinden des ML-Schätzers, welcher die log-Likelihood-Funktion
+optimiert, wird Gleichung (10) nach \(\beta\) differenziert. Die erste
+Ableitung von der log-Likelihood-Funktion wird als Score-Funktion
+benannt: \[
+\begin{aligned}
+s(\beta) = \frac{\partial}{\partial \beta}  \ell(\beta) &= \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + \exp(\eta_i)) \Big) \quad \\
+&\mathrel{\overset{(1)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\mathbf{x'}_i.\beta  - \ln (1 + \exp(\mathbf{x'}_i.\beta )) \Big) \quad \\ 
+\end{aligned}
+\]
+
+Seien alle Vorzeichnenanforderungen erfüllt, gelten folgende Regelungen
+bezüglich der Differenzierungsrechnung: \[
+\begin{aligned}
+&(12) \frac{\partial}{\partial t} a.f(t) = (a.f(t))' = a.f'(t) \\
+&(13) \frac{\partial}{\partial t} \ln(f(t)) = [\ln(f(t))]' = \frac{f'(t)}{f(t)} \\ 
+&(14) \frac{\partial}{\partial t} \exp(f(t)) = [\exp(f(t))]' = f'(t).\exp(f(t)) \\
+\end{aligned}
+\]
+
+Eingesetzt in die Score-Funktion: \[
+\begin{aligned}
+s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x}_i - \frac{\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta)}{1 + \exp(\mathbf{x'}_i.\beta)} \Bigg) \\
+&\mathrel{\overset{(1)}{=}}\sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \Bigg( y_i - \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Bigg) \Bigg] \\
+&\mathrel{\overset{(2)}{=}}  \sum_{i = 1}^{n} \ \mathbf{x}_i ( y_i - \pi_i) \quad (16)
+\end{aligned}
+\]
+
+Da \(s(\beta)\) wegen exponentiellen Komponenten nicht linear von
+\(\beta\) abhängt, wird zur Maximierung der Funktion ein iteratives
+Verfahren verwendet. In der Literatur gibt es viele Vorgehensweisen zur
+Lösung des Problems. Für diese Arbeit wird die Newton-Raphson-Methode
+ausgewählt. Dabei ist die zweite Ableitung der Funktion noch benötigt:
+
+\[
+\begin{aligned}
+\frac{\partial^2}{\partial \beta^2} \ell(\beta) &= \frac{\partial}{\partial \beta} s(\beta) \\ 
+&\mathrel{\overset{(15)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \ (\mathbf{x}_i.y_i - \mathbf{x}_i.\pi_i) \\
+&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ .  \Big(\frac{\partial}{\partial \beta} \pi_i \Big) \Bigg) \\
+&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ .  \Big(\frac{\partial}{\partial \beta} \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Big) \Bigg) \\
+\end{aligned}
+\]
+
+Wegen \[
+\frac{\partial}{\partial t} \frac{f(t)}{g(t)} = \frac{f'(t).g(t) - g'(t).f(t)}{(g(t))^2}
+\] gilt es: \[
+\begin{aligned}
+\frac{\partial}{\partial \beta} s(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \ . \Bigg( \frac{\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta).(1+\exp(\mathbf{x'}_i.\beta))-\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta).\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2} \Bigg) \Bigg] \\
+&= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \ . \frac{\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2}  \Bigg] \\
+&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ . \frac{\mathbf{x}_i}{1+\exp(\mathbf{x'}_i.\beta)} . \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Bigg) \\
+&= 
+\end{aligned}
+\]
 
 \subsection{Intepretation der
 Koeffizienten}\label{intepretation-der-koeffizienten}
 
-Die Bruchrechnung \(\frac{\pi_i}{1-\pi_i}\) spielt bei dem binären
-Logit-Modell eine besondere Rolle, weil sie mit der
-Eintrittswahrscheinlichkeit sehr
+Die Bruchrechnung \(\frac{\pi_i}{1-\pi_i}\) (siehe Gleichung 3) spielt
+bei dem binären Logit-Modell eine besondere Rolle, weil sie der
+Verbindung zwischen der Eintrittswahrscheinlichkeit und der
+Gegenwahrscheinlichkeit direkt widerspiegelt.
 
 \section{Implementierung in R}\label{implementierung-in-r}
 
@@ -434,7 +507,7 @@ angezeigt.
     1 & x_{n1} & x_{n2} & \cdots & x_{np}
  \end{pmatrix} \cdot
  \begin{pmatrix}
-    \beta_1 \\ \beta_2 \\ \beta_3 \\ \vdots \\ \beta_k  
+    \beta_1 \\ \beta_2 \\ \beta_3 \\ \vdots \\ \beta_p  
  \end{pmatrix} +
  \begin{pmatrix}
     \epsilon_1 \\ \epsilon_2 \\ \epsilon_3 \\ \vdots \\ \epsilon_n  

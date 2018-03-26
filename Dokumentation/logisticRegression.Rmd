@@ -67,17 +67,16 @@ Die dazugehörige lineare Regressionsgleichung lautet: $\mathbf{Y} = \mathbf{X}.
 
 Die einzelne Beobachtung lässt sich wie folgt darstellen: 
 $$
-y_i = \beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip} + \epsilon_i = \mathbf{x}_i.\beta + \epsilon_i \qquad \forall_i = 1,2,3,...,n
+y_i = \beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip} + \epsilon_i = \sum_{j = 0}^p x_{ij}.\beta_j + \epsilon_i \qquad \forall_i = 1,2,3,...,n
 $$ 
-Wobei $\mathbf{x}_i$ der i-ten Zeile der Designmatrix $\mathbf{X}$ entspricht.
 
-Um die Werte im Bereich der reellen Zahlen von der linearen Regression auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu beschränken, sollte die rechte Seite der Gleichung transformiert werden. Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion) zu finden, deren Wertebereich in [0,1] liegt: $\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip}) = F(\eta_i)$. Der lineare Prädikator $\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \mathbf{x}_i.\beta \ \ (1)$ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der Responsefunktion die standardisierte logistische Verteilung verwendet:
+Um die Werte im Bereich der reellen Zahlen von der linearen Regression auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu beschränken, sollte die rechte Seite der Gleichung transformiert werden. Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion) zu finden, deren Wertebereich in [0,1] liegt: $\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip}) = F(\eta_i)$. Der lineare Prädikator $\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \sum_{j = 0}^p x_{ij}.\beta_j \ \ (1)$ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der Responsefunktion die standardisierte logistische Verteilung verwendet:
 $$
 F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \quad (2)
 $$
 Da durch die Responsefunktion die Eintrittwahrscheinlichkeit $\pi_i$ modelliert werden soll, ergibt sich die Gleichung für das binäre Logit-Modell wie folgt:
 $$
-\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\mathbf{x}_i.\beta)}{1+\exp(\mathbf{x}_i.\beta)} \quad (3)
+\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \quad (3)
 $$
 Dabei kann $\pi_i$ maximal den Wert 1 nehmen, wenn $\exp(\eta_i)$ sehr groß ist und minimal den Wert 0, wenn $\exp(\eta_i)$ sehr nah rechts von 0 liegt. $\exp(\eta_i)$ kann nicht negativ sein. Diese Gleichung erfüllt somit die Anforderung bezüglich dem Wertebereich von Wahrscheinlichkeiten.
 
@@ -117,7 +116,7 @@ ggplot(cats, aes(y = Sex, x = Bwt)) +
     labs(x = "x1", y = "y")
 ```
 
-Das Ziel der ML-Schätzung besteht darin, die (Log-)Likelihood-Funktion zu maximieren. Im Folgenden wird die Vorgehensweise zum Aufbau der Log-Likelihood-Funktion wiedergegeben.
+Das Ziel der ML-Schätzung besteht darin, die Wahrscheinlichkeit die empirischen Beobachtungswerte zu maximieren. Dafür kommt die (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die Vorgehensweise zum Aufbau der Log-Likelihood-Funktion wiedergegeben.
 
 Gegeben sei $y_i = 1$ mit der Eintrittswahrscheinlichkeit $\pi_i$, und $y_i = 0$ mit der Gegenwahrscheinlichkeit $(1-\pi_i)$. Die Likelihood-Funktion lässt sich wie folgt definieren:
 $$
@@ -149,18 +148,21 @@ $$
 = \quad &\sum_{i = 1}^{n} \Big( y_i.\ln(\pi_i) - y_i.\ln(1-\pi_i) + \ln(1-\pi_i) \Big) \\
 \mathrel{\overset{(10)}{=}} \quad &\sum_{i = 1}^{n} \Bigg( y_i.\ln \Big(\frac{\pi_i}{1-\pi_i}\Big) + \ln(1-\pi_i) \Bigg) \\
 \mathrel{\overset{(4),(3)}{=}} \ &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + \ln \Big( 1- \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big) \Bigg) \\
-= \quad &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + ln \Big( \frac{1}{1+\exp(\eta_i)}\Big) \Bigg) \\
-= \quad &\sum_{i = 1}^{n} \Big( y_i.\eta_i - ln (1 + exp(\eta_i)) \Big) \quad (11)
+= \quad &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + \ln \Big( \frac{1}{1+\exp(\eta_i)}\Big) \Bigg) \\
+= \quad &\sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + exp(\eta_i)) \Big) \quad (11)
 \end{aligned}
 $$
 
 Zum Herausfinden des ML-Schätzers, welcher die log-Likelihood-Funktion optimiert, wird Gleichung (10) nach $\beta$ differenziert. Die erste Ableitung von der log-Likelihood-Funktion wird als Score-Funktion benannt:
+
 $$
 \begin{aligned}
-s(\beta) = \frac{\partial}{\partial \beta}  \ell(\beta) &= \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\eta_i - ln (1 + \exp(\eta_i)) \Big) \quad \\
-&\mathrel{\overset{(1)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\mathbf{x}_i.\beta  - ln (1 + \exp(\mathbf{x}_i.\beta )) \Big) \quad \\ 
+s(\beta) = \frac{\partial}{\partial \beta}  \ell(\beta) &= \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + \exp(\eta_i)) \Big) \quad \\
+&\mathrel{\overset{(1)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\sum_{j = 0}^p x_{ij}.\beta_j  - \ln (1 + \exp(\sum_{j = 0}^p x_{ij}.\beta_j )) \Big) \quad \\ 
 \end{aligned}
 $$
+
+Die Ergebnisse von der oberen Ableitung hängt davon ab, nach welcher $\beta_j$ mit $j \in (0,1,2,..,p)$ die Ableitung erfolgt wird. 
 
 Seien alle Vorzeichnenanforderungen erfüllt, gelten folgende Regelungen bezüglich der Differenzierungsrechnung:
 $$
@@ -174,9 +176,9 @@ $$
 Eingesetzt in die Score-Funktion:
 $$
 \begin{aligned}
-s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x}_i - \frac{\mathbf{x}_i.\exp(\mathbf{x}_i.\beta)}{1 + \exp(\mathbf{x}_i.\beta)} \Bigg) \\
-&\mathrel{\overset{(1)}{=}}\sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \Bigg( y_i - \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Bigg) \Bigg] \\
-&\mathrel{\overset{(2)}{=}}  \sum_{i = 1}^{n} \ \mathbf{x}_i ( y_i - \pi_i) \quad (16)
+s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x'}_i - \frac{\mathbf{x'}_i.\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1 + \exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \Bigg) \\
+&\mathrel{\overset{(1)}{=}}\sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \Bigg( y_i - \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Bigg) \Bigg] \\
+&\mathrel{\overset{(2)}{=}}  \sum_{i = 1}^{n} \ \mathbf{x'}_i ( y_i - \pi_i) \quad (16)
 \end{aligned}
 $$
 
@@ -185,9 +187,9 @@ Da $s(\beta)$ wegen exponentiellen Komponenten nicht linear von $\beta$ abhängt
 $$
 \begin{aligned}
 \frac{\partial^2}{\partial \beta^2} \ell(\beta) &= \frac{\partial}{\partial \beta} s(\beta) \\ 
-&\mathrel{\overset{(15)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \ (\mathbf{x}_i.y_i - \mathbf{x}_i.\pi_i) \\
-&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ .  \Big(\frac{\partial}{\partial \beta} \pi_i \Big) \Bigg) \\
-&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ .  \Big(\frac{\partial}{\partial \beta} \frac{\exp(\mathbf{x}_i.\beta)}{1+\exp(\mathbf{x}_i.\beta)} \Big) \Bigg) \\
+&\mathrel{\overset{(15)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \ (\mathbf{x'}_i.y_i - \mathbf{x'}_i.\pi_i) \\
+&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ .  \Big(\frac{\partial}{\partial \beta} \pi_i \Big) \Bigg) \\
+&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ .  \Big(\frac{\partial}{\partial \beta} \frac{\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \Big) \Bigg) \\
 \end{aligned}
 $$
 
@@ -198,9 +200,10 @@ $$
 gilt es:
 $$
 \begin{aligned}
-\frac{\partial}{\partial \beta} s(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \ . \Bigg( \frac{\mathbf{x}_i.\exp(\mathbf{x}_i.\beta).(1+\exp(\mathbf{x}_i.\beta))-\mathbf{x}_i.\exp(\mathbf{x}_i.\beta).\exp(\mathbf{x}_i.\beta)}{(1+\exp(\mathbf{x}_i.\beta))^2} \Bigg) \Bigg] \\
-&= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \ . \frac{\mathbf{x}_i.\exp^2(\mathbf{x}_i\beta)}{(1+\exp(\mathbf{x}_i.\beta))^2}  \Bigg] \\
-&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \ . \frac{\mathbf{x}_i}{1+\exp(\mathbf{x}_i.\beta)} . .... \Bigg] \\
+\frac{\partial}{\partial \beta} s(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \Bigg( \frac{\mathbf{x'}_i.\exp(\sum_{j = 0}^p x_{ij}.\beta_j).(1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j))-\mathbf{x'}_i.\exp(\sum_{j = 0}^p x_{ij}.\beta_j).\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{(1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j))^2} \Bigg) \Bigg] \\
+&= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \frac{\mathbf{x'}_i.\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{(1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j))^2}  \Bigg] \\
+&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ . \frac{\mathbf{x'}_i}{1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j)} . \frac{\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \Bigg) \\
+&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i . \mathbf{x'}_i . (1-\pi_i) . \pi_i \Big)
 \end{aligned}
 $$
 

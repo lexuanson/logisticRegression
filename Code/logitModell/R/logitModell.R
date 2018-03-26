@@ -19,7 +19,7 @@ maxLikeEst <- function(y, X) {
     M <- diag(nrow = nrow(X))
     
     # setze Abbruchskriterien
-    tolerance <- exp(-9)
+    tolerance <- exp(-6)
     diff <- 10 * abs(tolerance)
     maxIteration <- 100
     i <- 0
