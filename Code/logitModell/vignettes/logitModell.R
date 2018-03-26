@@ -15,7 +15,7 @@ testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
 
 data(cats, package = "MASS")
 testData <- cats[1:100,]
-testData$Sex <- factor(testData$Sex, labels = c(0,1))
+#testData$Sex <- factor(testData$Sex, labels = c(0,1))
 #testData$Sex <- as.numeric(as.character(testData$Sex))
 testModell <- as.formula("Sex ~ Bwt + Hwt")
 testModelFrame <- model.frame(Sex ~ Bwt + Hwt, testData)

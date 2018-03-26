@@ -19,13 +19,13 @@ maxLikeEst <- function(y, X) {
     M <- diag(nrow = nrow(X))
     
     # setze Abbruchskriterien
-    tolerance <- exp(-10)
+    tolerance <- exp(-9)
     diff <- 10 * abs(tolerance)
-    maxIteration <- 1000
+    maxIteration <- 100
     i <- 0
     
     # Solange Abbruchskriterien nicht erreicht
-    while (diff > tolerance || i < maxIteration) {
+    while (diff > tolerance & i < maxIteration) {
         
         # berechne die Wahrscheinlichkeit
         eta <- X %*% beta
@@ -36,13 +36,13 @@ maxLikeEst <- function(y, X) {
         M <- diag(p * (1 - p))
         
         # berechne die Änderung von Beta
-        beta_change <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
+        betaChange <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
         
         # aktualisiere Beta
-        beta <- beta + beta_change
+        beta <- beta + betaChange
         
         # berechne die totale Änderung von Beta
-        diff <- sum(abs(beta_change))
+        diff <- sum(abs(betaChange))
         
         # nächste Iteration
         i <- i + 1
@@ -75,7 +75,8 @@ maxLikeEst <- function(y, X) {
                    dfNull = dfNull,
                    maxLogLikeValue = maxLogLikeValue,
                    fittedWerte = fittedWerte,
-                   M = M) 
+                   M = M,
+                   anzahlIteration = i) 
     
     return(result)
     
@@ -166,7 +167,9 @@ print.logitMod <- function(x, ...){
     
     cat("\nNull Deviance:\t", round(nullDeviance,1))
     cat("\nResidual Deviance:", round(devianceResidual,1), "\t", 
-        "AIC: ", round(x_AIC,1))
+        "AIC: ", round(x_AIC,1), "\n") 
+    
+    cat("\nNumber of Fisher Scoring iterations: ", round(devianceResidual,1), "\n")
     
     # invisibly return linMod object
     invisible(x)
