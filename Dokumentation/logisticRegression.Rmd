@@ -301,8 +301,7 @@ dfNull <- nrow(X) - 1       # Nullmodell Freiheitsgrad
 s <- y
 s[s == 0] = -1
 devianceResiduals = as.numeric(s * sqrt(-2*((y * eta) - (log(1 + exp(eta))))))
-#devianceResiduals = -2 * as.numeric(crossprod(y,eta) - sum(log(1 + exp(eta))))    
-
+    
 # Kovarianzmatrix
 vcov <- solve(t(X) %*% M %*% X) 
 
@@ -312,9 +311,10 @@ maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
 Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der manuell definierten Funktion mit dem Standardmodell werden die ML-Schätzer und die Kovarianzmatrix zurückgegeben. Dafür wird für das Paket eine Extra-Vignette in R aufgebaut, um die Ergebnisse anhand dem Beispieldatensatz zu verdeutlichen. Zum Aufruf der Extra-Vignette muss der folgende Code bei dem Errichten des Paketes ausgeführt werden:
 
 ```{r eval = FALSE, results = 'hide', warning = FALSE, message = FALSE}
-setwd(".../logitModell") # der Pfad zu dem Paket
-devtools::install(build_vignettes = TRUE)
+devtools::install("~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell/", type = "source", build_vignettes = TRUE)
 vignette("logitModell")
+
+
 ```
 
 ## Definiere Klasse "logitMod"
@@ -324,7 +324,7 @@ Um anschließend mit S3-Methoden zu arbeiten, muss eine Klasse definiert werden,
 ```{r eval = FALSE, results="hide"}
 logitMod <- function(formula, data) {
     
-    # initialisiere y (Zielvariable) und X (Matrix enthält alle erklärenden Variablen)
+    # initialisiere y (Zielvariable) und X (Designmatrix)
     modelFrame <- model.frame(formula, data)
     X <- model.matrix(formula, modelFrame)
     y <- model.response(modelFrame)
@@ -339,7 +339,8 @@ logitMod <- function(formula, data) {
     result <- maxLikeEst(y, X)
     
     # erstelle das Null Modell und speichere es in die Ergebnisliste
-    nullModell <- maxLikeEst(X = matrix(rep(1, times = nrow(X)), ncol = 1), y = y)
+    nullModell <- maxLikeEst(X = matrix(rep(1, times = nrow(X)), ncol = 1), 
+                             y = y)
     result$nullModell <- nullModell
     
     # speichere notwendige Parameter in die Ergebnisliste
@@ -358,4 +359,77 @@ logitMod <- function(formula, data) {
 Da sich die Objekte von der Klasse "logitMod" ähnlich wie Objekte von *glm(...,family = "binomial")* verhalten sollen, werden dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus werden die Zielvariable sowie die Designmatrix entnommen und anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird das Null-Modell erstellt und ebenfalls in das "Hauptobjekt" für leichteren späteten Aufruf gespeichert.
 
 ## Definiere S3-Methoden
+In diesem Abschnitt wird die Implementierung von drei S3-Methoden anhand bisherigen Ergebnissen vorgestellt. Das Beispiel befindet sich wieder in der Extra-Vignette.
+
+### Print-Methode
+```{r}
+print.logitMod <- function(x, ...){
+    
+    cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
+    
+    cat("\n\nCoefficients:\n")
+    
+    print.default(format(coef(x)[,1], digits = 4L),
+                  print.gap = 1L, quote = FALSE, right = TRUE)
+    
+    cat("\nDegrees of Freedom: ", x$dfNull, 
+        " Total (i.e. Null); ", x$dfRes, " Residual")
+    
+    # Berechnung von null deviance, residual deviance & aic
+    nullDeviance <- -2 * x$nullModell$maxLogLikeValue
+    x$nullDeviance <- nullDeviance
+    residualDeviance <- -2 * x$maxLogLikeValue
+    x$residualDeviance <- residualDeviance
+    x_AIC <- (-2*x$maxLogLikeValue + 2*ncol(x$X))
+    x$AIC <- x_AIC
+    
+    cat("\nNull Deviance:\t", round(nullDeviance,1))
+    cat("\nResidual Deviance:", round(residualDeviance,1), "\t", 
+        "AIC: ", round(x_AIC,1), "\n") 
+    
+    cat("\nNumber of Fisher Scoring iterations: ", x$anzahlIteration, "\n")
+    
+    # invisibly return linMod object
+    invisible(x)
+    
+}
+```
+
+### Summary Methode
+
+```{r}
+summary.logitMod <- function(object, ...) {
+    
+    # Koeffizienten Standardfehler
+    object$betaStandardError  <- as.matrix(sqrt(diag(object$vcov)))
+    
+    # z-Statistik
+    zStat <- object$coefficients / object$betaStandardError
+    object$zStat <- zStat
+    
+    # p-Werte
+    pValue <- 2 * pnorm(-abs(zStat))
+    object$pValue <- pValue
+    
+    # Zusammenfassung der Werte für die Koeffizienten
+    object$coefficients <- cbind("Estimate" = object$coefficients[,],
+                            "Std. error" = object$betaStandardError[,],
+                            "z value" = object$zStat[,],
+                            "Pr(>|z|)" = object$pValue[,])
+    
+    # Berechnung von nullDeviance, residualDeviance & aic
+    nullDeviance <- -2 * object$nullModell$maxLogLikeValue
+    object$nullDeviance <- nullDeviance
+    residualDeviance <- -2 * object$maxLogLikeValue
+    object$residualDeviance <- residualDeviance
+    x_AIC <- (-2*object$maxLogLikeValue + 2*ncol(object$X))
+    object$AIC <- x_AIC
+    
+    class(object) <- "summary.logitMod"
+    
+    return(object)
+    
+}
+```
+
 

@@ -164,21 +164,17 @@ graphisch dar, binäre Variable durch lineare Regression zu modellieren:
 
 Graphisch lässt sich festlegen, dass die lineare Regression den
 Wertebereich {[}0,1{]} von binären Responsevariablen sehr schnell
-verlässt. Wenn die Annahmen von der linearen Regression noch in Betracht
-gezogen werden, ergeben sich darüber hinaus noch folgende Probleme (vgl.
-\ldots{}): \emph{ } *
-
-Aus diesen Gründen wird ein ganz anderer Ansatz benötigt, um binäre
-Zielvariable zu modellieren, nämlich das binäre Logit-Modell, welches
-ebenfalls als binäre logistische Regression oder binäres logistisches
-Regressionsmodell bezeichnet werden kann. In der Statistik lassen sich
-Logit-Modelle noch in multinomiale und kumulative Logit-Modelle
-aufteilen, je nachdem ob die abhängige Variable multinominal- oder
-ordinalskaliert sind . Diese Arbeit beschäftigt sich mit dem binären
-Logit-Modell, welches den Zusammenhang zwischen einer binären abhängigen
-Variable und einer/mehreren unabhängigen Variablen untersucht. Bei allen
-Arten von Logit-Modellen können die unabhängigen Variablen (erklärende
-oder Kovariablen) beliebig skaliert sein.
+verlässt. Aus diesem Grund wird ein ganz anderer Ansatz benötigt, um
+binäre Zielvariable zu modellieren, nämlich das binäre Logit-Modell,
+welches ebenfalls als binäre logistische Regression oder binäres
+logistisches Regressionsmodell bezeichnet werden kann. In der Statistik
+lassen sich Logit-Modelle noch in multinomiale und kumulative
+Logit-Modelle aufteilen, je nachdem ob die abhängige Variable
+multinominal- oder ordinalskaliert sind . Diese Arbeit beschäftigt sich
+mit dem binären Logit-Modell, welches den Zusammenhang zwischen einer
+binären abhängigen Variable und einer/mehreren unabhängigen Variablen
+untersucht. Bei allen Arten von Logit-Modellen können die unabhängigen
+Variablen (erklärende oder Kovariablen) beliebig skaliert sein.
 
 Im Unterschied zu der klassischen linearen Regression, welche den wahren
 Wert einer Zielvariable vorhersagt, interessiert sich das binäre
@@ -205,8 +201,11 @@ Regressionsmodells anstrebt. Dazu gehören noch die klassische lineare
 Regression, Probitmodell und Poisson-Regression. Die Grundidee von GLM
 ist die Transformation der linearen Regressionsgleichung, so dass der
 Wertebereich der vorhergesagten Zielvariable dem gewünschten entspricht.
-Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt. \#\#
-Modellspezifikation
+Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt. In
+Anlehnung an Schlittgen, R. (2013) können Modelle zu GLMs zugeordnet
+werden, wenn sie: 1. 2.
+
+\subsection{Modellspezifikation}\label{modellspezifikation}
 
 Gegeben seien n unabhängige Beobachtungen \(y_1, y_2, ...,y_n\) der
 binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
@@ -662,6 +661,86 @@ das Null-Modell erstellt und ebenfalls in das ``Hauptobjekt'' für
 leichteren späteten Aufruf gespeichert.
 
 \subsection{Definiere S3-Methoden}\label{definiere-s3-methoden}
+
+In diesem Abschnitt wird die Implementierung von drei S3-Methoden anhand
+bisherigen Ergebnissen vorgestellt. Das Beispiel befindet sich wieder in
+der Extra-Vignette.
+
+\subsubsection{Print-Methode}\label{print-methode}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{print.logitMod <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x, ...)\{}
+    
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"Call: "}\NormalTok{, }\KeywordTok{paste0}\NormalTok{(}\KeywordTok{deparse}\NormalTok{(x}\OperatorTok{$}\NormalTok{call)), }\DataTypeTok{fill =} \OtherTok{TRUE}\NormalTok{)}
+    
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n\textbackslash{}n}\StringTok{Coefficients:}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    
+    \KeywordTok{print.default}\NormalTok{(}\KeywordTok{format}\NormalTok{(}\KeywordTok{coef}\NormalTok{(x)[,}\DecValTok{1}\NormalTok{], }\DataTypeTok{digits =}\NormalTok{ 4L),}
+                  \DataTypeTok{print.gap =}\NormalTok{ 1L, }\DataTypeTok{quote =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{right =} \OtherTok{TRUE}\NormalTok{)}
+    
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{Degrees of Freedom: "}\NormalTok{, x}\OperatorTok{$}\NormalTok{dfNull, }\StringTok{" Total (i.e. Null); "}\NormalTok{,}
+\NormalTok{        x}\OperatorTok{$}\NormalTok{dfRes, }\StringTok{" Residual"}\NormalTok{)}
+    
+    \CommentTok{# Berechnung von null deviance, residual deviance & aic}
+\NormalTok{    nullDeviance <-}\StringTok{ }\OperatorTok{-}\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{x}\OperatorTok{$}\NormalTok{nullModell}\OperatorTok{$}\NormalTok{maxLogLikeValue}
+\NormalTok{    x}\OperatorTok{$}\NormalTok{nullDeviance <-}\StringTok{ }\NormalTok{nullDeviance}
+\NormalTok{    residualDeviance <-}\StringTok{ }\OperatorTok{-}\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{x}\OperatorTok{$}\NormalTok{maxLogLikeValue}
+\NormalTok{    x}\OperatorTok{$}\NormalTok{residualDeviance <-}\StringTok{ }\NormalTok{residualDeviance}
+\NormalTok{    x_AIC <-}\StringTok{ }\NormalTok{(}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{x}\OperatorTok{$}\NormalTok{maxLogLikeValue }\OperatorTok{+}\StringTok{ }\DecValTok{2}\OperatorTok{*}\KeywordTok{ncol}\NormalTok{(x}\OperatorTok{$}\NormalTok{X))}
+\NormalTok{    x}\OperatorTok{$}\NormalTok{AIC <-}\StringTok{ }\NormalTok{x_AIC}
+    
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{Null Deviance:}\CharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\KeywordTok{round}\NormalTok{(nullDeviance,}\DecValTok{1}\NormalTok{))}
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{Residual Deviance:"}\NormalTok{, }\KeywordTok{round}\NormalTok{(residualDeviance,}\DecValTok{1}\NormalTok{), }\StringTok{"}\CharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }
+        \StringTok{"AIC: "}\NormalTok{, }\KeywordTok{round}\NormalTok{(x_AIC,}\DecValTok{1}\NormalTok{), }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{) }
+    
+    \KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{Number of Fisher Scoring iterations: "}\NormalTok{, x}\OperatorTok{$}\NormalTok{anzahlIteration, }\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+    
+    \CommentTok{# invisibly return linMod object}
+    \KeywordTok{invisible}\NormalTok{(x)}
+    
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Summary Methode}\label{summary-methode}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{summary.logitMod <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(object, ...) \{}
+    
+    \CommentTok{# Koeffizienten Standardfehler}
+\NormalTok{    object}\OperatorTok{$}\NormalTok{betaStandardError  <-}\StringTok{ }\KeywordTok{as.matrix}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(object}\OperatorTok{$}\NormalTok{vcov)))}
+    
+    \CommentTok{# z-Statistik}
+\NormalTok{    zStat <-}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{coefficients }\OperatorTok{/}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{betaStandardError}
+\NormalTok{    object}\OperatorTok{$}\NormalTok{zStat <-}\StringTok{ }\NormalTok{zStat}
+    
+    \CommentTok{# p-Werte}
+\NormalTok{    pValue <-}\StringTok{ }\DecValTok{2} \OperatorTok{*}\StringTok{ }\KeywordTok{pnorm}\NormalTok{(}\OperatorTok{-}\KeywordTok{abs}\NormalTok{(zStat))}
+\NormalTok{    object}\OperatorTok{$}\NormalTok{pValue <-}\StringTok{ }\NormalTok{pValue}
+    
+    \CommentTok{# Zusammenfassung der Werte für die Koeffizienten}
+\NormalTok{    object}\OperatorTok{$}\NormalTok{coefficients <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(}\StringTok{"Estimate"}\NormalTok{ =}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{coefficients[,],}
+                            \StringTok{"Std. error"}\NormalTok{ =}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{betaStandardError[,],}
+                            \StringTok{"z value"}\NormalTok{ =}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{zStat[,],}
+                            \StringTok{"Pr(>|z|)"}\NormalTok{ =}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{pValue[,])}
+    
+    \CommentTok{# Berechnung von nullDeviance, residualDeviance & aic}
+\NormalTok{    nullDeviance <-}\StringTok{ }\OperatorTok{-}\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{nullModell}\OperatorTok{$}\NormalTok{maxLogLikeValue}
+\NormalTok{    object}\OperatorTok{$}\NormalTok{nullDeviance <-}\StringTok{ }\NormalTok{nullDeviance}
+\NormalTok{    residualDeviance <-}\StringTok{ }\OperatorTok{-}\DecValTok{2} \OperatorTok{*}\StringTok{ }\NormalTok{object}\OperatorTok{$}\NormalTok{maxLogLikeValue}
+\NormalTok{    object}\OperatorTok{$}\NormalTok{residualDeviance <-}\StringTok{ }\NormalTok{residualDeviance}
+\NormalTok{    x_AIC <-}\StringTok{ }\NormalTok{(}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{object}\OperatorTok{$}\NormalTok{maxLogLikeValue }\OperatorTok{+}\StringTok{ }\DecValTok{2}\OperatorTok{*}\KeywordTok{ncol}\NormalTok{(object}\OperatorTok{$}\NormalTok{X))}
+\NormalTok{    object}\OperatorTok{$}\NormalTok{AIC <-}\StringTok{ }\NormalTok{x_AIC}
+    
+    \KeywordTok{class}\NormalTok{(object) <-}\StringTok{ "summary.logitMod"}
+    
+    \KeywordTok{return}\NormalTok{(object)}
+    
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 
 \end{document}

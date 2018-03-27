@@ -150,7 +150,7 @@ print.logitMod <- function(x, ...){
     
     cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
     
-    cat("\n\nCoefficients:\n")
+    cat("\nCoefficients:\n")
     
     print.default(format(coef(x)[,1], digits = 4L),
                   print.gap = 1L, quote = FALSE, right = TRUE)
@@ -169,8 +169,6 @@ print.logitMod <- function(x, ...){
     cat("\nNull Deviance:\t", round(nullDeviance,1))
     cat("\nResidual Deviance:", round(residualDeviance,1), "\t", 
         "AIC: ", round(x_AIC,1), "\n") 
-    
-    cat("\nNumber of Fisher Scoring iterations: ", 999999, "\n")
     
     # invisibly return linMod object
     invisible(x)
@@ -196,31 +194,21 @@ print.logitMod <- function(x, ...){
 summary.logitMod <- function(object, ...) {
     
     # Koeffizienten Standardfehler
-    betaStandardError <- as.matrix(sqrt(diag(object$vcov)))
-    object$betaStandardError <- betaStandardError
+    object$betaStandardError  <- as.matrix(sqrt(diag(object$vcov)))
     
     # z-Statistik
-    zStat <- object$coefficients / betaStandardError
+    zStat <- object$coefficients / object$betaStandardError
     object$zStat <- zStat
     
     # p-Werte
     pValue <- 2 * pnorm(-abs(zStat))
     object$pValue <- pValue
     
-    # sigCode <- pValue
-    # sigCode[0 <= sigCode && sigCode < 0.001] <- "***"
-    # sigCode[0.001 <= sigCode && sigCode < 0.01] <- "**"
-    # sigCode[0.01 <= sigCode && sigCode < 0.5] <- "*"
-    # sigCode[0.05 <= sigCode && sigCode < 0.1] <- "."
-    # sigCode[0.1 <= sigCode && sigCode <= 1] <- ""
-    # object$sigCode <- sigCode
-    
     # Zusammenfassung der Werte für die Koeffizienten
     object$coefficients <- cbind("Estimate" = object$coefficients[,],
                             "Std. error" = object$betaStandardError[,],
                             "z value" = object$zStat[,],
                             "Pr(>|z|)" = object$pValue[,])
-    #" " = object$sigCode[,])
     
     # Berechnung von nullDeviance, residualDeviance & aic
     nullDeviance <- -2 * object$nullModell$maxLogLikeValue
@@ -269,7 +257,7 @@ print.summary.logitMod <- function(x, ...) {
         round(x$residualDeviance,2), " on ", x$dfRes, " degrees of freedom\n")
     cat("AIC: ", round(x$AIC,2))
     
-    cat("\n\nNumber of Fisher Scoring iterations: ", "\n")
+    cat("\n\nNumber of Fisher Scoring iterations: ", x$anzahlIteration, "\n")
     
     # invisibly return summary 
     invisible(x)
