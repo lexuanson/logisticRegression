@@ -198,8 +198,6 @@ Sonnenstrahlungsintensität vorhersagen?''.
 
 \section{Das binäre Logit-Modell}\label{das-binare-logit-modell}
 
-\subsection{Modellspezifikation}\label{modellspezifikation}
-
 Das Logit-Modell ist eine Methode aus der Algorithmenklasse namens
 \emph{Generalisierte Lineare Modelle} (engl. generalized linear model,
 kurz GLM), welche eine Verallgemeinerung des klassischen linearen
@@ -207,7 +205,8 @@ Regressionsmodells anstrebt. Dazu gehören noch die klassische lineare
 Regression, Probitmodell und Poisson-Regression. Die Grundidee von GLM
 ist die Transformation der linearen Regressionsgleichung, so dass der
 Wertebereich der vorhergesagten Zielvariable dem gewünschten entspricht.
-Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt.
+Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt. \#\#
+Modellspezifikation
 
 Gegeben seien n unabhängige Beobachtungen \(y_1, y_2, ...,y_n\) der
 binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
@@ -244,9 +243,11 @@ wobei \(\mathbf{Y}\) ein (nx1)-Vektor, \(\mathbf{X}\) ein (nxp) und
 
 Die einzelne Beobachtung lässt sich wie folgt darstellen: \[
 y_i = \beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip} + \epsilon_i = \mathbf{x'}_i.\beta + \epsilon_i \qquad \forall_i = 1,2,3,...,n
-\] Wobei \(\mathbf{x}_i\) der i-ten Zeile der Designmatrix
-\(\mathbf{X}\) entspricht. Da bei der Multiplikation A.B die Regel gilt,
-dass die Spaltenanzahl von A der Zeilenanzahl von B entsprechen muss. Da
+\]
+
+Wobei \(\mathbf{x}_i\) der i-ten Zeile der Designmatrix \(\mathbf{X}\)
+entspricht. Da bei der Multiplikation A.B die Regel gilt, dass die
+Spaltenanzahl von A der Zeilenanzahl von B entsprechen muss. Da
 \(\beta\) ein (px1)-Vektor ist, muss \(\mathbf{x}_i\) (px1-Vektor) in
 \(\mathbf{x'}_i\) (1xp-Vektor) transponiert werden, damit die
 Multiplikation durchführbar ist.
@@ -313,9 +314,10 @@ sollen.
 
 \includegraphics{logisticRegression_files/figure-latex/unnamed-chunk-2-1.pdf}
 
-Das Ziel der ML-Schätzung besteht darin, die (Log-)Likelihood-Funktion
-zu maximieren. Im Folgenden wird die Vorgehensweise zum Aufbau der
-Log-Likelihood-Funktion wiedergegeben.
+Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit
+für die empirischen Beobachtungswerte zu maximieren.Dafür kommt die
+(Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die
+Vorgehensweise zum Aufbau der Log-Likelihood-Funktion wiedergegeben.
 
 Gegeben sei \(y_i = 1\) mit der Eintrittswahrscheinlichkeit \(\pi_i\),
 und \(y_i = 0\) mit der Gegenwahrscheinlichkeit \((1-\pi_i)\). Die
@@ -368,7 +370,9 @@ logarithmisieren: \[
 Zum Herausfinden des ML-Schätzers, welcher die log-Likelihood-Funktion
 optimiert, wird Gleichung (10) nach \(\beta\) differenziert. Die erste
 Ableitung von der log-Likelihood-Funktion wird als Score-Funktion
-benannt: \[
+benannt:
+
+\[
 \begin{aligned}
 s(\beta) = \frac{\partial}{\partial \beta}  \ell(\beta) &= \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + \exp(\eta_i)) \Big) \quad \\
 &\mathrel{\overset{(1)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\mathbf{x'}_i.\beta  - \ln (1 + \exp(\mathbf{x'}_i.\beta )) \Big) \quad \\ 
@@ -386,24 +390,24 @@ bezüglich der Differenzierungsrechnung: \[
 
 Eingesetzt in die Score-Funktion: \[
 \begin{aligned}
-s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x}_i - \frac{\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta)}{1 + \exp(\mathbf{x'}_i.\beta)} \Bigg) \\
-&\mathrel{\overset{(1)}{=}}\sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \Bigg( y_i - \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Bigg) \Bigg] \\
-&\mathrel{\overset{(2)}{=}}  \sum_{i = 1}^{n} \ \mathbf{x}_i ( y_i - \pi_i) \quad (16)
+s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x'}_i - \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta)}{1 + \exp(\mathbf{x'}_i.\beta)} \Bigg) \\
+&\mathrel{\overset{(1)}{=}}\sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \Bigg( y_i - \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Bigg) \Bigg] \\
+&\mathrel{\overset{(2)}{=}}  \sum_{i = 1}^{n} \ \mathbf{x'}_i ( y_i - \pi_i) \quad (15)
 \end{aligned}
 \]
 
 Da \(s(\beta)\) wegen exponentiellen Komponenten nicht linear von
 \(\beta\) abhängt, wird zur Maximierung der Funktion ein iteratives
-Verfahren verwendet. In der Literatur gibt es viele Vorgehensweisen zur
-Lösung des Problems. Für diese Arbeit wird die Newton-Raphson-Methode
-ausgewählt. Dabei ist die zweite Ableitung der Funktion noch benötigt:
+Verfahren verwendet. Für diese Arbeit wird die Newton-Raphson-Methode
+ausgewählt. Dafür muss die zweite Ableitung der Funktion noch gebildet
+werden:
 
 \[
 \begin{aligned}
 \frac{\partial^2}{\partial \beta^2} \ell(\beta) &= \frac{\partial}{\partial \beta} s(\beta) \\ 
-&\mathrel{\overset{(15)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \ (\mathbf{x}_i.y_i - \mathbf{x}_i.\pi_i) \\
-&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ .  \Big(\frac{\partial}{\partial \beta} \pi_i \Big) \Bigg) \\
-&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ .  \Big(\frac{\partial}{\partial \beta} \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Big) \Bigg) \\
+&\mathrel{\overset{(15)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \ (\mathbf{x'}_i.y_i - \mathbf{x'}_i.\pi_i) \\
+&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ .  \Big(\frac{\partial}{\partial \beta} \pi_i \Big) \Bigg) \\
+&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ .  \Big(\frac{\partial}{\partial \beta} \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Big) \Bigg) \\
 \end{aligned}
 \]
 
@@ -411,10 +415,12 @@ Wegen \[
 \frac{\partial}{\partial t} \frac{f(t)}{g(t)} = \frac{f'(t).g(t) - g'(t).f(t)}{(g(t))^2}
 \] gilt es: \[
 \begin{aligned}
-\frac{\partial}{\partial \beta} s(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \ . \Bigg( \frac{\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta).(1+\exp(\mathbf{x'}_i.\beta))-\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta).\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2} \Bigg) \Bigg] \\
-&= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x}_i \ . \frac{\mathbf{x}_i.\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2}  \Bigg] \\
-&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x}_i \ . \frac{\mathbf{x}_i}{1+\exp(\mathbf{x'}_i.\beta)} . \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Bigg) \\
-&= 
+\frac{\partial}{\partial \beta} s(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \Bigg( \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).(1+\exp(\mathbf{x'}_i.\beta))-\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2} \Bigg) \Bigg] \\
+&= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2}  \Bigg] \\
+&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ . \frac{\mathbf{x'}_i}{1+\exp(\mathbf{x'}_i.\beta)} . \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Bigg) \\
+&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i . \mathbf{x'}_i . (1-\pi_i) . \pi_i \Big) \\
+&= - \sum_{i = 1}^{n} \Big( (\mathbf{x'}_i)^2 . (1-\pi_i) . \pi_i \Big) \\
+&= - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i.\mathbf{x}_i . (1-\pi_i) . \pi_i \Big) \\
 \end{aligned}
 \]
 
@@ -472,47 +478,190 @@ numerische Vektoren für weitere Berechnungen. Dieser Schritt wird extra
 gemacht, damit sich das manuelle Modell im Hinblick auf den Input gleich
 verhält wie das Standardmodell.
 
-\subsection{Maximum Likelihood
-Schätzung}\label{maximum-likelihood-schatzung-1}
+\subsection{Implementierung der
+Maximum-Likelihood-Schätzung}\label{implementierung-der-maximum-likelihood-schatzung}
 
 Bevor das eigentliche Logit-Modell erstellt wird, wird in diesem
 Abschnitt die Implementierung der Maximum Likelihood Schätzung
 auseinandergesetzt. Der Code dazu ist auf Basis von dem betroffenen
-theoretischen Teil (siehe Abschnitt \ldots{}) aufgebaut. Schrittweise
-werden die einzelnen Parameter definiert. Daraus wird in der
-Newton-Raphson-Schleife das Maximum Likelihood berechnet.
+theoretischen Teil (siehe Abschnitt \ldots{}) aufgebaut. Die Funktion
+\emph{maxLikeEst} dient dazu, anhand der Newton-Raphson-Methode das
+maximale Likelihood zu berechnen. Als Input werden ein Vektor
+(Zielvariable) und eine Matrix (Designmatrix) benötigt. Als Output wird
+ein Objekt erwartet, welches die Maximum-Likelihood-Schätzer enthält.
+Daneben werden ebenfalls die ersten notwendigen Kennwerte für den Aufbau
+von S3-Methoden in dem Objekt gespeichert.
 
-Das gerade ausgeführte Beispiel kann direkt in R geladen werden. Dafür
-wird in das Paket ein Vignette eingebaut, so dass wenn den folgenden
-Code ausgeführt wird, wird das Beispiel in der Help-Seite von R
-angezeigt.
+Der Aufbau der Funktion maxLikeEst sieht so aus:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{setwd}\NormalTok{(}\StringTok{"~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell"}\NormalTok{)}
+\NormalTok{maxLikeEst <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(y, X) \{}
+    
+    \CommentTok{#1. initialisiere Variablen }
+    
+    \CommentTok{#2. berechne das Maximum Likelihood anhand Newton-Raphson-Schleife}
+    
+    \CommentTok{#3. berechne nötige Parameter und speichere diese in einem Objekt}
+    
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Zunächst werden die Parameter und Variablen für die
+Newton-Raphson-Methode initialisiert:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# initialisiere beta}
+\NormalTok{beta <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DataTypeTok{times =} \KeywordTok{ncol}\NormalTok{(X))}
+
+\CommentTok{# initialisiere ...}
+\NormalTok{M <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\DataTypeTok{nrow =} \KeywordTok{nrow}\NormalTok{(X))}
+
+\CommentTok{# stelle Abbruchskriterien fest}
+\NormalTok{tolerance <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(}\OperatorTok{-}\DecValTok{6}\NormalTok{)}
+\NormalTok{diff <-}\StringTok{ }\DecValTok{10} \OperatorTok{*}\StringTok{ }\KeywordTok{abs}\NormalTok{(tolerance)}
+\NormalTok{maxIteration <-}\StringTok{ }\DecValTok{100}
+\NormalTok{i <-}\StringTok{ }\DecValTok{0}
+\end{Highlighting}
+\end{Shaded}
+
+\(\beta\) wird als ein Nullvektor mit der gleichen Länge wie die Anzahl
+der Spalten der Designmatrix initialisiert, um anschließend in der
+Newton-Raphson-Schleife nach jeder Iteration aktualisiert zu werden.
+Tolerance ist der Wert, bei dem die Schleife terminiert, wenn die
+absolute Veränderung der Lösungsgüte kleiner als dieser Wert ist. Das
+nächste Abbruchskriterium ist die maximale Anzahl der Iterationen.
+
+Solange die beiden Abbruchskriterien nicht erreicht sind, erfolgt in der
+Newton-Raphson-Schleife folgender iterativer Vorgang:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{while}\NormalTok{ (diff }\OperatorTok{>}\StringTok{ }\NormalTok{tolerance }\OperatorTok{&}\StringTok{ }\NormalTok{i }\OperatorTok{<}\StringTok{ }\NormalTok{maxIteration) \{}
+        
+    \CommentTok{# berechne die Wahrscheinlichkeit}
+\NormalTok{    eta <-}\StringTok{ }\NormalTok{X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta}
+\NormalTok{    exp_eta <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(eta)}
+\NormalTok{    p <-}\StringTok{ }\KeywordTok{as.vector}\NormalTok{(exp_eta }\OperatorTok{/}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\NormalTok{exp_eta))}
+    
+    \CommentTok{# aktualisiere ...}
+\NormalTok{    M <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(p }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{p))}
+    
+    \CommentTok{# berechne die Änderung von Beta}
+\NormalTok{    betaChange <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{M }\OperatorTok{%*%}\StringTok{ }\NormalTok{X) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{(y }\OperatorTok{-}\StringTok{ }\NormalTok{p)}
+    
+    \CommentTok{# aktualisiere Beta}
+\NormalTok{    beta <-}\StringTok{ }\NormalTok{beta }\OperatorTok{+}\StringTok{ }\NormalTok{betaChange}
+    
+    \CommentTok{# berechne die totale Änderung von Beta}
+\NormalTok{    diff <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(}\KeywordTok{abs}\NormalTok{(betaChange))}
+    
+    \CommentTok{# nächste Iteration}
+\NormalTok{    i <-}\StringTok{ }\NormalTok{i }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Die Änderung von \(\beta\) führt dazu, dass nach jeder Iteration
+ebenfalls die Eintrittswahrscheinlichkeit sowie \ldots{} Matrix neu
+definiert werden müssen.
+
+Als Output der Funktion maxLikeEst werden folgende Parameter in ein
+Objekt gespeichert, um mit den Werten aus dem R-Standard-Modell zu
+vergleichen.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Freiheitsgrad = Anzahl an Beobachtungen - Anzahl an Parameter}
+\NormalTok{dfRes <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(X) }\OperatorTok{-}\StringTok{ }\KeywordTok{ncol}\NormalTok{(X)  }\CommentTok{# ResiduensFreiheitsgrad }
+\NormalTok{dfNull <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(X) }\OperatorTok{-}\StringTok{ }\DecValTok{1}       \CommentTok{# Nullmodell Freiheitsgrad}
+
+\CommentTok{# Devianz Residual}
+\NormalTok{s <-}\StringTok{ }\NormalTok{y}
+\NormalTok{s[s }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{] =}\StringTok{ }\OperatorTok{-}\DecValTok{1}
+\NormalTok{devianceResiduals =}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(s }\OperatorTok{*}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{((y }\OperatorTok{*}\StringTok{ }\NormalTok{eta) }\OperatorTok{-}\StringTok{ }\NormalTok{(}\KeywordTok{log}\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{exp}\NormalTok{(eta))))))}
+\CommentTok{#devianceResiduals = -2 * as.numeric(crossprod(y,eta) - sum(log(1 + exp(eta))))    }
+
+\CommentTok{# Kovarianzmatrix}
+\NormalTok{vcov <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{M }\OperatorTok{%*%}\StringTok{ }\NormalTok{X) }
+
+\CommentTok{# Maximumwert der Log Likelihood Funktion}
+\NormalTok{maxLogLikeValue <-}\StringTok{ }\NormalTok{(}\KeywordTok{sum}\NormalTok{((y }\OperatorTok{*}\StringTok{ }\NormalTok{X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta) }\OperatorTok{-}\StringTok{ }\NormalTok{(}\KeywordTok{log}\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{exp}\NormalTok{(X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta)))))}
+\end{Highlighting}
+\end{Shaded}
+
+Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual
+und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der
+Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der manuell
+definierten Funktion mit dem Standardmodell werden die ML-Schätzer und
+die Kovarianzmatrix zurückgegeben. Dafür wird für das Paket eine
+Extra-Vignette in R aufgebaut, um die Ergebnisse anhand dem
+Beispieldatensatz zu verdeutlichen. Zum Aufruf der Extra-Vignette muss
+der folgende Code bei dem Errichten des Paketes ausgeführt werden:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{setwd}\NormalTok{(}\StringTok{".../logitModell"}\NormalTok{) }\CommentTok{# der Pfad zu dem Paket}
 \NormalTok{devtools}\OperatorTok{::}\KeywordTok{install}\NormalTok{(}\DataTypeTok{build_vignettes =} \OtherTok{TRUE}\NormalTok{)}
 \KeywordTok{vignette}\NormalTok{(}\StringTok{"logitModell"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\[
-\begin{pmatrix}
-    y_1 \\ y_2 \\ y_3 \\ \vdots \\ y_n 
- \end{pmatrix} = 
- \begin{pmatrix}
-    1 & x_{11} & x_{12} & \cdots & x_{1p} \\
-    1 & x_{21} & x_{22} & \cdots & x_{2p} \\
-    1 & x_{31} & x_{32} & \cdots & x_{3p} \\
-    \vdots  & \vdots  & \vdots & \ddots & \vdots \\
-    1 & x_{n1} & x_{n2} & \cdots & x_{np}
- \end{pmatrix} \cdot
- \begin{pmatrix}
-    \beta_1 \\ \beta_2 \\ \beta_3 \\ \vdots \\ \beta_p  
- \end{pmatrix} +
- \begin{pmatrix}
-    \epsilon_1 \\ \epsilon_2 \\ \epsilon_3 \\ \vdots \\ \epsilon_n  
- \end{pmatrix}
-\]
+\subsection{\texorpdfstring{Definiere Klasse
+``logitMod''}{Definiere Klasse logitMod}}\label{definiere-klasse-logitmod}
+
+Um anschließend mit S3-Methoden zu arbeiten, muss eine Klasse definiert
+werden, welche die Objekte aus der Funktion \emph{maxLikeEst} umfasst.
+Diese Klasse wird als ``logitMod'' bezeichnet und wird wie folgt
+definiert:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{logitMod <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(formula, data) \{}
+    
+    \CommentTok{# initialisiere y (Zielvariable) und X (Matrix enthält alle erklärenden Variablen)}
+\NormalTok{    modelFrame <-}\StringTok{ }\KeywordTok{model.frame}\NormalTok{(formula, data)}
+\NormalTok{    X <-}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(formula, modelFrame)}
+\NormalTok{    y <-}\StringTok{ }\KeywordTok{model.response}\NormalTok{(modelFrame)}
+    
+    \CommentTok{# # falls y nicht als 0-1/Variable eingegeben wird}
+    \CommentTok{# if (!(0 %in% y && 1 %in% y)) \{}
+    \CommentTok{#     y <- factor(y, labels = c(0,1))}
+    \CommentTok{# \}}
+    \CommentTok{# y <- as.numeric(as.character(y))}
+    
+    \CommentTok{# erstelle eine Objekt aus der maxLikeEst-Funktion}
+\NormalTok{    result <-}\StringTok{ }\KeywordTok{maxLikeEst}\NormalTok{(y, X)}
+    
+    \CommentTok{# erstelle das Null Modell und speichere es in die Ergebnisliste}
+\NormalTok{    nullModell <-}\StringTok{ }\KeywordTok{maxLikeEst}\NormalTok{(}\DataTypeTok{X =} \KeywordTok{matrix}\NormalTok{(}\KeywordTok{rep}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DataTypeTok{times =} \KeywordTok{nrow}\NormalTok{(X)), }\DataTypeTok{ncol =} \DecValTok{1}\NormalTok{), }\DataTypeTok{y =}\NormalTok{ y)}
+\NormalTok{    result}\OperatorTok{$}\NormalTok{nullModell <-}\StringTok{ }\NormalTok{nullModell}
+    
+    \CommentTok{# speichere notwendige Parameter in die Ergebnisliste}
+\NormalTok{    result}\OperatorTok{$}\NormalTok{formula <-}\StringTok{ }\NormalTok{formula}
+\NormalTok{    result}\OperatorTok{$}\NormalTok{call <-}\StringTok{ }\KeywordTok{match.call}\NormalTok{()}
+\NormalTok{    result}\OperatorTok{$}\NormalTok{X <-}\StringTok{ }\NormalTok{X}
+\NormalTok{    result}\OperatorTok{$}\NormalTok{y <-}\StringTok{ }\NormalTok{y}
+    
+    \CommentTok{# ordne die Ergebnisliste der Klasse "logitMod" zu}
+    \KeywordTok{class}\NormalTok{(result) <-}\StringTok{ "logitMod"}
+    
+    \KeywordTok{return}\NormalTok{(result)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Da sich die Objekte von der Klasse ``logitMod'' ähnlich wie Objekte von
+\emph{glm(\ldots{},family = ``binomial'')} verhalten sollen, werden
+dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus
+werden die Zielvariable sowie die Designmatrix entnommen und
+anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird
+das Null-Modell erstellt und ebenfalls in das ``Hauptobjekt'' für
+leichteren späteten Aufruf gespeichert.
+
+\subsection{Definiere S3-Methoden}\label{definiere-s3-methoden}
 
 
 \end{document}
