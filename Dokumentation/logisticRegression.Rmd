@@ -211,9 +211,10 @@ Die Bruchrechnung $\frac{\pi_i}{1-\pi_i}$ (siehe Gleichung 3) spielt bei dem bin
 
 # Implementierung in R
 
-Im Folgenden wird die Funktionalität von dem Paket **logitModell** erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären Logit-Modell programmiert darzustellen. Das Paket besteht aus dem R-Code, welcher anhand dem manuell berechneten Maximum Likelihood ein Objekt von der Klasse *logitMod* erstellt und anschließend drei S3 Methoden für diese Klasse (print, summary und plot) definiert, und einer Vignette, welche den R-Code anhand einem konkreten Beispiel ausführt. Dieser Beispieldatensatz wird im Folgenden verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell *glm(..., family = "binomial")* zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie dem Ruf von der angestrebten Institution. 
+Im Folgenden wird die Funktionalität von dem Paket **logitModell** erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären Logit-Modell programmiert darzustellen. Das Paket besteht aus dem R-Code, welcher anhand dem manuell berechneten Maximum Likelihood ein Objekt von der Klasse *logitMod* erstellt und anschließend drei S3 Methoden für diese Klasse (print, summary und plot) definiert, und einer Vignette, welche den R-Code anhand einem konkreten Beispiel ausführt.
 
 ## Beispieldatensatz
+Der Beispieldatensatz wird im Folgenden verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell *glm(..., family = "binomial")* zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie dem Ruf von der angestrebten Institution. 
 
 Zunächst wird der Datensatz importiert. Dabei wird die Zielvariable aus dem Datensatz entnommen und in einem Vektor gespeichert. Da diese schon als 0/1-Variable vorgegeben wird, besteht es in diesem Fall keine Notwendigkeit, die Zielvariable zu faktorisieren. Der Code funktioniert allerdings ebenfalls mit Zielvariable, welche zum Beispiel als weiblich/männlich oder Erfolg/kein Erfolg kodiert wird und transformiert diese in eine 0/1-Variable. 
 
@@ -226,6 +227,13 @@ y <- as.numeric(as.character(y))
 ```
 
 Es muss immer vorab überprüft werden, in welcher Art die Zielvariable eingegeben wird, denn das Maximum Likelihood braucht als Input numerische Vektoren für weitere Berechnungen. Dieser Schritt wird extra gemacht, damit sich das manuelle Modell im Hinblick auf den Input gleich verhält wie das Standardmodell. 
+
+Für das Paket wird eine Extra-Vignette in R aufgebaut, um die Ergebnisse anhand dem Beispieldatensatz zu verdeutlichen. Zum Aufruf der Extra-Vignette muss der folgende Code bei dem Errichten des Paketes ausgeführt werden:
+
+```{r eval = FALSE, results = 'hide', warning = FALSE, message = FALSE}
+devtools::install("~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell/", type = "source", build_vignettes = TRUE)
+vignette(topic = "vignetteLogitModell")
+```
 
 ## Implementierung der Maximum-Likelihood-Schätzung
 
@@ -308,12 +316,8 @@ vcov <- solve(t(X) %*% M %*% X)
 # Maximumwert der Log Likelihood Funktion
 maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
 ```
-Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der manuell definierten Funktion mit dem Standardmodell werden die ML-Schätzer und die Kovarianzmatrix zurückgegeben. Dafür wird für das Paket eine Extra-Vignette in R aufgebaut, um die Ergebnisse anhand dem Beispieldatensatz zu verdeutlichen. Zum Aufruf der Extra-Vignette muss der folgende Code bei dem Errichten des Paketes ausgeführt werden:
 
-```{r eval = FALSE, results = 'hide', warning = FALSE, message = FALSE}
-devtools::install("~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell/", type = "source", build_vignettes = TRUE)
-vignette(topic = "vignetteLogitModell")
-```
+Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der manuell definierten Funktion mit dem Standardmodell werden die ML-Schätzer und die Kovarianzmatrix zurückgegeben. 
 
 ## Definiere Klasse "logitMod"
 
