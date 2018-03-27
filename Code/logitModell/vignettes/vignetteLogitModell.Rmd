@@ -2,8 +2,7 @@
 title: "Logistic Regression"
 author: "Xuan Son Le (4669361), Freie Universität Berlin"
 date: "04/04/2018"
-output: 
-    rmarkdown::html_vignette:
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Logistic Regression}
   %\VignetteEngine{knitr::rmarkdown}
