@@ -67,18 +67,16 @@ Die dazugehörige lineare Regressionsgleichung lautet: $\mathbf{Y} = \mathbf{X}.
 
 Die einzelne Beobachtung lässt sich wie folgt darstellen: 
 $$
-y_i = \beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip} + \epsilon_i = \mathbf{x'}_i.\beta + \epsilon_i \qquad \forall_i = 1,2,3,...,n
+y_i = \beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip} + \epsilon_i = \sum_{j = 0}^p x_{ij}.\beta_j + \epsilon_i \qquad \forall_i = 1,2,3,...,n
 $$ 
 
-Wobei $\mathbf{x}_i$ der i-ten Zeile der Designmatrix $\mathbf{X}$ entspricht. Da bei der Multiplikation A.B die Regel gilt, dass die Spaltenanzahl von A der Zeilenanzahl von B entsprechen muss. Da $\beta$ ein (px1)-Vektor ist, muss $\mathbf{x}_i$ (px1-Vektor) in $\mathbf{x'}_i$ (1xp-Vektor) transponiert werden, damit die Multiplikation durchführbar ist.
-
-Um die Werte im Bereich der reellen Zahlen von der linearen Regression auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu beschränken, sollte die rechte Seite der Gleichung transformiert werden. Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion) zu finden, deren Wertebereich in [0,1] liegt: $\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip}) = F(\eta_i)$. Der lineare Prädikator $\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \mathbf{x'}_i.\beta \ \ (1)$ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der Responsefunktion die standardisierte logistische Verteilung verwendet:
+Um die Werte im Bereich der reellen Zahlen von der linearen Regression auf dem Wertebereich von Wahrscheinlichkeiten zwischen 0 und 1 zu beschränken, sollte die rechte Seite der Gleichung transformiert werden. Das Ziel ist es, eine sinnvolle Verteilungsfunktion (Responsefunktion) zu finden, deren Wertebereich in [0,1] liegt: $\pi_i = P(\mathbf{Y_i} = 1) = F(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip}) = F(\eta_i)$. Der lineare Prädikator $\eta_i = \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \sum_{j = 0}^p x_{ij}.\beta_j \ \ (1)$ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der Responsefunktion die standardisierte logistische Verteilung verwendet:
 $$
 F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \quad (2)
 $$
 Da durch die Responsefunktion die Eintrittwahrscheinlichkeit $\pi_i$ modelliert werden soll, ergibt sich die Gleichung für das binäre Logit-Modell wie folgt:
 $$
-\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \quad (3)
+\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \quad (3)
 $$
 Dabei kann $\pi_i$ maximal den Wert 1 nehmen, wenn $\exp(\eta_i)$ sehr groß ist und minimal den Wert 0, wenn $\exp(\eta_i)$ sehr nah rechts von 0 liegt. $\exp(\eta_i)$ kann nicht negativ sein. Diese Gleichung erfüllt somit die Anforderung bezüglich dem Wertebereich von Wahrscheinlichkeiten.
 
@@ -118,7 +116,7 @@ ggplot(cats, aes(y = Sex, x = Bwt)) +
     labs(x = "x1", y = "y")
 ```
 
-Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit für die empirischen Beobachtungswerte zu maximieren.Dafür kommt die (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die Vorgehensweise zum Aufbau der Log-Likelihood-Funktion wiedergegeben.
+Das Ziel der ML-Schätzung besteht darin, die Wahrscheinlichkeit die empirischen Beobachtungswerte zu maximieren. Dafür kommt die (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die Vorgehensweise zum Aufbau der Log-Likelihood-Funktion wiedergegeben.
 
 Gegeben sei $y_i = 1$ mit der Eintrittswahrscheinlichkeit $\pi_i$, und $y_i = 0$ mit der Gegenwahrscheinlichkeit $(1-\pi_i)$. Die Likelihood-Funktion lässt sich wie folgt definieren:
 $$
@@ -160,11 +158,11 @@ Zum Herausfinden des ML-Schätzers, welcher die log-Likelihood-Funktion optimier
 $$
 \begin{aligned}
 s(\beta) = \frac{\partial}{\partial \beta}  \ell(\beta) &= \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + \exp(\eta_i)) \Big) \quad \\
-&\mathrel{\overset{(1)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\mathbf{x'}_i.\beta  - \ln (1 + \exp(\mathbf{x'}_i.\beta )) \Big) \quad \\ 
+&\mathrel{\overset{(1)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Big( y_i.\sum_{j = 0}^p x_{ij}.\beta_j  - \ln (1 + \exp(\sum_{j = 0}^p x_{ij}.\beta_j )) \Big) \quad \\ 
 \end{aligned}
 $$
 
-Seien alle Vorzeichnenanforderungen erfüllt, gelten folgende Regelungen bezüglich der Differenzierungsrechnung:
+Die Ergebnisse von der oberen Ableitung hängt hauptsächlich davon ab, nach welcher $\beta_j$ mit $j \in (0,1,2,..,p)$ die Ableitung erfolgt wird. Seien alle Vorzeichnenanforderungen erfüllt, gelten folgende Regelungen bezüglich der Differenzierungsrechnung:
 $$
 \begin{aligned}
 &(12) \frac{\partial}{\partial t} a.f(t) = (a.f(t))' = a.f'(t) \\
@@ -176,40 +174,32 @@ $$
 Eingesetzt in die Score-Funktion:
 $$
 \begin{aligned}
-s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x'}_i - \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta)}{1 + \exp(\mathbf{x'}_i.\beta)} \Bigg) \\
-&\mathrel{\overset{(1)}{=}}\sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \Bigg( y_i - \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Bigg) \Bigg] \\
-&\mathrel{\overset{(2)}{=}}  \sum_{i = 1}^{n} \ \mathbf{x'}_i ( y_i - \pi_i) \quad (15)
+s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.x_{ij} - \frac{x_{ij}.\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1 + \exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \Bigg) \quad (16)
 \end{aligned}
 $$
 
-Da $s(\beta)$ wegen exponentiellen Komponenten nicht linear von $\beta$ abhängt, wird zur Maximierung der Funktion ein iteratives Verfahren verwendet. In der Literatur gibt es viele Vorgehensweisen zur Lösung des Problems. Für diese Arbeit wird die Newton-Raphson-Methode ausgewählt. Dabei ist die zweite Ableitung der Funktion noch benötigt:
+Da $s(\beta)$ wegen exponentiellen Komponenten nicht linear von $\beta$ abhängt, wird zur Maximierung der Funktion ein iteratives Verfahren verwendet. In der Literatur gibt es viele Vorgehensweisen zur Lösung des Problems. Für diese Arbeit wird die Newton-Raphson-Methode ausgewählt. Dafür wird die zweite Ableitung der Funktion noch benötigt:
 
 $$
 \begin{aligned}
 \frac{\partial^2}{\partial \beta^2} \ell(\beta) &= \frac{\partial}{\partial \beta} s(\beta) \\ 
-&\mathrel{\overset{(15)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \ (\mathbf{x'}_i.y_i - \mathbf{x'}_i.\pi_i) \\
-&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ .  \Big(\frac{\partial}{\partial \beta} \pi_i \Big) \Bigg) \\
-&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ .  \Big(\frac{\partial}{\partial \beta} \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Big) \Bigg) \\
+&\mathrel{\overset{(16)}{=}} \frac{\partial}{\partial \beta} \sum_{i = 1}^{n} \Bigg( y_i.x_{ij} - \frac{x_{ij}.\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1 + \exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \Bigg) \\
 \end{aligned}
 $$
 
-Wegen
+Da wieder die Differentialrechnung von $\beta_k$ mit $k \in (0,1,2,...,p)$ abhängt und wegen
 $$
 \frac{\partial}{\partial t} \frac{f(t)}{g(t)} = \frac{f'(t).g(t) - g'(t).f(t)}{(g(t))^2}
 $$
 gilt es:
 $$
 \begin{aligned}
-\frac{\partial}{\partial \beta} s(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \Bigg( \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).(1+\exp(\mathbf{x'}_i.\beta))-\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2} \Bigg) \Bigg] \\
-&= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2}  \Bigg] \\
-&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ . \frac{\mathbf{x'}_i}{1+\exp(\mathbf{x'}_i.\beta)} . \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Bigg) \\
-&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i . \mathbf{x'}_i . (1-\pi_i) . \pi_i \Big) \\
-&= - \sum_{i = 1}^{n} \Big( (\mathbf{x'}_i)^2 . (1-\pi_i) . \pi_i \Big) \\
-&= - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i.\mathbf{x}_i . (1-\pi_i) . \pi_i \Big) \\
+\frac{\partial}{\partial \beta_k} s(\beta_k) &= - \sum_{i = 1}^{n} \frac{x_{ik}.\exp(\sum_{k = 0}^p x_{ik}.\beta_k).(1+\exp(\sum_{k = 0}^p x_{ik}.\beta_k))-x_{ik}.x_{ij}.\exp(\sum_{k = 0}^p x_{ik}.\beta_k).\exp(\sum_{k = 0}^p x_{ik}.\beta_k)}{(1+\exp(\sum_{k = 0}^p x_{ik}.\beta_k))^2} \\
+&= - \sum_{i = 1}^{n} \Bigg[\frac{\mathbf{x'}_i.\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{(1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j))^2}  \Bigg] \\
+&= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ . \frac{\mathbf{x'}_i}{1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j)} . \frac{\exp(\sum_{j = 0}^p x_{ij}.\beta_j)}{1+\exp(\sum_{j = 0}^p x_{ij}.\beta_j)} \Bigg) \\
+&\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i . \mathbf{x'}_i . (1-\pi_i) . \pi_i \Big)
 \end{aligned}
 $$
-
-
 
 ## Intepretation der Koeffizienten
 Die Bruchrechnung $\frac{\pi_i}{1-\pi_i}$ (siehe Gleichung 3) spielt bei dem binären Logit-Modell eine besondere Rolle, weil sie der Verbindung zwischen der Eintrittswahrscheinlichkeit und der Gegenwahrscheinlichkeit direkt widerspiegelt.
