@@ -312,9 +312,8 @@ Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das M
 
 ```{r eval = FALSE, results = 'hide', warning = FALSE, message = FALSE}
 devtools::install("~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell/", type = "source", build_vignettes = TRUE)
+library("logitModell")
 vignette("logitModell")
-
-
 ```
 
 ## Definiere Klasse "logitMod"
