@@ -12,6 +12,12 @@
 #' @export
 maxLikeEst <- function(y, X) {
     
+    # falls y nicht als 0-1/Variable eingegeben wird
+    if (!(0 %in% y && 1 %in% y)) {
+        y <- factor(y, labels = c(0,1))
+    }
+    y <- as.numeric(as.character(y))
+    
     # initialisiere beta
     beta <- rep(0, times = ncol(X))
     
@@ -23,7 +29,7 @@ maxLikeEst <- function(y, X) {
     diff <- 10 * abs(tolerance)
     maxIteration <- 100
     i <- 0
-    
+
     # Solange Abbruchskriterien nicht erreicht
     while (diff > tolerance & i < maxIteration) {
         
@@ -52,30 +58,25 @@ maxLikeEst <- function(y, X) {
     dfRes <- nrow(X) - ncol(X)  # ResiduensFreiheitsgrad 
     dfNull <- nrow(X) - 1       # Nullmodell Freiheitsgrad
     
-    # Kovarianzmatrix
-    vcov <- solve(t(X) %*% M %*% X) 
-    
     # Devianz Residual
     s <- y
     s[s == 0] = -1
-    devianceResidual = as.numeric(s * sqrt(-2*((y * eta) - (log(1 + exp(eta))))))
+    devianceResiduals = as.numeric(s * sqrt(-2*((y * eta) - (log(1 + exp(eta))))))
+    #devianceResiduals = -2 * as.numeric(crossprod(y,eta) - sum(log(1 + exp(eta))))    
+    
+    # Kovarianzmatrix
+    vcov <- solve(t(X) %*% M %*% X) 
     
     # Maximumwert der Log Likelihood Funktion
     maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
     
-    # Fitted Values
-    fittedWerte <- p
-    M <- M
-    
     # Liste der zurückgegebenen Werte
     result <- list(coefficients = beta,
                    vcov = vcov,
-                   devianceResidual = devianceResidual,
+                   devianceResiduals = devianceResiduals,
                    dfRes = dfRes,
                    dfNull = dfNull,
                    maxLogLikeValue = maxLogLikeValue,
-                   fittedWerte = fittedWerte,
-                   M = M,
                    anzahlIteration = i) 
     
     return(result)
@@ -158,18 +159,18 @@ print.logitMod <- function(x, ...){
         x$dfRes, " Residual")
     
     # Berechnung von null deviance, residual deviance & aic
-    nullDeviance <- sum(x$nullModell$devianceResidual^2)
+    nullDeviance <- -2 * x$nullModell$maxLogLikeValue
     x$nullDeviance <- nullDeviance
-    devianceResidual <- sum(x$devianceResidual^2)
-    x$devianceResidual <- devianceResidual
+    residualDeviance <- -2 * x$maxLogLikeValue
+    x$residualDeviance <- residualDeviance
     x_AIC <- (-2*x$maxLogLikeValue + 2*ncol(x$X))
     x$AIC <- x_AIC
     
     cat("\nNull Deviance:\t", round(nullDeviance,1))
-    cat("\nResidual Deviance:", round(devianceResidual,1), "\t", 
+    cat("\nResidual Deviance:", round(residualDeviance,1), "\t", 
         "AIC: ", round(x_AIC,1), "\n") 
     
-    cat("\nNumber of Fisher Scoring iterations: ", round(devianceResidual,1), "\n")
+    cat("\nNumber of Fisher Scoring iterations: ", 999999, "\n")
     
     # invisibly return linMod object
     invisible(x)
@@ -222,9 +223,9 @@ summary.logitMod <- function(object, ...) {
     #" " = object$sigCode[,])
     
     # Berechnung von nullDeviance, residualDeviance & aic
-    nullDeviance <- sum(object$nullModell$devianceResidual^2)
+    nullDeviance <- -2 * object$nullModell$maxLogLikeValue
     object$nullDeviance <- nullDeviance
-    residualDeviance <- sum(object$devianceResidual^2)
+    residualDeviance <- -2 * object$maxLogLikeValue
     object$residualDeviance <- residualDeviance
     x_AIC <- (-2*object$maxLogLikeValue + 2*ncol(object$X))
     object$AIC <- x_AIC
@@ -255,7 +256,7 @@ print.summary.logitMod <- function(x, ...) {
     cat("Call: ", deparse(x$call), fill = TRUE)
     
     cat("\nDeviance Residuals:\n")
-    print.summaryDefault(summary(x$devianceResidual)[-4], digits = 4L)
+    print.summaryDefault(summary(x$devianceResiduals)[-4], digits = 4L)
     
     cat("\nCoefficients:\n")
     printCoefmat(x$coefficients, signif.legend = TRUE, digits = 4L)
@@ -292,7 +293,7 @@ print.summary.logitMod <- function(x, ...) {
 plot.logitMod <- function(x, ...) {
     
     #1
-    plot(y = x$devianceResidual, x = (x$X %*% x$coefficients),
+    plot(y = x$devianceResiduals, x = (x$X %*% x$coefficients),
          main = "Residuals vs Fitted",
          ylab = "Residuals",
          xlab = paste("Predicted Values\n",
@@ -300,14 +301,14 @@ plot.logitMod <- function(x, ...) {
     abline(a = 0, b = 0, lty = 3)
     
     #2
-    qqnorm(x$devianceResidual, 
+    qqnorm(x$devianceResiduals, 
            main = "Normal Q-Q", 
            ylab = "Std. deviance resid.",
            xlab = paste("Theoretical Quantiles\n", deparse(x$call))) 
-    qqline(x$devianceResidual, lty = 3)
+    qqline(x$devianceResiduals, lty = 3)
     
     #3
-    plot(y = sqrt(abs(x$devianceResidual)), x = (x$X %*% x$coefficients),
+    plot(y = sqrt(abs(x$devianceResiduals)), x = (x$X %*% x$coefficients),
          main = "Scale Location",
          ylab = expression(sqrt("|Std. deviance resid.|")),
          xlab = paste("Predicted Values\n", deparse(x$call)))

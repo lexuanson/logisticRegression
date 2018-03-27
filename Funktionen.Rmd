@@ -13,34 +13,30 @@ knitr::opts_chunk$set(echo = TRUE)
 ######################################################################################
 
 ```{r (Log)-Likelihood Funktion}
-loglike_1 <- function(beta) {
+loglike_vector <- function(X,y,beta) {
     
-    eta <- X %*% beta #
+    eta <- t(X) %*% beta #
 
     exp_eta <- exp(eta) # 
     
     p <- exp_eta / (1 + exp_eta) # 
     
-    result <- log(prod((p^y)*((1 - p)^(1 - y))))
+    result <- crossprod(y,eta) - sum(log(1 + exp(eta)))
     
-    return(-result) #becaue minimizing
+    return(-result) 
 }
 
-loglike <- function(beta) {
+loglike <- function(X,y,beta) {
     
-    #return (log(likelihood(beta)))
-    
-    # or just sum (crossprod(y,eta) - sum(log(1+exp(eta))))
-    
-    eta <- X %*% beta #
+    eta <- t(X) %*% beta #
 
     exp_eta <- exp(eta) # 
     
     p <- exp_eta / (1 + exp_eta) # 
     
-    result <- sum (crossprod(y,eta) - sum(log(1 + exp(eta))))
+    result <- sum(crossprod(y,eta) - sum(log(1 + exp(eta))))
     
-    return(-result) #becaue minimizing
+    return(result) 
 }
 
 
