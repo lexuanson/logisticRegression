@@ -206,6 +206,22 @@ $$
 \end{aligned}
 $$
 
+## Newton-Raphson-Methode
+
+Die Newton-Raphson-Methode setzt sich zum Ziel, eine nichtlinear lösbare Funktion zu optimieren. Diese Methode wurde ... (QUELLE). 
+
+Sei $\mathbf{f}$ eine Funktion von x, $\mathbf{f'}(x)$ die erste Ableitung und $x_0$ die Initiallösung. Das Ziel ist es, die Gleichung $\mathbf{f}(x) = 0$ zu lösen. Seien alle Anforderungen der Differentialrechnung erfüllt, kann eine Verbesserung von $x_0$ wie folgt berechnet werden: 
+$$
+x_1 = x_0 - \frac{\mathbf{f}(x_0)}{\mathbf{f'}(x_0)}
+$$
+
+Wobei eine Verbesserung bedeutet, dass $\mathbf{f}(x_1)$ näher an 0 liegt als $\mathbf{f}(x_0)$. Dieser Prozess wird so oft wiederholt, bis eine akzeptable Lösung anhand der vordefinierten Abbruchskriterien bestimmt wird:
+$$
+x_{n+1} = x_n - \frac{\mathbf{f}(x_n)}{\mathbf{f'}(x_n)}
+$$
+
+The method starts with a function f defined over the real numbers x, the function's derivative f ′, and an initial guess x0 for a root of the function f. If the function satisfies the assumptions made in the derivation of the formula and the initial guess is close, then a better approximation x1 is
+
 ## Intepretation der Koeffizienten
 Die Bruchrechnung $\frac{\pi_i}{1-\pi_i}$ (siehe Gleichung 3) spielt bei dem binären Logit-Modell eine besondere Rolle, weil sie der Verbindung zwischen der Eintrittswahrscheinlichkeit und der Gegenwahrscheinlichkeit direkt widerspiegelt.
 
@@ -317,7 +333,7 @@ vcov <- solve(t(X) %*% M %*% X)
 maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
 ```
 
-Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der manuell definierten Funktion mit dem Standardmodell werden die ML-Schätzer und die Kovarianzmatrix zurückgegeben. 
+Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der Funktion *maxLikeEst* mit dem Standardmodell werden die ML-Schätzer und die Kovarianzmatrix zurückgegeben. 
 
 ## Definiere Klasse "logitMod"
 
@@ -361,7 +377,8 @@ logitMod <- function(formula, data) {
 Da sich die Objekte von der Klasse "logitMod" ähnlich wie Objekte von *glm(...,family = "binomial")* verhalten sollen, werden dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus werden die Zielvariable sowie die Designmatrix entnommen und anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird das Null-Modell erstellt und ebenfalls in das "Hauptobjekt" für leichteren späteten Aufruf gespeichert.
 
 ## Definiere S3-Methoden
-In diesem Abschnitt wird die Implementierung von drei S3-Methoden anhand bisherigen Ergebnissen vorgestellt. Das Beispiel befindet sich wieder in der Extra-Vignette.
+
+In diesem Abschnitt wird die Implementierung von drei S3-Methoden anhand bisherigen Ergebnissen vorgestellt. Der Code wird ebenfalls anhand des Beispielsdatensatzes in der Extra-Vignette umgesetzt.
 
 ### Print-Methode
 ```{r}
