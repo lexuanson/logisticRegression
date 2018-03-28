@@ -115,8 +115,14 @@ ggplot(cats, aes(y = Sex, x = Bwt)) +
     labs(x = "x1", y = "y")
 ```
 
-Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit für die empirischen Beobachtungswerte zu maximieren.Dafür kommt die (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die Vorgehensweise zum Aufbau der Log-Likelihood-Funktion wiedergegeben.
+Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit für die empirischen Beobachtungswerte zu maximieren.Dafür kommt die (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die Vorgehensweise zum Lösen der ML-Schätzung anhand der Log-Likelihood-Funktion wiedergegeben:
+1. Maximum Likelihood Funktion
+2. Log-Likelihood-Funktion
+3. Score-Funktion (erste Ableitung)
+4. Hesse Matrix (zweite Ableitung)
+5. Newton-Raphson-Methode
 
+### Maximum Likelihood Funktion
 Gegeben sei $y_i = 1$ mit der Eintrittswahrscheinlichkeit $\pi_i$, und $y_i = 0$ mit der Gegenwahrscheinlichkeit $(1-\pi_i)$. Die Likelihood-Funktion lässt sich wie folgt definieren:
 $$
 \mathcal{L}(\beta) = {\prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i}} \quad (6)
@@ -129,7 +135,8 @@ $$
 \mathcal{L}(\beta) = {\prod_{i=1}^{n} \Bigg[ \Big( \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big)^{y_i}.\Big(1-\frac{\exp(\eta_i)}{1 + \exp(\eta_i)}\Big)^{1-y_i}}\Bigg] \quad (7)
 $$
 
-Der Versuch, Gleichung (6) zu differenzieren und nach $\beta$ zu lösen, um die Extremwerte zu finden, ist extrem aufwendig, weil sie eine Serie von Multiplikationen enthält. Wegen den exponentialen Komponenten kann die logistische Funktion aus der Mathematik zur Vereinfachung der Likelihood-Funktion Einsatz finden. Da die logistische Funktion eine monotone Funktion ist, entspricht jedes Maximum von der Likelihood-Funktion dem Maximum von der Log-Likelihood-Funktion und umgekehrt. Es gelgen für den Logarithmus folgende Regelungen (seien alle Vorzeichenvoraussetzungen für den Logarithmus erfüllt):
+### Log-Likelihood-Funktion
+Der Versuch, Gleichung (7) zu differenzieren und nach $\beta$ zu lösen, um die Extremwerte zu finden, ist extrem aufwendig, weil sie eine Serie von Multiplikationen enthält. Wegen den exponentialen Komponenten kann die logistische Funktion aus der Mathematik zur Vereinfachung der Likelihood-Funktion Einsatz finden. Da die logistische Funktion eine monotone Funktion ist, entspricht jedes Maximum von der Likelihood-Funktion dem Maximum von der Log-Likelihood-Funktion und umgekehrt. Es gelgen für den Logarithmus folgende Regelungen (seien alle Vorzeichenvoraussetzungen für den Logarithmus erfüllt):
 $$
 \begin{aligned}
 (8) \quad &\ln(\prod_{i=1}^{n}x_i) = \ln(x_1.x_2...x_n) = \ln(x_1) + \ln(x_2) + \ ... \ + \ln(x_n) = \sum_{i=1}^{n} \ln(x_i) \\
@@ -152,6 +159,7 @@ $$
 \end{aligned}
 $$
 
+### Score-Funktion 
 Zum Herausfinden des ML-Schätzers, welcher die log-Likelihood-Funktion optimiert, wird Gleichung (10) nach $\beta$ differenziert. Die erste Ableitung von der log-Likelihood-Funktion wird als Score-Funktion benannt:
 
 $$
@@ -180,6 +188,7 @@ s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x'}_i - \frac{\mathbf{x'}_i.\exp
 \end{aligned}
 $$
 
+### Hesse Matrix
 Da $s(\beta)$ wegen exponentiellen Komponenten nicht linear von $\beta$ abhängt, wird zur Maximierung der Funktion ein iteratives Verfahren verwendet. Für diese Arbeit wird die Newton-Raphson-Methode ausgewählt. Dafür muss die zweite Ableitung der Funktion noch gebildet werden, welche als Hesse-Matrix (H) bezeichnet wird:
 
 $$
@@ -211,7 +220,7 @@ $$
 
 $$
 
-## Newton-Raphson-Methode
+#### Newton-Raphson-Methode
 
 Die Newton-Raphson-Methode setzt sich zum Ziel, eine nichtlinear lösbare Funktion zu optimieren. Diese Methode wurde ... (QUELLE). 
 
