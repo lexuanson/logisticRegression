@@ -129,7 +129,7 @@ $$
 $$
 Wenn $y_i$ gleich 1 ist, ergibt sich für die betroffene Beobachtung die Eintrittswahrscheinlichkeit $\pi_i$ und umgekehrt. Das Likelihood ist gleich die Multiplikation der Wahrscheinlichkeiten von allen Beobachtungen. Dieses soll maximiert werden.
 
-Da $\pi_i$ von dem linearen Prädikator $\eta_i$ anhängt, ist die Likelihood-Funktion von $\beta$ abhängig. Wird $\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)}$ in die Likelihood-Funktion eingesetzt, ergibt sich:
+Da $\pi_i$ von dem linearen Prädikator $\eta_i$ abhängt, ist die Likelihood-Funktion von $\beta$ abhängig. Wird $\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)}$ in die Likelihood-Funktion eingesetzt, ergibt sich:
 
 $$
 \mathcal{L}(\beta) = {\prod_{i=1}^{n} \Bigg[ \Big( \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Big)^{y_i}.\Big(1-\frac{\exp(\eta_i)}{1 + \exp(\eta_i)}\Big)^{1-y_i}}\Bigg] \quad (7)
@@ -184,7 +184,7 @@ $$
 s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x'}_i - \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta)}{1 + \exp(\mathbf{x'}_i.\beta)} \Bigg) \\
 &\mathrel{\overset{(1)}{=}}\sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \Bigg( y_i - \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \Bigg) \Bigg] \\
 &\mathrel{\overset{(2)}{=}}  \sum_{i = 1}^{n} \ \mathbf{x'}_i ( y_i - \pi_i) \quad  \\
-&= X'.(y-\pi) \quad (15) 
+&= \mathbf{X}'.(y-\pi) \quad (15) 
 \end{aligned}
 $$
 
@@ -211,13 +211,13 @@ $$
 &= - \sum_{i = 1}^{n} \Bigg( \mathbf{x'}_i \ . \frac{\mathbf{x'}_i}{1+\exp(\mathbf{x'}_i.\beta)} . \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \Bigg) \\
 &\mathrel{\overset{(3)}{=}} - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i . \mathbf{x'}_i . (1-\pi_i) . \pi_i \Big) \\
 &= - \sum_{i = 1}^{n} \Big( (\mathbf{x'}_i)^2 . (1-\pi_i) . \pi_i \Big) \\
-&= - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i.\mathbf{x}_i . (1-\pi_i) . \pi_i \Big) \quad (16) \\
+&= - \sum_{i = 1}^{n} \Big( \mathbf{x'}_i.\mathbf{x}_i . (1-\pi_i) . \pi_i \Big) \quad \\
 \end{aligned}
 $$
 
-Sei M eine nxn-Matrix mit dem i-ten diagonalen Element $M_{ii} = \pi_i.(1-\pi_i)$ mit $i \in (1,2,...,n)$, ergibt sich: 
+Sei M eine nxn-Matrix mit dem i-ten diagonalen Element $\mathbf{M}_{ii} = \pi_i.(1-\pi_i)$ mit $i \in (1,2,...,n)$, ergibt sich: 
 $$
-
+s'(\beta) = H(\beta) = - \sum_{i = 1}^{n} \mathbf{x'}_i.\mathbf{x}_i . \mathbf{M}_{ii} = - \mathbf{X}'\mathbf{M}\mathbf{X} \quad (16)
 $$
 
 ### Newton-Raphson-Methode
@@ -237,13 +237,39 @@ $$
 $\mathbf{f}(x)$ repräsentiert für diese Arbeit die Score-Funktion $s(\beta)$, da die Gleichung $s(\beta) = 0$ gelöst werden soll. Eingesetzt in Gleichung 17 ergibt sich:
 $$
 \begin{aligned}
-\beta_{n+1} &= \quad \beta_n - \frac{s(\beta)}{s'(\beta)} \\
-&\mathrel{\overset{(15),(16)}{=}} \beta_n 
+\beta_{n+1}\quad  = \qquad &\beta_n - \frac{s(\beta)}{s'(\beta)} \\
+\mathrel{\overset{(15),(16)}{=}} \quad &\beta_n - \frac{\ \  \mathbf{X}'.(y-\pi)}{- \mathbf{X}'\mathbf{M}\mathbf{X}} \\ \\
+= \qquad &\beta_n + (\mathbf{X}'\mathbf{M}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi)
 \end{aligned}
 $$
 
+In Anlehnung an ... wird demnächst die Newton-Raphson-Methode anhand einem Pseudocode näher erläutert:
+$$
+\begin{aligned}
+&1 \quad \mathbf{function}(X, y): \\
+&2 \qquad \quad   \mathbf{initialisiere} \ \ \beta_0,\ maxIteration,\ i,\ tolerance,\ diff,\ M \\
+&3 \qquad \quad  \mathbf{while} \ (diff > tolerance) \\
+&4 \qquad \qquad \quad betaChange = (\mathbf{X}'\mathbf{M}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi) \\
+&5 \qquad \qquad \quad diff = | betaChange| \\
+&6 \qquad \qquad \quad      i = i + 1 \\
+&7 \qquad \qquad \quad      \mathbf{if} \ (i > maxIteration): \\
+&8  \qquad \qquad \qquad \qquad          break \\ 
+&9 \quad \bf{end} 
+\end{aligned}
+$$
+
+Es wird eine zulässige Startlösung $\beta_0$ initialisiert. Je näher $s(\beta_0)$ an 0 liegt, umso schneller sollte die Laufzeit der Schleife sein. Dieses wird bei der Implementierung berücksichtigt, um herauszufinden, ob es sich lohnt, eine gute Startlösung festzustellen. 
+
+*tolerance* ist in der Regel sehr klein positiv und dient als Indikator für die Konvergenz des Algorithmus. Grundsätzlich sollte die Differenz *diff* = $|\beta_{i+1} - \beta_i|$ nach jeder Iteration immer kleiner werden. Wenn der Algorithmus konvergiert, wird nach einer bestimmten Anzahl an Iterationen diese Differenz kleiner als der vorgegebene Konvergenzwert. Wenn die Differenz immer größer als der Konvergenzwert bleibt, kann festgestellt werden, dass der Algorithmus nicht konvergiert. Wenn es der Fall ist, terminiert der Algorithmus bei Erreichung der maximalen Anzahl an Iterationen (*maxIteration*).
+
 ## Intepretation der Koeffizienten
-Die Bruchrechnung $\frac{\pi_i}{1-\pi_i}$ (siehe Gleichung 3) spielt bei dem binären Logit-Modell eine besondere Rolle, weil sie der Verbindung zwischen der Eintrittswahrscheinlichkeit und der Gegenwahrscheinlichkeit direkt widerspiegelt.
+Die Bruchrechnung $\frac{\pi_i}{1-\pi_i}$ (siehe Gleichung 3) spielt bei dem binären Logit-Modell eine besondere Rolle, weil sie der Verbindung zwischen der Eintrittswahrscheinlichkeit und der Gegenwahrscheinlichkeit direkt widerspiegelt. Dieses lässt sich wie folgt zerlegen:
+$$
+\begin{aligned}
+\frac{P(Y = 1)}{P(Y=0)} = \frac{\pi_i}{1-\pi_i} \mathrel{\overset{(4)}{=}} \exp(\eta_i) &\mathrel{\overset{(1)}{=}} \  \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip}) \\ 
+&= \ \exp(\beta_0).\exp(\beta_1.x_{i2}).\exp(\beta_2.x_{i3}) ... \exp(\beta_p.x_{ip})
+\end{aligned}
+$$
 
 # Implementierung in R
 
@@ -276,7 +302,7 @@ vignette(topic = "vignetteLogitModell")
 Bevor das eigentliche Logit-Modell erstellt wird, wird in diesem Abschnitt die Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der Code dazu ist auf Basis von dem betroffenen theoretischen Teil (siehe Abschnitt ...) aufgebaut. Die Funktion *maxLikeEst* dient dazu, anhand der Newton-Raphson-Methode das maximale Likelihood zu berechnen. Als Input werden ein Vektor (Zielvariable) und eine Matrix (Designmatrix) benötigt. Als Output wird ein Objekt erwartet, welches die Maximum-Likelihood-Schätzer enthält. Daneben werden ebenfalls die ersten notwendigen Kennwerte für den Aufbau von S3-Methoden in dem Objekt gespeichert.
 
 Der Aufbau der Funktion maxLikeEst sieht so aus:
-```{r}
+```{r eval = FALSE, results="hide"}
 maxLikeEst <- function(y, X) {
     
     #1. initialisiere Variablen 
@@ -329,6 +355,10 @@ while (diff > tolerance & i < maxIteration) {
     
     # nächste Iteration
     i <- i + 1
+    
+    if (i > maxIteration) {
+        stop("Die Funktion konvergiert nicht!")
+    }
 }
 ```
 

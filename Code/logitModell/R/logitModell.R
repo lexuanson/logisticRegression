@@ -31,7 +31,7 @@ maxLikeEst <- function(y, X) {
     i <- 0
 
     # Solange Abbruchskriterien nicht erreicht
-    while (diff > tolerance & i < maxIteration) {
+    while (diff > tolerance) {
         
         # berechne die Wahrscheinlichkeit
         eta <- X %*% beta
@@ -48,10 +48,14 @@ maxLikeEst <- function(y, X) {
         beta <- beta + betaChange
         
         # berechne die totale Änderung von Beta
-        diff <- sum(abs(betaChange))
+        diff <- abs(sum(betaChange))
         
         # nächste Iteration
         i <- i + 1
+        
+        if (i > maxIteration) {
+            stop("Der Algorithmus konvergiert nicht!")
+        }
     }
     
     # Freiheitsgrad = Anzahl an Beobachtungen - Anzahl an Parameter
