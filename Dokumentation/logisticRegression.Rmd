@@ -297,6 +297,8 @@ devtools::install("~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticReg
 vignette(topic = "vignetteLogitModell")
 ```
 
+Die Extra-Vignette wird demnächst in der Help-Seite angezeigt. 
+
 ## Implementierung der Maximum-Likelihood-Schätzung
 
 Bevor das eigentliche Logit-Modell erstellt wird, wird in diesem Abschnitt die Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der Code dazu ist auf Basis von dem betroffenen theoretischen Teil (siehe Abschnitt ...) aufgebaut. Die Funktion *maxLikeEst* dient dazu, anhand der Newton-Raphson-Methode das maximale Likelihood zu berechnen. Als Input werden ein Vektor (Zielvariable) und eine Matrix (Designmatrix) benötigt. Als Output wird ein Objekt erwartet, welches die Maximum-Likelihood-Schätzer enthält. Daneben werden ebenfalls die ersten notwendigen Kennwerte für den Aufbau von S3-Methoden in dem Objekt gespeichert.
