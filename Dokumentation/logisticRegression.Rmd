@@ -220,7 +220,7 @@ $$
 
 $$
 
-#### Newton-Raphson-Methode
+### Newton-Raphson-Methode
 
 Die Newton-Raphson-Methode setzt sich zum Ziel, eine nichtlinear lösbare Funktion zu optimieren. Diese Methode wurde ... (QUELLE). 
 
