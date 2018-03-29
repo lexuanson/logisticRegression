@@ -98,7 +98,7 @@ $$
 
 ## Maximum Likelihood Schätzung
 
-Ähnlich wie bei der linearen Regression muss bei dem binären Logit-Modell die unbekannten Parameter $\beta_i$ (i = 0,1,2,...,k) ebenfalls geschätzt werden. Bei der klassischen linearen Regression wird die Methode der Kleinsten Quadrate (engl. *method of least squares*, kurz KQ-Methode) genutzt, um eine Regressionslinie zu bestimmen, welche die Summe der quadratischen Abweichungen von den beobachteten Punkten minimiert. Da bei dem binären Logit-Modell nicht der wahre Wert der Zielvariable sondern die Eintrittswahrscheinlichkeit geschätzt wird, ist die Abweichung zwischen dem wahren Wert und dem geschätzten Wert nicht mehr aussagekräftig wie bei der linearen Regression. Die Koeffizienten müssen anders geschätzt werden. Dementsprechend wird bei dem binären Logit-Modell die sogenannte Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung .. zeigt ein Beispiel mit zwei mögliche binäre logistiche Regressionskurven, die durch das Maximum Likelihood optimiert werden sollen.
+Ähnlich wie bei der linearen Regression muss bei dem binären Logit-Modell die unbekannten Parameter $\beta_i$ (i = 0,1,2,...,k) ebenfalls geschätzt werden. Bei der klassischen linearen Regression wird die Methode der Kleinsten Quadrate (engl. *method of least squares*, kurz KQ-Methode) genutzt, um eine Regressionslinie zu bestimmen, welche die Summe der quadratischen Abweichungen von den beobachteten Punkten minimiert. Da bei dem binären Logit-Modell nicht der wahre Wert der Zielvariable sondern die Eintrittswahrscheinlichkeit geschätzt wird, ist die Abweichung zwischen dem wahren Wert und dem geschätzten Wert nicht mehr aussagekräftig wie bei der linearen Regression. Die Koeffizienten müssen anders geschätzt werden. Dementsprechend wird bei dem binären Logit-Modell die sogenannte Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung .. zeigt ein Beispiel mit zwei mögliche binäre logistiche Regressionskurven, die durch das Maximum Likelihood optimiert werden sollen. Es gibt unendlich viele solche Kurven. Das Ziel ist es, die Kurve mit dem höchsten Maximum Likelihood herauszufinden. 
 
 ```{r echo=FALSE, fig.height=3, fig.width=6}
 library(ggplot2)
@@ -115,7 +115,7 @@ ggplot(cats, aes(y = Sex, x = Bwt)) +
     labs(x = "x1", y = "y")
 ```
 
-Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit für die empirischen Beobachtungswerte zu maximieren.Dafür kommt die (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die Vorgehensweise zum Lösen der ML-Schätzung anhand der Log-Likelihood-Funktion wiedergegeben:
+Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit für die empirischen Beobachtungswerte zu maximieren. Dafür kommt die (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die Vorgehensweise zum Lösen der ML-Schätzung anhand der Log-Likelihood-Funktion wiedergegeben:
 1. Maximum Likelihood Funktion
 2. Log-Likelihood-Funktion
 3. Score-Funktion (erste Ableitung)
@@ -189,7 +189,7 @@ s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x'}_i - \frac{\mathbf{x'}_i.\exp
 $$
 
 ### Hesse Matrix
-Da $s(\beta)$ wegen exponentiellen Komponenten nicht linear von $\beta$ abhängt, wird zur Maximierung der Funktion ein iteratives Verfahren verwendet. Für diese Arbeit wird die Newton-Raphson-Methode ausgewählt. Dafür muss die zweite Ableitung der Funktion noch gebildet werden, welche als Hesse-Matrix (H) bezeichnet wird:
+Da $s(\beta)$ wegen exponentiellen Komponenten nicht linear von $\beta$ abhängt, wird zur Maximierung der Funktion ein iteratives Verfahren verwendet. Für diese Arbeit wird die Newton-Raphson-Methode (vgl. ...) ausgewählt. Dafür muss die zweite Ableitung der Funktion noch gebildet werden, welche als Hesse-Matrix (H) bezeichnet wird:
 
 $$
 \begin{aligned}
@@ -203,7 +203,9 @@ Wegen
 $$
 \frac{\partial}{\partial t} \frac{f(t)}{g(t)} = \frac{f'(t).g(t) - g'(t).f(t)}{(g(t))^2}
 $$
-gilt es:
+  
+gilt:
+  
 $$
 \begin{aligned}
 \frac{\partial}{\partial \beta} s(\beta) = H(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \Bigg( \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).(1+\exp(\mathbf{x'}_i.\beta))-\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2} \Bigg) \Bigg] \\
@@ -333,7 +335,7 @@ i <- 0
 
 $\beta$ wird als ein Nullvektor mit der gleichen Länge wie die Anzahl der Spalten der Designmatrix initialisiert, um anschließend in der Newton-Raphson-Schleife nach jeder Iteration aktualisiert zu werden. Tolerance ist der Wert, bei dem die Schleife terminiert, wenn die absolute Veränderung der Lösungsgüte kleiner als dieser Wert ist. Das nächste Abbruchskriterium ist die maximale Anzahl der Iterationen. 
 
-Solange die beiden Abbruchskriterien nicht erreicht sind, erfolgt in der Newton-Raphson-Schleife folgender iterativer Vorgang:
+Solange die beiden Abbruchskriterien nicht erreicht sind, erfolgt in der Newton-Raphson-Schleife folgender iterativer Vorgang, welcher sich auf dem erklärten Pseudocode basiert:
 
 ``` {r eval = FALSE, results="hide"}
 while (diff > tolerance & i < maxIteration) {
@@ -364,8 +366,6 @@ while (diff > tolerance & i < maxIteration) {
 }
 ```
 
-Die Änderung von $\beta$ führt dazu, dass nach jeder Iteration ebenfalls die Eintrittswahrscheinlichkeit sowie ... Matrix neu definiert werden müssen. 
-
 Als Output der Funktion maxLikeEst werden folgende Parameter in ein Objekt gespeichert, um mit den Werten aus dem R-Standard-Modell zu vergleichen.
 
 ```{r eval = FALSE, results="hide"}
@@ -385,7 +385,7 @@ vcov <- solve(t(X) %*% M %*% X)
 maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
 ```
 
-Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der Funktion *maxLikeEst* mit dem Standardmodell werden die ML-Schätzer und die Kovarianzmatrix zurückgegeben. 
+Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der Funktion *maxLikeEst* mit dem Standardmodell werden die geschätzen Koeffizienten $\beta$ und die Kovarianzmatrix zurückgegeben. 
 
 ## Definiere Klasse "logitMod"
 
@@ -426,7 +426,7 @@ logitMod <- function(formula, data) {
 }
 ```
 
-Da sich die Objekte von der Klasse "logitMod" ähnlich wie Objekte von *glm(...,family = "binomial")* verhalten sollen, werden dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus werden die Zielvariable sowie die Designmatrix entnommen und anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird das Null-Modell erstellt und ebenfalls in das "Hauptobjekt" für leichteren späteten Aufruf gespeichert.
+Da sich die Objekte von der Klasse "logitMod" ähnlich wie Objekte von *glm(...,family = "binomial")* verhalten sollen, werden dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus werden die Zielvariable sowie die Designmatrix entnommen und anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird das Null-Modell erstellt und ebenfalls in das "Hauptobjekt" gespeichert, um die Null-Devianz vom Logit-Modell einfacher aufzurufen.
 
 ## Definiere S3-Methoden
 
