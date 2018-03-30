@@ -87,7 +87,6 @@ maxLikeEst <- function(y, X) {
     
 }
 
-
 #' @title Interface for an alternative logistic regression implementation
 #' @description This function computes coefficients of a binary logistic regression
 #' and contructs an object of "logitMod" class
@@ -151,7 +150,6 @@ logitMod <- function(formula, data) {
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' print(logm)
 #' @importFrom stats coef
-#' @export
 print.logitMod <- function(x, ...){
     
     cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
@@ -197,7 +195,6 @@ print.logitMod <- function(x, ...){
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' summary(logm)
 #' @importFrom stats pnorm
-#' @export 
 summary.logitMod <- function(object, ...) {
     
     # Koeffizienten Standardfehler
@@ -246,7 +243,6 @@ summary.logitMod <- function(object, ...) {
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' summary(logm)
 #' @importFrom stats printCoefmat 
-#' @export
 print.summary.logitMod <- function(x, ...) {
     
     cat("Call: ", deparse(x$call), fill = TRUE)
@@ -286,7 +282,7 @@ print.summary.logitMod <- function(x, ...) {
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' plot(logm)
 #' @importFrom graphics plot abline 
-#' @importFrom stats qqnorm qqline  
+#' @importFrom stats qqnorm qqline
 #' @export
 plot.logitMod <- function(x, ...) {
     
@@ -299,21 +295,22 @@ plot.logitMod <- function(x, ...) {
     abline(a = 0, b = 0, lty = 3)
     
     #2
-    qqnorm(x$devianceResiduals, 
-           main = "Normal Q-Q", 
-           ylab = "Std. deviance resid.",
-           xlab = paste("Theoretical Quantiles\n", deparse(x$call))) 
+    qqnorm(x$devianceResiduals,
+       main = "Normal Q-Q",
+       ylab = "Std. deviance resid.",
+       xlab = paste("Theoretical Quantiles\n", deparse(x$call)))
     qqline(x$devianceResiduals, lty = 3)
-    
+
     #3
     plot(y = sqrt(abs(x$devianceResiduals)), x = (x$X %*% x$coefficients),
-         main = "Scale Location",
-         ylab = expression(sqrt("|Std. deviance resid.|")),
-         xlab = paste("Predicted Values\n", deparse(x$call)))
+     main = "Scale Location",
+     ylab = expression(sqrt("|Std. deviance resid.|")),
+     xlab = paste("Predicted Values\n", deparse(x$call)))
+    
     
     # #4 shittt
     # pearsonResidual <- 
     #     (x$y - x$fittedWerte)/sqrt(x$fittedWerte*(1 - x$fittedWerte))
     # plot(y = pearsonResidual, x = diag(x$M))
-
+    
 }
