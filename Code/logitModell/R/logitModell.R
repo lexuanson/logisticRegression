@@ -101,8 +101,8 @@ maxLikeEst <- function(y, X) {
 #' testModell <- as.formula("admit ~ gre + gpa + rank")
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
 #' logitMod(formula = admit ~ gre + gpa + rank, data = testData)
-#' @export
 #' @importFrom stats model.frame model.matrix model.response 
+#' @export
 logitMod <- function(formula, data) {
     
     # initialisiere y (Zielvariable) und X (Matrix enthält alle erklärenden Variablen)
@@ -151,6 +151,7 @@ logitMod <- function(formula, data) {
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' print(logm)
 #' @importFrom stats coef
+#' @export
 print.logitMod <- function(x, ...){
     
     cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
@@ -196,6 +197,7 @@ print.logitMod <- function(x, ...){
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' summary(logm)
 #' @importFrom stats pnorm
+#' @export 
 summary.logitMod <- function(object, ...) {
     
     # Koeffizienten Standardfehler
@@ -244,6 +246,7 @@ summary.logitMod <- function(object, ...) {
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' summary(logm)
 #' @importFrom stats printCoefmat 
+#' @export
 print.summary.logitMod <- function(x, ...) {
     
     cat("Call: ", deparse(x$call), fill = TRUE)
@@ -282,9 +285,9 @@ print.summary.logitMod <- function(x, ...) {
 #' testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' plot(logm)
-#' @export
 #' @importFrom graphics plot abline 
 #' @importFrom stats qqnorm qqline  
+#' @export
 plot.logitMod <- function(x, ...) {
     
     #1
