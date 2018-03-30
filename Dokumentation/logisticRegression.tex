@@ -122,6 +122,8 @@
   \postdate{\par}
   \date{02/04/2018}
 
+\usepackage{caption}
+\captionsetup[figure]{name=Abbildung}
 
 \begin{document}
 \maketitle
@@ -160,21 +162,28 @@ Oft wird binäre Variable als 0/1-Variable kodiert, das heißt sie nimmt
 nur den Wert 0 oder 1 an. Die folgende Grafik stellt den Ansatz
 graphisch dar, binäre Variable durch lineare Regression zu modellieren:
 
-\includegraphics{logisticRegression_files/figure-latex/unnamed-chunk-1-1.pdf}
+\begin{figure}[h]
+
+{\centering \includegraphics{logisticRegression_files/figure-latex/unnamed-chunk-1-1} 
+
+}
+
+\caption{Beispielshafte lineare Regression für binäre Zielvariable}\label{fig:unnamed-chunk-1}
+\end{figure}
 
 Graphisch lässt sich festlegen, dass die lineare Regression den
 Wertebereich {[}0,1{]} von binären Responsevariablen sehr schnell
 verlässt. Aus diesem Grund wird ein ganz anderer Ansatz benötigt, um
-binäre Zielvariable zu modellieren, nämlich das binäre Logit-Modell,
-welches ebenfalls als binäre logistische Regression oder binäres
-logistisches Regressionsmodell bezeichnet werden kann. In der Statistik
-lassen sich Logit-Modelle noch in multinomiale und kumulative
-Logit-Modelle aufteilen, je nachdem ob die abhängige Variable
-multinominal- oder ordinalskaliert sind . Diese Arbeit beschäftigt sich
-mit dem binären Logit-Modell, welches den Zusammenhang zwischen einer
-binären abhängigen Variable und einer/mehreren unabhängigen Variablen
-untersucht. Bei allen Arten von Logit-Modellen können die unabhängigen
-Variablen (erklärende oder Kovariablen) beliebig skaliert sein.
+binäre Zielvariable zu modellieren, nämlich das binäre Logit-Modell
+(auch binäre logistische Regression oder binäres logistisches
+Regressionsmodell). In der Statistik lassen sich Logit-Modelle noch in
+multinomiale und kumulative Logit-Modelle aufteilen, je nachdem ob die
+abhängige Variable multinominal- oder ordinalskaliert sind . Diese
+Arbeit beschäftigt sich mit dem binären Logit-Modell, welches den
+Zusammenhang zwischen einer binären abhängigen Variable und
+einer/mehreren unabhängigen Variablen untersucht. Bei allen Arten von
+Logit-Modellen können die unabhängigen Variablen (erklärende oder
+Kovariablen) beliebig skaliert sein.
 
 Im Unterschied zu der klassischen linearen Regression, welche den wahren
 Wert einer Zielvariable vorhersagt, interessiert sich das binäre
@@ -205,11 +214,14 @@ Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt. In
 Anlehnung an Schlittgen, R. (2013) können Modelle zu GLMs zugeordnet
 werden, wenn sie: 1. 2.
 
+\newpage 
+
 \subsection{Modellspezifikation}\label{modellspezifikation}
 
-Die folgende Modellspezifikation basiert sich auf dem Buch
-\emph{Regressionsanalysen mit R}, Kapitel 9.1 (Schlittgen 2013,
-S.215-225)
+Die folgende Modellspezifikation basiert sich auf Kapitel 9.1 aus dem
+Buch \emph{Regressionsanalysen mit R} (Schlittgen
+\protect\hyperlink{ref-schlittgen2013regressionsanalysen}{2013},
+S.215-225).
 
 Gegeben seien n unabhängige Beobachtungen \(y_1, y_2, ...,y_n\) der
 binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
@@ -319,7 +331,14 @@ Regressionskurven, die durch das Maximum Likelihood optimiert werden
 sollen. Es gibt unendlich viele solche Kurven. Das Ziel ist es, die
 Kurve mit dem höchsten Maximum Likelihood herauszufinden.
 
-\includegraphics{logisticRegression_files/figure-latex/unnamed-chunk-2-1.pdf}
+\begin{figure}[h]
+
+{\centering \includegraphics{logisticRegression_files/figure-latex/unnamed-chunk-2-1} 
+
+}
+
+\caption{Beispielshafte logistische Regressionskurve}\label{fig:unnamed-chunk-2}
+\end{figure}
 
 Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit
 für die empirischen Beobachtungswerte zu maximieren. Dafür kommt die
@@ -483,8 +502,9 @@ Eingesetzt in Gleichung 17 ergibt sich: \[
 \end{aligned} 
 \]
 
-In Anlehnung an \ldots{} wird demnächst die Newton-Raphson-Methode
-anhand einem Pseudocode näher erläutert: \[
+In Anlehnung an (Quinn \protect\hyperlink{ref-quinn2001newton}{2001})
+wird demnächst die Newton-Raphson-Methode anhand einem Pseudocode näher
+erläutert: \[
 \begin{aligned}
 &1 \quad \mathbf{function}(X, y): \\
 &2 \qquad \quad   \mathbf{initialisiere} \ \ \beta_0,\ maxIteration,\ i,\ tolerance,\ diff,\ M \\
@@ -872,6 +892,10 @@ Beispielsdatensatzes in der Extra-Vignette umgesetzt.
 \addcontentsline{toc}{section}{Literaturverzeichnis}
 
 \hypertarget{refs}{}
+\hypertarget{ref-quinn2001newton}{}
+Quinn, Kevin. 2001. ``The Newton Raphson Algorithm for Function
+Optimization.'' \emph{University of Washington Seattle}.
+
 \hypertarget{ref-schlittgen2013regressionsanalysen}{}
 Schlittgen, Rainer. 2013. \emph{Regressionsanalysen Mit R}. Walter de
 Gruyter.
