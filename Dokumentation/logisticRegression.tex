@@ -207,6 +207,10 @@ werden, wenn sie: 1. 2.
 
 \subsection{Modellspezifikation}\label{modellspezifikation}
 
+Die folgende Modellspezifikation basiert sich auf dem Buch
+\emph{Regressionsanalysen mit R}, Kapitel 9.1 (Schlittgen 2013,
+S.215-225)
+
 Gegeben seien n unabhängige Beobachtungen \(y_1, y_2, ...,y_n\) der
 binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
 \(\mathbf{Y}\) ist die Binomialverteilung:
@@ -263,11 +267,14 @@ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung
 (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen
 Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der
 Responsefunktion die standardisierte logistische Verteilung verwendet:
+
 \[
 F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \quad (2)
 \] Da durch die Responsefunktion die Eintrittwahrscheinlichkeit
 \(\pi_i\) modelliert werden soll, ergibt sich die Gleichung für das
-binäre Logit-Modell wie folgt: \[
+binäre Logit-Modell wie folgt:
+
+\[
 \pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \quad (3)
 \] Dabei kann \(\pi_i\) maximal den Wert 1 nehmen, wenn \(\exp(\eta_i)\)
 sehr groß ist und minimal den Wert 0, wenn \(\exp(\eta_i)\) sehr nah
@@ -309,12 +316,13 @@ werden. Dementsprechend wird bei dem binären Logit-Modell die sogenannte
 Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung
 .. zeigt ein Beispiel mit zwei mögliche binäre logistiche
 Regressionskurven, die durch das Maximum Likelihood optimiert werden
-sollen.
+sollen. Es gibt unendlich viele solche Kurven. Das Ziel ist es, die
+Kurve mit dem höchsten Maximum Likelihood herauszufinden.
 
 \includegraphics{logisticRegression_files/figure-latex/unnamed-chunk-2-1.pdf}
 
 Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit
-für die empirischen Beobachtungswerte zu maximieren.Dafür kommt die
+für die empirischen Beobachtungswerte zu maximieren. Dafür kommt die
 (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die
 Vorgehensweise zum Lösen der ML-Schätzung anhand der
 Log-Likelihood-Funktion wiedergegeben: 1. Maximum Likelihood Funktion 2.
@@ -411,8 +419,8 @@ s(\beta) &= \sum_{i = 1}^{n} \Bigg( y_i.\mathbf{x'}_i - \frac{\mathbf{x'}_i.\exp
 Da \(s(\beta)\) wegen exponentiellen Komponenten nicht linear von
 \(\beta\) abhängt, wird zur Maximierung der Funktion ein iteratives
 Verfahren verwendet. Für diese Arbeit wird die Newton-Raphson-Methode
-ausgewählt. Dafür muss die zweite Ableitung der Funktion noch gebildet
-werden, welche als Hesse-Matrix (H) bezeichnet wird:
+(vgl. \ldots{}) ausgewählt. Dafür muss die zweite Ableitung der Funktion
+noch gebildet werden, welche als Hesse-Matrix (H) bezeichnet wird:
 
 \[
 \begin{aligned}
@@ -424,7 +432,11 @@ werden, welche als Hesse-Matrix (H) bezeichnet wird:
 
 Wegen \[
 \frac{\partial}{\partial t} \frac{f(t)}{g(t)} = \frac{f'(t).g(t) - g'(t).f(t)}{(g(t))^2}
-\] gilt es: \[
+\]
+
+gilt:
+
+\[
 \begin{aligned}
 \frac{\partial}{\partial \beta} s(\beta) = H(\beta) &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \Bigg( \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).(1+\exp(\mathbf{x'}_i.\beta))-\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta).\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2} \Bigg) \Bigg] \\
 &= - \sum_{i = 1}^{n} \Bigg[ \mathbf{x'}_i \ . \frac{\mathbf{x'}_i.\exp(\mathbf{x'}_i.\beta)}{(1+\exp(\mathbf{x'}_i.\beta))^2}  \Bigg] \\
@@ -467,26 +479,24 @@ Eingesetzt in Gleichung 17 ergibt sich: \[
 \begin{aligned}
 \beta_{n+1}\quad  = \qquad &\beta_n - \frac{s(\beta)}{s'(\beta)} \\
 \mathrel{\overset{(15),(16)}{=}} \quad &\beta_n - \frac{\ \  \mathbf{X}'.(y-\pi)}{- \mathbf{X}'\mathbf{M}\mathbf{X}} \\ \\
-= \qquad &\beta_n + (\mathbf{X}'\mathbf{M}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi)
-\end{aligned}
+= \qquad &\beta_n + (\mathbf{X}'\mathbf{M}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi) \quad (17)
+\end{aligned} 
 \]
 
 In Anlehnung an \ldots{} wird demnächst die Newton-Raphson-Methode
-anhand einem Pseudocode näher erläutert:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\DecValTok{1} \ControlFlowTok{function}\NormalTok{(X, y)}\OperatorTok{:}
-\DecValTok{2}\NormalTok{   initialisiere}\OperatorTok{:}\StringTok{ }\ErrorTok{$$}\NormalTok{\textbackslash{}beta_}\DecValTok{0}\OperatorTok{$}\ErrorTok{$}\NormalTok{, maxIteration, i, tolerance, diff, M}
-\DecValTok{3}   \ControlFlowTok{while}\NormalTok{ (diff }\OperatorTok{>}\StringTok{ }\NormalTok{tolerance)}
-\DecValTok{4}\NormalTok{       betaChange =}\StringTok{ }\ErrorTok{$}\NormalTok{(\textbackslash{}mathbf\{X\}}\StringTok{'\textbackslash{}mathbf\{M\}\textbackslash{}mathbf\{X\})^\{-1\}.\textbackslash{}mathbf\{X\}'}\NormalTok{.(y}\OperatorTok{-}\NormalTok{\textbackslash{}pi)}\OperatorTok{$}
-\DecValTok{5}       \DataTypeTok{diff =} 
-\DecValTok{6}       \DataTypeTok{i =}\NormalTok{ i }\OperatorTok{+}\StringTok{ }\DecValTok{1}
-\DecValTok{7}       \ControlFlowTok{if}\NormalTok{ (i }\OperatorTok{>}\StringTok{ }\NormalTok{maxIteration)}
-\DecValTok{8}            \ControlFlowTok{break}
-\DecValTok{9}\NormalTok{ end}
-\end{Highlighting}
-\end{Shaded}
+anhand einem Pseudocode näher erläutert: \[
+\begin{aligned}
+&1 \quad \mathbf{function}(X, y): \\
+&2 \qquad \quad   \mathbf{initialisiere} \ \ \beta_0,\ maxIteration,\ i,\ tolerance,\ diff,\ M \\
+&3 \qquad \quad  \mathbf{while} \ (diff > tolerance) \\
+&4 \qquad \qquad \quad betaChange = (\mathbf{X}'\mathbf{M}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi) \\
+&5 \qquad \qquad \quad diff = | betaChange| \\
+&6 \qquad \qquad \quad      i = i + 1 \\
+&7 \qquad \qquad \quad      \mathbf{if} \ (i > maxIteration): \\
+&8  \qquad \qquad \qquad \qquad          break \\ 
+&9 \quad \bf{end} 
+\end{aligned}
+\]
 
 Es wird eine zulässige Startlösung \(\beta_0\) initialisiert. Je näher
 \(s(\beta_0)\) an 0 liegt, umso schneller sollte die Laufzeit der
@@ -495,7 +505,7 @@ herauszufinden, ob es sich lohnt, eine gute Startlösung festzustellen.
 
 \emph{tolerance} ist in der Regel sehr klein positiv und dient als
 Indikator für die Konvergenz des Algorithmus. Grundsätzlich sollte die
-Differenz \emph{diff} = \((\beta_{i+1} - \beta_i]\) nach jeder Iteration
+Differenz \emph{diff} = \(|\beta_{i+1} - \beta_i|\) nach jeder Iteration
 immer kleiner werden. Wenn der Algorithmus konvergiert, wird nach einer
 bestimmten Anzahl an Iterationen diese Differenz kleiner als der
 vorgegebene Konvergenzwert. Wenn die Differenz immer größer als der
@@ -506,10 +516,40 @@ Erreichung der maximalen Anzahl an Iterationen (\emph{maxIteration}).
 \subsection{Intepretation der
 Koeffizienten}\label{intepretation-der-koeffizienten}
 
-Die Bruchrechnung \(\frac{\pi_i}{1-\pi_i}\) (siehe Gleichung 3) spielt
-bei dem binären Logit-Modell eine besondere Rolle, weil sie der
-Verbindung zwischen der Eintrittswahrscheinlichkeit und der
-Gegenwahrscheinlichkeit direkt widerspiegelt.
+Im Unterschied zu der linearen Regression lassen sich bei dem binären
+Logit-Modell die Koeffizienten nicht direkt interpretieren, da die
+Eintrittswahrscheinlichkeit von \(\beta\) durch eine komplexe Funktion
+abhängig ist (siehe Gleichung 3). Die Bruchrechnung
+\(\frac{\pi_i}{1-\pi_i}\) (Gleichung 4) spielt bei dem binären
+Logit-Modell eine besondere Rolle, weil sie der Verbindung zwischen der
+Eintrittswahrscheinlichkeit und der Gegenwahrscheinlichkeit direkt
+widerspiegelt. Dieses wird als \textbf{Odds} bezeichnet. Der Begriff
+\textbf{Chance} ist eine andere Möglichkeit, die \textbf{Odds}
+darzustellen. Beispielsweise wird beim Münzwurf von einer 1:1-Chance für
+Kopf bespochen, da die Wahrscheinlichkeiten von Kopf und Zahl gleich 0.5
+sind und der Odd somit 1 ist. \textbf{Odds} lassen sich wie folgt
+zerlegen: \[
+\begin{aligned}
+Odd(\pi_i) = \frac{P(Y = 1)}{P(Y=0)} = \frac{\pi_i}{1-\pi_i} &\mathrel{\overset{(4)}{=}} \exp(\eta_i) \\ &\mathrel{\overset{(1)}{=}} \  \exp(\beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip}) \\ \\
+&= \ \exp(\beta_0).\exp(\beta_1.x_{i1}).\exp(\beta_2.x_{i2}) ... \exp(\beta_p.x_{ip})
+\end{aligned}
+\]
+
+Wenn sich irgendein \(x_{ij}\) um 1 erhöht, folgt
+\(\exp(\beta_j.(x_{ij}+1)) = exp(\beta_j.x_{ij}+\beta_j) = \exp(\beta_j.x_{ij}).\exp(\beta_j)\).
+Das Verhältnis von zwei Odds (\textbf{Odds Ratio}) beträgt somit:
+
+\[
+\mathbf{OR} = \frac{Odd(\pi_i|x_{ij}+1)}{Odd(\pi_i|x_{ij})} = \exp(\beta_j)
+\]
+
+Die Chance, \(\mathbf{Y} = 1\) zu erhalten, verändert sich um
+\(\exp(\beta_j)\)-mal, wenn \(\mathbf{X}_j\) um 1 steigt. Ist
+\(\beta_j > 0\) und somit \(\exp(\beta_j) > 1\), steigt die Chance der
+Eintrittswahrscheinlichkeit. Ist \(\beta_j = 0\) und somit
+\(\exp(\beta_j) = 1\), bleibt die Chance der Eintrittswahrscheinlichkeit
+gleich. Ist \(\beta_j < 0\) und somit \(\exp(\beta_j) < 1\), sinkt die
+Chance der Eintrittswahrscheinlichkeit.
 
 \section{Implementierung in R}\label{implementierung-in-r}
 
@@ -570,6 +610,8 @@ ausgeführt werden:
 \end{Highlighting}
 \end{Shaded}
 
+Die Extra-Vignette wird demnächst in der Help-Seite angezeigt.
+
 \subsection{Implementierung der
 Maximum-Likelihood-Schätzung}\label{implementierung-der-maximum-likelihood-schatzung}
 
@@ -627,21 +669,22 @@ absolute Veränderung der Lösungsgüte kleiner als dieser Wert ist. Das
 nächste Abbruchskriterium ist die maximale Anzahl der Iterationen.
 
 Solange die beiden Abbruchskriterien nicht erreicht sind, erfolgt in der
-Newton-Raphson-Schleife folgender iterativer Vorgang:
+Newton-Raphson-Schleife folgender iterativer Vorgang, welcher sich auf
+dem erklärten Pseudocode basiert:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \ControlFlowTok{while}\NormalTok{ (diff }\OperatorTok{>}\StringTok{ }\NormalTok{tolerance }\OperatorTok{&}\StringTok{ }\NormalTok{i }\OperatorTok{<}\StringTok{ }\NormalTok{maxIteration) \{}
         
-    \CommentTok{# berechne die Wahrscheinlichkeit}
+    \CommentTok{# berechne die Wahrscheinlichkeit (siehe Gleichung 4)}
 \NormalTok{    eta <-}\StringTok{ }\NormalTok{X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta}
 \NormalTok{    exp_eta <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(eta)}
 \NormalTok{    p <-}\StringTok{ }\KeywordTok{as.vector}\NormalTok{(exp_eta }\OperatorTok{/}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\NormalTok{exp_eta))}
     
-    \CommentTok{# aktualisiere ...}
+    \CommentTok{# aktualisiere diagonale Matrix }
 \NormalTok{    M <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(p }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{p))}
     
-    \CommentTok{# berechne die Änderung von Beta}
+    \CommentTok{# berechne die Änderung von Beta (siehe Gleichung 17)}
 \NormalTok{    betaChange <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{M }\OperatorTok{%*%}\StringTok{ }\NormalTok{X) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{(y }\OperatorTok{-}\StringTok{ }\NormalTok{p)}
     
     \CommentTok{# aktualisiere Beta}
@@ -659,10 +702,6 @@ Newton-Raphson-Schleife folgender iterativer Vorgang:
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
-
-Die Änderung von \(\beta\) führt dazu, dass nach jeder Iteration
-ebenfalls die Eintrittswahrscheinlichkeit sowie \ldots{} Matrix neu
-definiert werden müssen.
 
 Als Output der Funktion maxLikeEst werden folgende Parameter in ein
 Objekt gespeichert, um mit den Werten aus dem R-Standard-Modell zu
@@ -690,8 +729,9 @@ vergleichen.
 Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual
 und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der
 Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der Funktion
-\emph{maxLikeEst} mit dem Standardmodell werden die ML-Schätzer und die
-Kovarianzmatrix zurückgegeben.
+\emph{maxLikeEst} mit dem Standardmodell werden die geschätzen
+Koeffizienten \(\beta\) und die Kovarianzmatrix zurückgegeben, wobei
+sich die Kovarianzmatrix wie folgt berechnen lässt:
 
 \subsection{\texorpdfstring{Definiere Klasse
 ``logitMod''}{Definiere Klasse logitMod}}\label{definiere-klasse-logitmod}
@@ -710,11 +750,11 @@ definiert:
 \NormalTok{    X <-}\StringTok{ }\KeywordTok{model.matrix}\NormalTok{(formula, modelFrame)}
 \NormalTok{    y <-}\StringTok{ }\KeywordTok{model.response}\NormalTok{(modelFrame)}
     
-    \CommentTok{# # falls y nicht als 0-1/Variable eingegeben wird}
-    \CommentTok{# if (!(0 %in% y && 1 %in% y)) \{}
-    \CommentTok{#     y <- factor(y, labels = c(0,1))}
-    \CommentTok{# \}}
-    \CommentTok{# y <- as.numeric(as.character(y))}
+    \CommentTok{# falls y nicht als 0-1/Variable eingegeben wird}
+    \ControlFlowTok{if}\NormalTok{ (}\OperatorTok{!}\NormalTok{(}\DecValTok{0} \OperatorTok{%in%}\StringTok{ }\NormalTok{y }\OperatorTok{&&}\StringTok{ }\DecValTok{1} \OperatorTok{%in%}\StringTok{ }\NormalTok{y)) \{}
+\NormalTok{        y <-}\StringTok{ }\KeywordTok{factor}\NormalTok{(y, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\NormalTok{    \}}
+\NormalTok{    y <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.character}\NormalTok{(y))}
     
     \CommentTok{# erstelle eine Objekt aus der maxLikeEst-Funktion}
 \NormalTok{    result <-}\StringTok{ }\KeywordTok{maxLikeEst}\NormalTok{(y, X)}
@@ -743,8 +783,8 @@ Da sich die Objekte von der Klasse ``logitMod'' ähnlich wie Objekte von
 dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus
 werden die Zielvariable sowie die Designmatrix entnommen und
 anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird
-das Null-Modell erstellt und ebenfalls in das ``Hauptobjekt'' für
-leichteren späteten Aufruf gespeichert.
+das Null-Modell erstellt und ebenfalls in das ``Hauptobjekt''
+gespeichert, um die Null-Devianz vom Logit-Modell einfacher aufzurufen.
 
 \subsection{Definiere S3-Methoden}\label{definiere-s3-methoden}
 
@@ -827,6 +867,14 @@ Beispielsdatensatzes in der Extra-Vignette umgesetzt.
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
+
+\section*{Literaturverzeichnis}\label{literaturverzeichnis}
+\addcontentsline{toc}{section}{Literaturverzeichnis}
+
+\hypertarget{refs}{}
+\hypertarget{ref-schlittgen2013regressionsanalysen}{}
+Schlittgen, Rainer. 2013. \emph{Regressionsanalysen Mit R}. Walter de
+Gruyter.
 
 
 \end{document}
