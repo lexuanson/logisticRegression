@@ -150,6 +150,7 @@ logitMod <- function(formula, data) {
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' print(logm)
 #' @importFrom stats coef
+#' @export
 print.logitMod <- function(x, ...){
     
     cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
@@ -195,6 +196,7 @@ print.logitMod <- function(x, ...){
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' summary(logm)
 #' @importFrom stats pnorm
+#' @export
 summary.logitMod <- function(object, ...) {
     
     # Koeffizienten Standardfehler
@@ -243,6 +245,7 @@ summary.logitMod <- function(object, ...) {
 #' logm <- logitMod(formula = admit ~ gre + gpa + rank, data = testData)
 #' summary(logm)
 #' @importFrom stats printCoefmat 
+#' @export
 print.summary.logitMod <- function(x, ...) {
     
     cat("Call: ", deparse(x$call), fill = TRUE)
