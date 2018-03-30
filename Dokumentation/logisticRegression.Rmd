@@ -1,17 +1,18 @@
 ---
-output: 
-  pdf_document: 
+title: "<h2> __Logistische Regression__ </h2>"
+author: "Xuan Son Le (4669361), Freie Universität Berlin"
+date: "02/04/2018"
+output:
+  word_document: default
+  pdf_document:
+    includes:
+      in_header: figureCaption.tex
     keep_tex: yes
     latex_engine: pdflatex
     number_sections: yes
-    includes:
-      in_header: figureCaption.tex
-bibliography: verzeichnis.bib
-title: <h2> __Logistische Regression__ </h2>
-author: "Xuan Son Le (4669361), Freie Universität Berlin"
-date: "02/04/2018"
+link-citations: yes
 fontsize: 12pt
-link-citations: yes 
+bibliography: verzeichnis.bib
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.pos = 'h', 
@@ -47,13 +48,13 @@ Graphisch lässt sich festlegen, dass die lineare Regression den Wertebereich [0
 
 Im Unterschied zu der klassischen linearen Regression, welche den wahren Wert einer Zielvariable vorhersagt, interessiert sich das binäre Logit-Modell eher für die Wahrscheinlichkeit, dass die Zielvariable den Wert 1 annimmt. Das Hauptziel vom binären Logit-Modell ist es, die Wahrscheinlichkeit für den Eintritt der Zielvariable vorherzusagen. Dadurch soll die folgende theoretische Fragestellung beantwortet werden: *Wie stark ist der Einfluss von den unabhängigen (erklärenden) Variablen auf die Wahrscheinlichkeit, dass die abhängige (zu erklärende / Response) Variable eintritt beziehungsweise den Wert 1 annimmt?* In der Praxis kann diese Fragestellung beispielsweise so formuliert werden: "Haben Alter, Geschlecht, Berufe oder andere Merkmale der Kunden Einfluss auf die Wahrscheinlichkeit, dass sie ein Kredit rechtzeitig zurückzahlen?" oder "Lässt sich die Wahrscheinlichkeit, dass es regnet, durch die Temparatur, die Windstärke oder Sonnenstrahlungsintensität vorhersagen?". 
 
+\newpage 
 
 # Das binäre Logit-Modell
-Das Logit-Modell ist eine Methode aus der Algorithmenklasse namens *Generalisierte Lineare Modelle* (engl. generalized linear model, kurz GLM), welche eine Verallgemeinerung des klassischen linearen Regressionsmodells anstrebt. Dazu gehören noch die klassische lineare Regression, Probitmodell und Poisson-Regression. Die Grundidee von GLM ist die Transformation der linearen Regressionsgleichung, so dass der Wertebereich der vorhergesagten Zielvariable dem gewünschten entspricht. Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt. In Anlehnung an @schlittgen2013regressionsanalysen, S.238 können Modelle zu GLMs zugeordnet werden, wenn sie:
+Das Logit-Modell ist eine Methode aus der Algorithmenklasse namens *Generalisierte Lineare Modelle* (engl. generalized linear model, kurz GLM), welche eine Verallgemeinerung des klassischen linearen Regressionsmodells anstrebt. Dazu gehören noch die klassische lineare Regression, Probitmodell und Poisson-Regression. Der grundliegende Ansatz von GLM ist die Transformation der linearen Regressionsgleichung, so dass der Wertebereich der vorhergesagten Zielvariable dem gewünschten entspricht. Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt. In Anlehnung an @schlittgen2013regressionsanalysen, S.238 können Modelle zu GLMs zugeordnet werden, wenn sie:
     1. 
     2. 
-    
-\newpage 
+
 
 ## Modellspezifikation
 
@@ -70,6 +71,7 @@ Gegeben seien n unabhängige Beobachtungen $y_1, y_2, ...,y_n$ der binären Ziel
     1 & x_{n1} & x_{n2} & \cdots & x_{np}
  \end{pmatrix}
 \]
+
 Die dazugehörige lineare Regressionsgleichung lautet: $\mathbf{Y} = \mathbf{X}.\beta + \epsilon$ mit $\epsilon = (\epsilon_1, \epsilon_2, \epsilon_3, ..., \epsilon_n)$ als die Abweichung der einzelnen Schätzungen gegenüber dem wahren Wert, wobei $\mathbf{Y}$ ein (nx1)-Vektor, $\mathbf{X}$ ein (nxp) und $\beta_i$ sowie $\epsilon_i$ ein (px1)-Vektor ist.
 
 Die einzelne Beobachtung lässt sich wie folgt darstellen: 
@@ -296,12 +298,12 @@ Die Chance, $\mathbf{Y} = 1$ zu erhalten, verändert sich um $\exp(\beta_j)$-mal
 
 # Implementierung in R
 
-Im Folgenden wird die Funktionalität von dem Paket **logitModell** erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären Logit-Modell programmiert darzustellen. Das Paket besteht aus dem R-Code, welcher anhand dem manuell berechneten Maximum Likelihood ein Objekt von der Klasse *logitMod* erstellt und anschließend drei S3 Methoden für diese Klasse (print, summary und plot) definiert, und einer Vignette, welche den R-Code anhand einem konkreten Beispiel ausführt.
+Im Folgenden wird die Funktionalität von dem Paket **logitModell** erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären Logit-Modell programmiert darzustellen. Das Paket besteht aus dem R-Code, welcher anhand dem manuell berechneten Maximum Likelihood ein Objekt von der Klasse *logitMod* erstellt und anschließend drei S3 Methoden für diese Klasse (print, summary und plot) definiert, und einer Extra-Vignette, welche den R-Code anhand einem konkreten Beispiel ausführt.
 
 ## Beispieldatensatz
 Der Beispieldatensatz wird im Folgenden verwendet, um die Richtigkeit und Vollständigkeit der Ergebnisse der implementierten Methode im Vergleich zu der R-Standardmethode für Logit-Modell *glm(..., family = "binomial")* zu testen. Die binäre Responsevariable heißt *admit*, welche besagt ob ein Kandidat eine Zulassung bekommt. Zudem enthält der Datensatz drei unabhängige Variablen: *gre*, *gpa* (metrisch) und *rank* (kategorial). Der Datensatz soll ein Modell unterstützen, welche die Abhängigkeit von der Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie dem Ruf von der angestrebten Institution. 
 
-Zunächst wird der Datensatz importiert. Dabei wird die Zielvariable aus dem Datensatz entnommen und in einem Vektor gespeichert. Da diese schon als 0/1-Variable vorgegeben wird, besteht es in diesem Fall keine Notwendigkeit, die Zielvariable zu faktorisieren. Der Code funktioniert allerdings ebenfalls mit Zielvariable, welche zum Beispiel als weiblich/männlich oder Erfolg/kein Erfolg kodiert wird und transformiert diese in eine 0/1-Variable. 
+Es muss immer zunächst überprüft werden, in welcher Art die Zielvariable eingegeben wird, denn das Maximum Likelihood braucht als Input numerische Vektoren für weitere Berechnungen. Die folgenden Codezeilen transformiert beispielsweise weiblich/männlich- oder Erfolg/kein Erfolg-Zielvariablen in 0/1-Variable. Dieser Schritt wird extra gemacht, damit sich das manuelle Modell im Hinblick auf den Input gleich verhält wie das Standardmodell. 
 
 ```{r eval = FALSE, results="hide"} 
 # sei y die eingegebene Zielvariable
@@ -310,8 +312,6 @@ if (!(0 %in% y && 1 %in% y)) {
 }
 y <- as.numeric(as.character(y))
 ```
-
-Es muss immer vorab überprüft werden, in welcher Art die Zielvariable eingegeben wird, denn das Maximum Likelihood braucht als Input numerische Vektoren für weitere Berechnungen. Dieser Schritt wird extra gemacht, damit sich das manuelle Modell im Hinblick auf den Input gleich verhält wie das Standardmodell. 
 
 Für das Paket wird eine Extra-Vignette in R aufgebaut, um die Ergebnisse anhand dem Beispieldatensatz zu verdeutlichen. Zum Aufruf der Extra-Vignette muss der folgende Code bei dem Errichten des Paketes ausgeführt werden:
 
@@ -324,7 +324,7 @@ Die Extra-Vignette wird demnächst in der Help-Seite angezeigt.
 
 ## Implementierung der Maximum-Likelihood-Schätzung
 
-Bevor das eigentliche Logit-Modell erstellt wird, wird in diesem Abschnitt die Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der Code dazu ist auf Basis von dem dazugehörigen theoretischen Teil aufgebaut. Die Funktion *maxLikeEst* dient dazu, anhand der Newton-Raphson-Methode das maximale Likelihood zu berechnen. Als Input werden ein Vektor (Zielvariable) und eine Matrix (Designmatrix) benötigt. Als Output wird ein Objekt erwartet, welches die Maximum-Likelihood-Schätzer enthält. Daneben werden ebenfalls die ersten notwendigen Kennwerte für den Aufbau von S3-Methoden in dem Objekt gespeichert.
+Bevor das eigentliche Logit-Modell erstellt wird, wird die Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der Code dazu ist auf Basis von dem dazugehörigen theoretischen Teil aufgebaut. Die Funktion *maxLikeEst* dient dazu, anhand der Newton-Raphson-Methode das maximale Likelihood zu berechnen. Als Input werden ein Vektor (Zielvariable) und eine Matrix (Designmatrix) benötigt. Als Output wird ein Objekt erwartet, welches die Maximum-Likelihood-Schätzer enthält. Daneben werden ebenfalls die ersten notwendigen Kennwerte für den Aufbau von S3-Methoden in dem Objekt gespeichert.
 
 Der Aufbau der Funktion maxLikeEst sieht so aus:
 ```{r eval = FALSE, results="hide"}
@@ -406,123 +406,26 @@ vcov <- solve(t(X) %*% M %*% X)
 maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
 ```
 
-Für die Print-Methode werden die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Dieses wird demnächst in der Print-Methode näher erläutert. Zum Vergleich der Ergebnisse der Funktion *maxLikeEst* mit dem Standardmodell werden die geschätzen Koeffizienten $\beta$ und die Kovarianzmatrix zurückgegeben, wobei sich die Kovarianzmatrix wie folgt berechnen lässt:
+Um anschließend die Print-Methode zu definieren, werden hierbei die Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood bestimmt. Die Freiheitsgrade ist die Differenz zwischen der Anzahl an Beobachtungen (entspricht Zeilenanzahl von der Designmatrix) und der Anzahl an Parameter (entspricht Spaltenanzahl von der Designmatrix). Da das Null-Modell nur den Interzept enthält, ist hat die Designmatrix nur eine Spalte. Die Devianzresiduen lassen sich anhand der folgenden Formel berechnet:
+$$
+
+$$
+
+Die Formel der Kovarianzmatrix lautet:
+$$
+
+$$
+
+Um den Maximumwert der Log-Likelihood-Funktion zu erhalten, muss lediglich der erhaltene ML-Schätzer in Gleichung ... eingesetzt werden.
+
+Zum Vergleich der Ergebnisse der Funktion *maxLikeEst* mit dem Standardmodell werden die geschätzen Koeffizienten $\beta$ und die Kovarianzmatrix zurückgegeben, wobei sich die Kovarianzmatrix wie folgt berechnen lässt:
 
 ## Definiere Klasse "logitMod"
 
-Um anschließend mit S3-Methoden zu arbeiten, muss eine Klasse definiert werden, welche die Objekte aus der Funktion *maxLikeEst* umfasst. Diese Klasse wird als "logitMod" bezeichnet und wird wie folgt definiert:
-
-```{r eval = FALSE, results="hide"}
-logitMod <- function(formula, data) {
-    
-    # initialisiere y (Zielvariable) und X (Designmatrix)
-    modelFrame <- model.frame(formula, data)
-    X <- model.matrix(formula, modelFrame)
-    y <- model.response(modelFrame)
-    
-    # falls y nicht als 0-1/Variable eingegeben wird
-    if (!(0 %in% y && 1 %in% y)) {
-        y <- factor(y, labels = c(0,1))
-    }
-    y <- as.numeric(as.character(y))
-    
-    # erstelle eine Objekt aus der maxLikeEst-Funktion
-    result <- maxLikeEst(y, X)
-    
-    # erstelle das Null Modell und speichere es in die Ergebnisliste
-    nullModell <- maxLikeEst(X = matrix(rep(1, times = nrow(X)), ncol = 1), 
-                             y = y)
-    result$nullModell <- nullModell
-    
-    # speichere notwendige Parameter in die Ergebnisliste
-    result$formula <- formula
-    result$call <- match.call()
-    result$X <- X
-    result$y <- y
-    
-    # ordne die Ergebnisliste der Klasse "logitMod" zu
-    class(result) <- "logitMod"
-    
-    return(result)
-}
-```
-
-Da sich die Objekte von der Klasse "logitMod" ähnlich wie Objekte von *glm(...,family = "binomial")* verhalten sollen, werden dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus werden die Zielvariable y sowie die Designmatrix $\mathbf{X}$ entnommen und anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird das Null-Modell erstellt und ebenfalls in das "Hauptobjekt" gespeichert, um die Null-Devianz vom Logit-Modell einfacher aufzurufen. Das Null-Modell besteht lediglich aus der Zielvariable und dem Interzept $\beta_0$, das heißt es besteht keine Abhängigkeit von den Kovariaten.  
+Um anschließend mit S3-Methoden zu arbeiten, muss eine Klasse definiert werden, welche die Objekte aus der Funktion *maxLikeEst* umfasst. Diese Klasse wird als "logitMod". Da sich die Objekte von der Klasse "logitMod" ähnlich wie Objekte von *glm(...,family = "binomial")* verhalten sollen, werden dementsprechend als Input ein Formula und ein Datensatz erwartet. Daraus werden die Zielvariable y sowie die Designmatrix $\mathbf{X}$ entnommen und anschließend in die Funktion maxLikeEst eingesetzt. Darüber hinaus wird das Null-Modell erstellt und ebenfalls in das "Hauptobjekt" gespeichert, um die Null-Devianz vom Logit-Modell einfacher aufzurufen. Das Null-Modell besteht lediglich aus der Zielvariable und dem Interzept $\beta_0$, das heißt es besteht keine Abhängigkeit von den Kovariaten.  
 
 ## Definiere S3-Methoden
 
-In diesem Abschnitt wird die Implementierung von drei S3-Methoden anhand bisherigen Ergebnissen vorgestellt. Der Code wird ebenfalls anhand des Beispielsdatensatzes in der Extra-Vignette umgesetzt.
-
-### Print-Methode
-```{r}
-print.logitMod <- function(x, ...){
-    
-    cat("Call: ", paste0(deparse(x$call)), fill = TRUE)
-    
-    cat("\n\nCoefficients:\n")
-    
-    print.default(format(coef(x)[,1], digits = 4L),
-                  print.gap = 1L, quote = FALSE, right = TRUE)
-    
-    cat("\nDegrees of Freedom: ", x$dfNull, 
-        " Total (i.e. Null); ", x$dfRes, " Residual")
-    
-    # Berechnung von null deviance, residual deviance & aic
-    nullDeviance <- -2 * x$nullModell$maxLogLikeValue
-    x$nullDeviance <- nullDeviance
-    residualDeviance <- -2 * x$maxLogLikeValue
-    x$residualDeviance <- residualDeviance
-    x_AIC <- (-2*x$maxLogLikeValue + 2*ncol(x$X))
-    x$AIC <- x_AIC
-    
-    cat("\nNull Deviance:\t", round(nullDeviance,1))
-    cat("\nResidual Deviance:", round(residualDeviance,1), "\t", 
-        "AIC: ", round(x_AIC,1), "\n") 
-    
-    cat("\nNumber of Fisher Scoring iterations: ", x$anzahlIteration, "\n")
-    
-    # invisibly return linMod object
-    invisible(x)
-    
-}
-```
-
-### Summary Methode
- 
-```{r}
-summary.logitMod <- function(object, ...) {
-    
-    # Koeffizienten Standardfehler
-    object$betaStandardError  <- as.matrix(sqrt(diag(object$vcov)))
-    
-    # z-Statistik
-    zStat <- object$coefficients / object$betaStandardError
-    object$zStat <- zStat
-    
-    # p-Werte
-    pValue <- 2 * pnorm(-abs(zStat))
-    object$pValue <- pValue
-    
-    # Zusammenfassung der Werte für die Koeffizienten
-    object$coefficients <- cbind("Estimate" = object$coefficients[,],
-                            "Std. error" = object$betaStandardError[,],
-                            "z value" = object$zStat[,],
-                            "Pr(>|z|)" = object$pValue[,])
-    
-    # Berechnung von nullDeviance, residualDeviance & aic
-    nullDeviance <- -2 * object$nullModell$maxLogLikeValue
-    object$nullDeviance <- nullDeviance
-    residualDeviance <- -2 * object$maxLogLikeValue
-    object$residualDeviance <- residualDeviance
-    x_AIC <- (-2*object$maxLogLikeValue + 2*ncol(object$X))
-    object$AIC <- x_AIC
-    
-    class(object) <- "summary.logitMod"
-    
-    return(object)
-    
-}
-```
 
 # Literaturverzeichnis
 
