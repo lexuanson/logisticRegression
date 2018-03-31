@@ -250,9 +250,11 @@ auf Kapitel 9.1 aus dem Buch \emph{Regressionsanalysen mit R}
 \protect\hyperlink{ref-schlittgen2013regressionsanalysen}{2013},
 S.215-225) und Kapitel 4.1 der Vorlesungsfolien vom Modul
 \emph{Statistische Modellierung} im Wintersemester 2016/2017 an der
-Freie Universität Berlin. Gegeben seien n unabhängige Beobachtungen
-\(y_1, y_2, ...,y_n\) der binären Zielvariable \(\mathbf{Y}\). Ein
-Verteilungsmodell für \(\mathbf{Y}\) ist die Binomialverteilung:
+Freie Universität Berlin.
+
+Gegeben seien n unabhängige Beobachtungen \(y_1, y_2, ...,y_n\) der
+binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
+\(\mathbf{Y}\) ist die Binomialverteilung:
 \(\mathbf{Y}_i \sim B(1, \pi_i)\) mit \(\pi_i = P(Y_i = 1)\). Für diese
 Arbeit wird \(\pi_i = (\pi_1, \pi_2, ..., \pi_n)\) als die
 Eintrittwahrscheinlichkeit von der einzelnen \(\mathbf{Y}_i\) benannt.
@@ -334,7 +336,10 @@ werden, ergibt sich schließlich die Logit-Linkfunktion: \[
 
 Es gilt nämlich: \[
 \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \ln(\frac{\pi_i}{1-\pi_i}) \quad (5)
-\] \#\# Maximum Likelihood Schätzung
+\]
+
+\subsection{Maximum Likelihood
+Schätzung}\label{maximum-likelihood-schatzung}
 
 Ähnlich wie bei der linearen Regression müssen bei dem binären
 Logit-Modell die unbekannten Parameter \(\beta_i\) (i =
@@ -367,9 +372,22 @@ Das Ziel der ML-Schätzung besteht darin, die Eintrittswahrscheinlichkeit
 für die empirischen Beobachtungswerte zu maximieren. Dafür kommt die
 (Log-)Likelihood-Funktion zum Einsatz. Im Folgenden wird die
 Vorgehensweise zum Lösen der ML-Schätzung anhand der
-Log-Likelihood-Funktion wiedergegeben: 1. Maximum Likelihood Funktion 2.
-Log-Likelihood-Funktion 3. Score-Funktion (erste Ableitung) 4. Hesse
-Matrix (zweite Ableitung) 5. Newton-Raphson-Methode
+Log-Likelihood-Funktion wiedergegeben:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Maximum Likelihood Funktion
+\item
+  Log-Likelihood-Funktion
+\item
+  Score-Funktion (erste Ableitung)
+\item
+  Hesse Matrix (zweite Ableitung)
+\item
+  Newton-Raphson-Methode
+\end{enumerate}
 
 \subsubsection{Maximum Likelihood
 Funktion}\label{maximum-likelihood-funktion}
@@ -420,10 +438,14 @@ logarithmisieren: \[
 = \quad &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + \ln \Big( \frac{1}{1+\exp(\eta_i)}\Big) \Bigg) \\
 = \quad &\sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + exp(\eta_i)) \Big) \quad (11)
 \end{aligned}
-\] \#\#\# Score-Funktion Zum Herausfinden des ML-Schätzers, welcher die
-log-Likelihood-Funktion optimiert, wird Gleichung (10) nach \(\beta\)
-differenziert. Die erste Ableitung von der log-Likelihood-Funktion wird
-als Score-Funktion benannt:
+\]
+
+\subsubsection{Score-Funktion}\label{score-funktion}
+
+Zum Herausfinden des ML-Schätzers, welcher die log-Likelihood-Funktion
+optimiert, wird Gleichung (10) nach \(\beta\) differenziert. Die erste
+Ableitung von der log-Likelihood-Funktion wird als Score-Funktion
+benannt:
 
 \[
 \begin{aligned}
@@ -596,15 +618,25 @@ Chance der Eintrittswahrscheinlichkeit.
 Im Folgenden wird die Funktionalität von dem Paket \textbf{logitModell}
 erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären
 Logit-Modell programmiert darzustellen. Das Paket besteht aus dem
-R-Code, welcher folgende Funktionen beinhaltet: *
-\textbf{maxLikeEst(y,X)}: berechnent das Maximum Likelihood *
-\textbf{logitMod(formula, data)}: erstellt Objekt mit der Klasse
-``logitMod'', um mit S3-Methoden zu arbeiten *
-\textbf{print.logitMod(x,..)}: Print-Methode *
-\textbf{summary.logitMod(object,..)}: Summary-Methode *
-\textbf{print.summary.logitMod(object,..)}: Bessere Einordnung der
-Ergebnisse aus der Summary-Methode * \textbf{plot.logitMod(x,..)}:
-Plot-Methode
+R-Code, welcher folgende Funktionen beinhaltet:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{maxLikeEst(y,X)}: berechnent das Maximum Likelihood
+\item
+  \texttt{logitMod(formula,\ data)}: erstellt Objekt mit der Klasse
+  ``logitMod'', um mit S3-Methoden zu arbeiten
+\item
+  \texttt{print.logitMod(x,..)}: Print-Methode
+\item
+  \texttt{summary.logitMod(object,..)}: Summary-Methode
+\item
+  \texttt{print.summary.logitMod(object,..)}: Bessere Einordnung der
+  Ergebnisse aus der Summary-Methode
+\item
+  \texttt{plot.logitMod(x,..)}: Plot-Methode
+\end{itemize}
 
 Alle diese Methoden werden in einer Extra-Vignette anhand einem
 konkreten Beispiel ausgeführt. Zum Aufruf der Extra-Vignette muss der
@@ -680,15 +712,16 @@ initialisiert, um anschließend in der Newton-Raphson-Schleife nach jeder
 Iteration aktualisiert zu werden. Tolerance ist der Wert, bei dem die
 Schleife terminiert, wenn die absolute Veränderung der Lösungsgüte
 kleiner als dieser Wert ist. Das nächste Abbruchskriterium ist die
-maximale Anzahl der Iterationen.
+maximale Anzahl der Iterationen. Solange die beiden Abbruchskriterien
+nicht erreicht sind, erfolgt in der Newton-Raphson-Schleife ein
+iterativer Vorgang, welcher sich auf dem erklärten Pseudocode (siehe
+Abschnitt ) basiert.
 
-Solange die beiden Abbruchskriterien nicht erreicht sind, erfolgt in der
-Newton-Raphson-Schleife ein iterativer Vorgang, welcher sich auf dem
-erklärten Pseudocode (siehe Abschnitt ) basiert. Nachdem der ML-Schätzer
-bestimmt wird, werden folgende Parameter berechnet. Diese Werte werden
-hierbei berechnet, um die Unabhängigkeit der S3-Methoden voneinander zu
-garantieren. Das bedeutet, dass beispielsweise \emph{summary()} ohne
-\emph{print()} aufgerufen werden kann.
+Nachdem der ML-Schätzer bestimmt wird, werden folgende Parameter
+berechnet. Diese Werte werden hierbei berechnet, um die Unabhängigkeit
+der S3-Methoden voneinander zu garantieren. Das bedeutet, dass
+beispielsweise \texttt{summary()} ohne \texttt{print()} aufgerufen
+werden kann.
 
 \begin{itemize}
 \item
@@ -708,7 +741,7 @@ garantieren. Das bedeutet, dass beispielsweise \emph{summary()} ohne
   berechnet: \[
   d_i = s_i.\sqrt{-2[y_i.\ln(\pi_i) + (1 - y_i).\ln(1 - \pi_i)]}
   \] mit \(s_i = 1\) wenn \(y_i = 1\) und \(s_i = -1\) wenn \(y_i = 0\).
-  Dieses gehört zu der Methode \emph{summary()}
+  Dieses gehört zu der Methode \texttt{summary()}
 \end{itemize}
 
 \begin{itemize}
@@ -718,20 +751,17 @@ garantieren. Das bedeutet, dass beispielsweise \emph{summary()} ohne
   Designmatrix) und der Anzahl an Parameter (entspricht Spaltenanzahl
   von der Designmatrix). Da das Null-Modell nur den Interzept enthält,
   ist hat die Designmatrix nur eine Spalte. Die Freiheitsgrade taucht
-  bei \emph{print()} und \emph{summary()} auf.
+  bei \texttt{print()} und \texttt{summary()} auf.
 \item
-  \textbf{angepasste Wahrscheinlichkeit}: entspricht die
+  \textbf{Angepasste Wahrscheinlichkeit}: entspricht die
   Eintrittswahrscheinlichkeit der einzelnen Beobachtungen, welche durch
   das Modell angepasst wird (siehe Gleichung \ldots{} für die
   Berechnung)
 \item
-  \textbf{Kovarianzmatrix}: die Kovarianzmatrix lässt wie folgt
-  berechnen:
+  \textbf{Kovarianzmatrix}: \(Cov(\beta) = (\mathbf{X'MX})^{-1}\). Dabei
+  wird \texttt{solve()} verwendet, um die Inversematrix von
+  \(\mathbf{X'MX}\) zu berechnen.
 \end{itemize}
-
-\$\$
-
-\$\$
 
 Alle der eben berechneten Werte werden in einem Objekt gespeichert,
 welches zu der Klasse ``logitMod'' zugeordnet wird.
@@ -751,10 +781,10 @@ Formula und ein Datensatz erwartet. Daraus erfolgt Folgendes:
   Ein Modellframe wird definiert, welcher alle gegebenen Daten anhand
   einem Dataframe widergibt.
 \item
-  Die Zielvariable y wird als \emph{model.response()} aus diesem
+  Die Zielvariable y wird als \texttt{model.response()} aus diesem
   Modellframe entnommen.
 \item
-  Die Designmatrix \(\mathbf{X}\) wird als \emph{model.matrix()} aus
+  Die Designmatrix \(\mathbf{X}\) wird als \texttt{model.matrix()} aus
   diesem Modellframe entnommen. Die Eins-Spalte für den Interzept wird
   automatisch erzeugt. Ebenfalls werden alle n-kategorialen Variablen
   als (n-1) Dummies-Variablen transformiert.
@@ -799,30 +829,38 @@ Berlin.
 
 Alle hierbei nötigen Werte werden bereit in das Objekt der Klasse
 ``logitMod'' gespeichert. Es geht bei der Print-Methode lediglich um die
-Einordnung der Werte in passendem Format. \emph{cat()} verknüpft der
+Einordnung der Werte in passendem Format. \texttt{cat()} verknüpft der
 betroffenen berechneten Werte mit den entsprechenden Begriffen, welche
-in der Konsole angezeigt werden sollen. \emph{print.default()} sorgt
+in der Konsole angezeigt werden sollen. \texttt{print.default()} sorgt
 dafür, dass die Werte der Koeffizienten exakt wie bei dem Standardmodell
-dargestellt werden. \emph{invisible()} wird schließlich ausgeführt, um
+dargestellt werden. \texttt{invisible()} wird schließlich ausgeführt, um
 einen verdoppelten Output zu vermeiden, weil ansonsten extra
-\emph{print()} ausgeführt werden muss.
+\texttt{print()} ausgeführt werden muss.
 
 \subsubsection{Summary-Methode}\label{summary-methode}
 
 In der Summary-Methode werden zunächst die bisher noch fehlende Werte
-berechnet: * \textbf{Standard Error} der Koeffizienten: entspricht der
-Wurzel von dem Diagonalen aus der Kovarianzmatrix. Der Standardfehler
-gibt an, inwieweit der geschätzte Koeffizient sich durchschnittlich
-schwankt, wenn die Stichprobe unendlich mal gezogen wird. *
-\textbf{z-Stat}: entspricht die Bruchrechnung der einzelnen
-Koeffizienten durch der betroffenen Standardabweichung, welche sich
-annährend über eine Normalverteilung verteilen sollte, wenn die
-Stichprobenumfang groß genug ist.\\
-* \textbf{p-Value}: zweiseitige
+berechnet:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Standard Error} der Koeffizienten: entspricht der Wurzel von
+  dem Diagonalen aus der Kovarianzmatrix. Der Standardfehler gibt an,
+  inwieweit der geschätzte Koeffizient sich durchschnittlich schwankt,
+  wenn die Stichprobe unendlich mal gezogen wird.
+\item
+  \textbf{z-Stat}: entspricht die Bruchrechnung der einzelnen
+  Koeffizienten durch der betroffenen Standardabweichung, welche sich
+  annährend über eine Normalverteilung verteilen sollte, wenn die
+  Stichprobenumfang groß genug ist.\\
+\item
+  \textbf{p-Value}: p-Wert für zweiseitige z-Test ist gleich
+\end{itemize}
 
 Bisher gibt die Summary-Methode eine Liste von allen dazugehörigen
 Werten in einer Liste zurück, was extrem unübersichtlich wäre.
-Demzufolge sorgt die Funktion \emph{print.summary()} für die richtige
+Demzufolge sorgt die Funktion \texttt{print.summary()} für die richtige
 Einordnung der jeweiligen Werten. Die meisten Werte müssen lediglich mit
 dem passenden Begriffen anhand \texttt{cat()} verknüpft werden. Für die
 Devianz-Residuen und Koeffiziententabelle werden zusätzlich folgende
@@ -841,7 +879,7 @@ Standardfunktionen verwendet:
   Signifikanzniveaus anzuzeigen.
 \end{itemize}
 
-Schließlich wird ebenfalls \emph{invisible()} aufgerufen, um eine
+Schließlich wird ebenfalls \texttt{invisible()} aufgerufen, um eine
 Verdoppelung des Outputs zu vermeiden.
 
 \subsubsection{Plot-Methode}\label{plot-methode}
