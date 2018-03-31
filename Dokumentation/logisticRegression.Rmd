@@ -389,17 +389,17 @@ Alle hierbei nötigen Werte werden bereit in das Objekt der Klasse "logitMod" ge
 
 ### Summary-Methode
 
-In der Summary-Methode werden zunächst lediglich bisher noch fehlende Werte berechnet:
-* **Standard Error** der Koeffizienten
-* **z-Stat**
-* **p-Value**
-*
+In der Summary-Methode werden zunächst die bisher noch fehlende Werte berechnet:
+* **Standard Error** der Koeffizienten: entspricht der Wurzel von dem Diagonalen aus der Kovarianzmatrix. Der Standardfehler gibt an, inwieweit der geschätzte Koeffizient sich durchschnittlich schwankt, wenn die Stichprobe unendlich mal gezogen wird.
+* **z-Stat**: entspricht die Bruchrechnung der einzelnen Koeffizienten durch der betroffenen Standardabweichung, welche sich annährend über eine Normalverteilung verteilen sollte, wenn die Stichprobenumfang groß genug ist.  
+* **p-Value**: zweiseitige
 
-Bisher gibt die Summary-Methode eine Liste von allen dazugehörigen Werten in einer Liste zurück, was extrem unübersichtlich wäre. Demzufolge sorgt die Funktion *print.summary()* für die richtige Einordnung der jeweiligen Werten.
+Bisher gibt die Summary-Methode eine Liste von allen dazugehörigen Werten in einer Liste zurück, was extrem unübersichtlich wäre. Demzufolge sorgt die Funktion *print.summary()* für die richtige Einordnung der jeweiligen Werten. Die meisten Werte müssen lediglich mit dem passenden Begriffen anhand `cat()` verknüpft werden. Für die Devianz-Residuen und Koeffiziententabelle werden zusätzlich folgende Standardfunktionen verwendet:
 
-*print.summaryDefault
-*printCoefmat
-*invisible
+* **print.summaryDefault**: fasst die Verteilung der Devianz-Residuen in einem Standardformat mit Minimum, Quantilen und Maximum zusammen.
+* **printCoefmat**: ordnet alle relevanten Werte in Bezug auf die Koeffizienten in einem Tabellenformat zu. Hierbei wird für `signif.legend = TRUE` entschieden, um ebenfalls die Signifikanzniveaus anzuzeigen.
+
+Schließlich wird ebenfalls *invisible()* aufgerufen, um eine Verdoppelung des Outputs zu vermeiden. 
 
 ### Plot-Methode
 

@@ -306,11 +306,15 @@ Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der
 Responsefunktion die standardisierte logistische Verteilung verwendet:
 \[
 F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \quad (2)
-\] Da durch die Responsefunktion die Eintrittwahrscheinlichkeit
-\(\pi_i\) modelliert werden soll, ergibt sich die Gleichung für das
-binäre Logit-Modell wie folgt: \[
+\]
+
+Da durch die Responsefunktion die Eintrittwahrscheinlichkeit \(\pi_i\)
+modelliert werden soll, ergibt sich die Gleichung für das binäre
+Logit-Modell wie folgt: \[
 \pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \quad (3)
-\] Dabei kann \(\pi_i\) maximal den Wert 1 nehmen, wenn \(\exp(\eta_i)\)
+\]
+
+Dabei kann \(\pi_i\) maximal den Wert 1 nehmen, wenn \(\exp(\eta_i)\)
 sehr groß ist und minimal den Wert 0, wenn \(\exp(\eta_i)\) sehr nah
 rechts von 0 liegt. \(\exp(\eta_i)\) kann nicht negativ sein. Diese
 Gleichung erfüllt somit die Anforderung bezüglich dem Wertebereich von
@@ -326,7 +330,9 @@ werden, ergibt sich schließlich die Logit-Linkfunktion: \[
 \Leftrightarrow \exp(\eta_i) &= \frac{\pi_i}{1-\pi_i} \\
 \Leftrightarrow \eta_i &= \ln(\frac{\pi_i}{1-\pi_i}) \quad (4)\\
 \end{aligned} 
-\] Es gilt nämlich: \[
+\]
+
+Es gilt nämlich: \[
 \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \ln(\frac{\pi_i}{1-\pi_i}) \quad (5)
 \] \#\# Maximum Likelihood Schätzung
 
@@ -803,16 +809,40 @@ einen verdoppelten Output zu vermeiden, weil ansonsten extra
 
 \subsubsection{Summary-Methode}\label{summary-methode}
 
-In der Summary-Methode werden zunächst lediglich bisher noch fehlende
-Werte berechnet: * \textbf{Standard Error} der Koeffizienten *
-\textbf{z-Stat} * \textbf{p-Value} *
+In der Summary-Methode werden zunächst die bisher noch fehlende Werte
+berechnet: * \textbf{Standard Error} der Koeffizienten: entspricht der
+Wurzel von dem Diagonalen aus der Kovarianzmatrix. Der Standardfehler
+gibt an, inwieweit der geschätzte Koeffizient sich durchschnittlich
+schwankt, wenn die Stichprobe unendlich mal gezogen wird. *
+\textbf{z-Stat}: entspricht die Bruchrechnung der einzelnen
+Koeffizienten durch der betroffenen Standardabweichung, welche sich
+annährend über eine Normalverteilung verteilen sollte, wenn die
+Stichprobenumfang groß genug ist.\\
+* \textbf{p-Value}: zweiseitige
 
 Bisher gibt die Summary-Methode eine Liste von allen dazugehörigen
 Werten in einer Liste zurück, was extrem unübersichtlich wäre.
 Demzufolge sorgt die Funktion \emph{print.summary()} für die richtige
-Einordnung der jeweiligen Werten.
+Einordnung der jeweiligen Werten. Die meisten Werte müssen lediglich mit
+dem passenden Begriffen anhand \texttt{cat()} verknüpft werden. Für die
+Devianz-Residuen und Koeffiziententabelle werden zusätzlich folgende
+Standardfunktionen verwendet:
 
-\emph{print.summaryDefault }printCoefmat *invisible
+\begin{itemize}
+\tightlist
+\item
+  \textbf{print.summaryDefault}: fasst die Verteilung der
+  Devianz-Residuen in einem Standardformat mit Minimum, Quantilen und
+  Maximum zusammen.
+\item
+  \textbf{printCoefmat}: ordnet alle relevanten Werte in Bezug auf die
+  Koeffizienten in einem Tabellenformat zu. Hierbei wird für
+  \texttt{signif.legend\ =\ TRUE} entschieden, um ebenfalls die
+  Signifikanzniveaus anzuzeigen.
+\end{itemize}
+
+Schließlich wird ebenfalls \emph{invisible()} aufgerufen, um eine
+Verdoppelung des Outputs zu vermeiden.
 
 \subsubsection{Plot-Methode}\label{plot-methode}
 
