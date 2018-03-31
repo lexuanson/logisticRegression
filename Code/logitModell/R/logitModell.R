@@ -74,6 +74,9 @@ maxLikeEst <- function(y, X) {
     # Maximumwert der Log Likelihood Funktion
     maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
     
+    # fittedWerte
+    fittedWerte <- exp(X %*% beta) / (1 + exp(X %*% beta))
+    
     # Liste der zurückgegebenen Werte
     result <- list(coefficients = beta,
                    vcov = vcov,
@@ -81,7 +84,9 @@ maxLikeEst <- function(y, X) {
                    dfRes = dfRes,
                    dfNull = dfNull,
                    maxLogLikeValue = maxLogLikeValue,
-                   anzahlIteration = i) 
+                   anzahlIteration = i,
+                   fittedWerte = fittedWerte,
+                   M = M) 
     
     return(result)
     
@@ -311,9 +316,12 @@ plot.logitMod <- function(x, ...) {
      xlab = paste("Predicted Values\n", deparse(x$call)))
     
     
-    # #4 shittt
-    # pearsonResidual <- 
-    #     (x$y - x$fittedWerte)/sqrt(x$fittedWerte*(1 - x$fittedWerte))
-    # plot(y = pearsonResidual, x = diag(x$M))
-    
+    #4
+    pearsonResidual <-
+        (x$y - x$fittedWerte)/sqrt(x$fittedWerte*(1 - x$fittedWerte))
+    leverage <- diag(sqrt(x$M) %*% x$X %*% (solve(t(x$X) %*% x$M %*% x$X)) %*% t(x$X) %*% sqrt(x$M))
+    plot(y = pearsonResidual, 
+         x = leverage)
+
 }
+

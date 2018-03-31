@@ -60,4 +60,5 @@ summary(fittedLogModell)
 **Plot method**  
 ```{r Plot method}
 plot(fittedLogModell)
+plot(glm(formula = testModell, data = testData, family = "binomial"))
 ```
