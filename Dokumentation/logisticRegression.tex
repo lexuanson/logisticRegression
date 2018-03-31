@@ -202,9 +202,7 @@ der Praxis kann diese Fragestellung beispielsweise so formuliert werden:
 Einfluss auf die Wahrscheinlichkeit, dass sie ein Kredit rechtzeitig
 zurückzahlen?'' oder ``Lässt sich die Wahrscheinlichkeit, dass es
 regnet, durch die Temparatur, die Windstärke oder
-Sonnenstrahlungsintensität vorhersagen?''.
-
-\newpage 
+Sonnenstrahlungsintensität vorhersagen?''. \newpage 
 
 \section{Das binäre Logit-Modell}\label{das-binare-logit-modell}
 
@@ -237,10 +235,12 @@ können Modelle zu GLMs zugeordnet werden, wenn:
   Die abhängige Variable gehört zu einer Exponentialfamilie mit der
   Dichtefunktion: \[
   f(y_i;\theta_i) = \exp \Bigg( \frac{y_i.\theta_i + b(\theta_i)}{a_i(\phi)} + c(y,\phi) \Bigg)
-  \] Die mathematische Erklärung von GLMs wird hierbei vernachlässigt,
-  denn diese Arbeit konzentriert sich lediglich auf dem binären
-  Logit-Modell, welches in Folgenden vorgestellt werden.
+  \]
 \end{enumerate}
+
+Die mathematische Erklärung von GLMs wird hierbei vernachlässigt, denn
+diese Arbeit konzentriert sich lediglich auf dem binären Logit-Modell,
+welches in Folgenden vorgestellt werden.
 
 \subsection{Modellspezifikation}\label{modellspezifikation}
 
@@ -250,11 +250,9 @@ auf Kapitel 9.1 aus dem Buch \emph{Regressionsanalysen mit R}
 \protect\hyperlink{ref-schlittgen2013regressionsanalysen}{2013},
 S.215-225) und Kapitel 4.1 der Vorlesungsfolien vom Modul
 \emph{Statistische Modellierung} im Wintersemester 2016/2017 an der
-Freie Universität Berlin.
-
-Gegeben seien n unabhängige Beobachtungen \(y_1, y_2, ...,y_n\) der
-binären Zielvariable \(\mathbf{Y}\). Ein Verteilungsmodell für
-\(\mathbf{Y}\) ist die Binomialverteilung:
+Freie Universität Berlin. Gegeben seien n unabhängige Beobachtungen
+\(y_1, y_2, ...,y_n\) der binären Zielvariable \(\mathbf{Y}\). Ein
+Verteilungsmodell für \(\mathbf{Y}\) ist die Binomialverteilung:
 \(\mathbf{Y}_i \sim B(1, \pi_i)\) mit \(\pi_i = P(Y_i = 1)\). Für diese
 Arbeit wird \(\pi_i = (\pi_1, \pi_2, ..., \pi_n)\) als die
 Eintrittwahrscheinlichkeit von der einzelnen \(\mathbf{Y}_i\) benannt.
@@ -278,9 +276,7 @@ Zusammengefasst lässt sich die Designmatrix wie folgt darstellen: \[
     \vdots  & \vdots  & \vdots & \ddots & \vdots \\
     1 & x_{n1} & x_{n2} & \cdots & x_{np}
  \end{pmatrix}
-\]
-
-Die dazugehörige lineare Regressionsgleichung lautet:
+\] Die dazugehörige lineare Regressionsgleichung lautet:
 \(\mathbf{Y} = \mathbf{X}.\beta + \epsilon\) mit
 \(\epsilon = (\epsilon_1, \epsilon_2, \epsilon_3, ..., \epsilon_n)\) als
 die Abweichung der einzelnen Schätzungen gegenüber dem wahren Wert,
@@ -289,11 +285,9 @@ wobei \(\mathbf{Y}\) ein (nx1)-Vektor, \(\mathbf{X}\) ein (nxp) und
 
 Die einzelne Beobachtung lässt sich wie folgt darstellen: \[
 y_i = \beta_0 + \beta_1.x_{i1} + \beta_2.x_{i2} + ... + \beta_p.x_{ip} + \epsilon_i = \mathbf{x'}_i.\beta + \epsilon_i \qquad \forall_i = 1,2,3,...,n
-\]
-
-Wobei \(\mathbf{x}_i\) der i-ten Zeile der Designmatrix \(\mathbf{X}\)
-entspricht. Da bei der Multiplikation A.B die Regel gilt, dass die
-Spaltenanzahl von A der Zeilenanzahl von B entsprechen muss. Da
+\] Wobei \(\mathbf{x}_i\) der i-ten Zeile der Designmatrix
+\(\mathbf{X}\) entspricht. Da bei der Multiplikation A.B die Regel gilt,
+dass die Spaltenanzahl von A der Zeilenanzahl von B entsprechen muss. Da
 \(\beta\) ein (px1)-Vektor ist, muss \(\mathbf{x}_i\) (px1-Vektor) in
 \(\mathbf{x'}_i\) (1xp-Vektor) transponiert werden, damit die
 Multiplikation durchführbar ist.
@@ -310,14 +304,11 @@ wird ebenfalls als Linkfunktion genannt, weil dadurch eine Verbindung
 (Link) zwischen der Eintrittwahrscheinlichkeit und den unabhängigen
 Variablen erfolgt wird. Für das binäre Logit-Modell wird anstelle der
 Responsefunktion die standardisierte logistische Verteilung verwendet:
-
 \[
 F(\eta_i) = Logist(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} \quad (2)
 \] Da durch die Responsefunktion die Eintrittwahrscheinlichkeit
 \(\pi_i\) modelliert werden soll, ergibt sich die Gleichung für das
-binäre Logit-Modell wie folgt:
-
-\[
+binäre Logit-Modell wie folgt: \[
 \pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \quad (3)
 \] Dabei kann \(\pi_i\) maximal den Wert 1 nehmen, wenn \(\exp(\eta_i)\)
 sehr groß ist und minimal den Wert 0, wenn \(\exp(\eta_i)\) sehr nah
@@ -335,16 +326,11 @@ werden, ergibt sich schließlich die Logit-Linkfunktion: \[
 \Leftrightarrow \exp(\eta_i) &= \frac{\pi_i}{1-\pi_i} \\
 \Leftrightarrow \eta_i &= \ln(\frac{\pi_i}{1-\pi_i}) \quad (4)\\
 \end{aligned} 
-\]
-
-Es gilt nämlich: \[
+\] Es gilt nämlich: \[
 \beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \ln(\frac{\pi_i}{1-\pi_i}) \quad (5)
-\]
+\] \#\# Maximum Likelihood Schätzung
 
-\subsection{Maximum Likelihood
-Schätzung}\label{maximum-likelihood-schatzung}
-
-Ähnlich wie bei der linearen Regression muss bei dem binären
+Ähnlich wie bei der linearen Regression müssen bei dem binären
 Logit-Modell die unbekannten Parameter \(\beta_i\) (i =
 0,1,2,\ldots{},k) ebenfalls geschätzt werden. Bei der klassischen
 linearen Regression wird die Methode der Kleinsten Quadrate (engl.
@@ -356,8 +342,8 @@ Eintrittswahrscheinlichkeit geschätzt wird, ist die Abweichung zwischen
 dem wahren Wert und dem geschätzten Wert nicht mehr aussagekräftig wie
 bei der linearen Regression. Die Koeffizienten müssen anders geschätzt
 werden. Dementsprechend wird bei dem binären Logit-Modell die sogenannte
-Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung
-.. zeigt ein Beispiel mit zwei mögliche binäre logistiche
+Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung 2
+zeigt ein Beispiel mit zwei mögliche binäre logistiche
 Regressionskurven, die durch das Maximum Likelihood optimiert werden
 sollen. Es gibt unendlich viele solche Kurven. Das Ziel ist es, die
 Kurve mit dem höchsten Maximum Likelihood herauszufinden.
@@ -416,9 +402,7 @@ Vorzeichenvoraussetzungen für den Logarithmus erfüllt): \[
 (9) \quad &\ln(x^\alpha) = \alpha.\ln(x) \\
 (10) \quad &\ln(\frac{x}{y}) = \ln(x) - \ln(y)
 \end{aligned} 
-\]
-
-Dementsprechend lässt die Likelihood-Funktion wie folgt
+\] Dementsprechend lässt die Log-Likelihood-Funktion wie folgt
 logarithmisieren: \[
 \begin{aligned}
 \ell(\beta) = \ln(\mathcal{L}(\beta)) = \quad &\ln \Bigg( \prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i} \Bigg) \\
@@ -430,14 +414,10 @@ logarithmisieren: \[
 = \quad &\sum_{i = 1}^{n} \Bigg( y_i.\eta_i + \ln \Big( \frac{1}{1+\exp(\eta_i)}\Big) \Bigg) \\
 = \quad &\sum_{i = 1}^{n} \Big( y_i.\eta_i - \ln (1 + exp(\eta_i)) \Big) \quad (11)
 \end{aligned}
-\]
-
-\subsubsection{Score-Funktion}\label{score-funktion}
-
-Zum Herausfinden des ML-Schätzers, welcher die log-Likelihood-Funktion
-optimiert, wird Gleichung (10) nach \(\beta\) differenziert. Die erste
-Ableitung von der log-Likelihood-Funktion wird als Score-Funktion
-benannt:
+\] \#\#\# Score-Funktion Zum Herausfinden des ML-Schätzers, welcher die
+log-Likelihood-Funktion optimiert, wird Gleichung (10) nach \(\beta\)
+differenziert. Die erste Ableitung von der log-Likelihood-Funktion wird
+als Score-Funktion benannt:
 
 \[
 \begin{aligned}
@@ -610,11 +590,27 @@ Chance der Eintrittswahrscheinlichkeit.
 Im Folgenden wird die Funktionalität von dem Paket \textbf{logitModell}
 erklärt, welches zum Ziel setzt, die Grundidee hinter dem binären
 Logit-Modell programmiert darzustellen. Das Paket besteht aus dem
-R-Code, welcher anhand dem manuell berechneten Maximum Likelihood ein
-Objekt von der Klasse \emph{logitMod} erstellt und anschließend drei S3
-Methoden für diese Klasse (print, summary und plot) definiert, und einer
-Extra-Vignette, welche den R-Code anhand einem konkreten Beispiel
-ausführt.
+R-Code, welcher folgende Funktionen beinhaltet: *
+\textbf{maxLikeEst(y,X)}: berechnent das Maximum Likelihood *
+\textbf{logitMod(formula, data)}: erstellt Objekt mit der Klasse
+``logitMod'', um mit S3-Methoden zu arbeiten *
+\textbf{print.logitMod(x,..)}: Print-Methode *
+\textbf{summary.logitMod(object,..)}: Summary-Methode *
+\textbf{print.summary.logitMod(object,..)}: Bessere Einordnung der
+Ergebnisse aus der Summary-Methode * \textbf{plot.logitMod(x,..)}:
+Plot-Methode
+
+Alle diese Methoden werden in einer Extra-Vignette anhand einem
+konkreten Beispiel ausgeführt. Zum Aufruf der Extra-Vignette muss der
+folgende Code bei dem Errichten des Paketes ausgeführt werden. Die
+Extra-Vignette wird demnächst in der Help-Seite angezeigt:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{devtools}\OperatorTok{::}\KeywordTok{install}\NormalTok{(}\StringTok{"~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell/"}\NormalTok{, }\DataTypeTok{type =} \StringTok{"source"}\NormalTok{, }\DataTypeTok{build_vignettes =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{vignette}\NormalTok{(}\DataTypeTok{topic =} \StringTok{"vignetteLogitModell"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \subsection{Beispieldatensatz}\label{beispieldatensatz}
 
@@ -628,6 +624,18 @@ Zudem enthält der Datensatz drei unabhängige Variablen: \emph{gre},
 ein Modell unterstützen, welche die Abhängigkeit von der
 Wahrscheinlichkeit einer Zulassung von der Abschlussnote, GRE-Note sowie
 dem Ruf von der angestrebten Institution.
+
+\subsection{Implementierung der
+Maximum-Likelihood-Schätzung}\label{implementierung-der-maximum-likelihood-schatzung}
+
+Bevor das eigentliche Logit-Modell erstellt wird, wird die
+Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der
+Code dazu ist auf Basis von dem dazugehörigen theoretischen Teil
+aufgebaut. Die Funktion \emph{maxLikeEst} dient dazu, anhand der
+Newton-Raphson-Methode das maximale Likelihood zu berechnen. Als Input
+werden ein Vektor y (Zielvariable) und eine Matrix X (Designmatrix)
+benötigt. Als Output wird ein Objekt erwartet, welches die
+Maximum-Likelihood-Schätzer enthält.
 
 Es muss immer zunächst überprüft werden, in welcher Art die Zielvariable
 eingegeben wird, denn das Maximum Likelihood braucht als Input
@@ -647,35 +655,7 @@ wie das Standardmodell.
 \end{Highlighting}
 \end{Shaded}
 
-Für das Paket wird eine Extra-Vignette in R aufgebaut, um die Ergebnisse
-anhand dem Beispieldatensatz zu verdeutlichen. Zum Aufruf der
-Extra-Vignette muss der folgende Code bei dem Errichten des Paketes
-ausgeführt werden:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{devtools}\OperatorTok{::}\KeywordTok{install}\NormalTok{(}\StringTok{"~/Desktop/Uni/Master/WS1718/ProgR/Abschlussarbeit/logisticRegression/Code/logitModell/"}\NormalTok{, }\DataTypeTok{type =} \StringTok{"source"}\NormalTok{, }\DataTypeTok{build_vignettes =} \OtherTok{TRUE}\NormalTok{)}
-\KeywordTok{vignette}\NormalTok{(}\DataTypeTok{topic =} \StringTok{"vignetteLogitModell"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-Die Extra-Vignette wird demnächst in der Help-Seite angezeigt.
-
-\subsection{Implementierung der
-Maximum-Likelihood-Schätzung}\label{implementierung-der-maximum-likelihood-schatzung}
-
-Bevor das eigentliche Logit-Modell erstellt wird, wird die
-Implementierung der Maximum Likelihood Schätzung auseinandergesetzt. Der
-Code dazu ist auf Basis von dem dazugehörigen theoretischen Teil
-aufgebaut. Die Funktion \emph{maxLikeEst} dient dazu, anhand der
-Newton-Raphson-Methode das maximale Likelihood zu berechnen. Als Input
-werden ein Vektor (Zielvariable) und eine Matrix (Designmatrix)
-benötigt. Als Output wird ein Objekt erwartet, welches die
-Maximum-Likelihood-Schätzer enthält. Daneben werden ebenfalls die ersten
-notwendigen Kennwerte für den Aufbau von S3-Methoden in dem Objekt
-gespeichert.
-
-Der Aufbau der Funktion maxLikeEst sieht so aus:
+Der Aufbau der Funktion maxLikeEst(y,X) sieht so aus:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -688,111 +668,67 @@ Der Aufbau der Funktion maxLikeEst sieht so aus:
 \end{Shaded}
 
 Zunächst werden die Parameter und Variablen für die
-Newton-Raphson-Methode initialisiert:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# initialisiere beta}
-\NormalTok{beta <-}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DataTypeTok{times =} \KeywordTok{ncol}\NormalTok{(X))}
-
-\CommentTok{# initialisiere ...}
-\NormalTok{M <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\DataTypeTok{nrow =} \KeywordTok{nrow}\NormalTok{(X))}
-
-\CommentTok{# stelle Abbruchskriterien fest}
-\NormalTok{tolerance <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(}\OperatorTok{-}\DecValTok{6}\NormalTok{)}
-\NormalTok{diff <-}\StringTok{ }\DecValTok{10} \OperatorTok{*}\StringTok{ }\KeywordTok{abs}\NormalTok{(tolerance)}
-\NormalTok{maxIteration <-}\StringTok{ }\DecValTok{100}
-\NormalTok{i <-}\StringTok{ }\DecValTok{0}
-\end{Highlighting}
-\end{Shaded}
-
-\(\beta\) wird als ein Nullvektor mit der gleichen Länge wie die Anzahl
-der Spalten der Designmatrix initialisiert, um anschließend in der
-Newton-Raphson-Schleife nach jeder Iteration aktualisiert zu werden.
-Tolerance ist der Wert, bei dem die Schleife terminiert, wenn die
-absolute Veränderung der Lösungsgüte kleiner als dieser Wert ist. Das
-nächste Abbruchskriterium ist die maximale Anzahl der Iterationen.
+Newton-Raphson-Methode initialisiert. \(\beta\) wird als ein Nullvektor
+mit der gleichen Länge wie die Anzahl der Spalten der Designmatrix
+initialisiert, um anschließend in der Newton-Raphson-Schleife nach jeder
+Iteration aktualisiert zu werden. Tolerance ist der Wert, bei dem die
+Schleife terminiert, wenn die absolute Veränderung der Lösungsgüte
+kleiner als dieser Wert ist. Das nächste Abbruchskriterium ist die
+maximale Anzahl der Iterationen.
 
 Solange die beiden Abbruchskriterien nicht erreicht sind, erfolgt in der
-Newton-Raphson-Schleife folgender iterativer Vorgang, welcher sich auf
-dem erklärten Pseudocode basiert:
+Newton-Raphson-Schleife ein iterativer Vorgang, welcher sich auf dem
+erklärten Pseudocode (siehe Abschnitt ) basiert. Nachdem der ML-Schätzer
+bestimmt wird, werden folgende Parameter berechnet. Diese Werte werden
+hierbei berechnet, um die Unabhängigkeit der S3-Methoden voneinander zu
+garantieren. Das bedeutet, dass beispielsweise \emph{summary()} ohne
+\emph{print()} aufgerufen werden kann.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\ControlFlowTok{while}\NormalTok{ (diff }\OperatorTok{>}\StringTok{ }\NormalTok{tolerance }\OperatorTok{&}\StringTok{ }\NormalTok{i }\OperatorTok{<}\StringTok{ }\NormalTok{maxIteration) \{}
-        
-    \CommentTok{# berechne die Wahrscheinlichkeit (siehe Gleichung 4)}
-\NormalTok{    eta <-}\StringTok{ }\NormalTok{X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta}
-\NormalTok{    exp_eta <-}\StringTok{ }\KeywordTok{exp}\NormalTok{(eta)}
-\NormalTok{    p <-}\StringTok{ }\KeywordTok{as.vector}\NormalTok{(exp_eta }\OperatorTok{/}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\NormalTok{exp_eta))}
-    
-    \CommentTok{# aktualisiere diagonale Matrix }
-\NormalTok{    M <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(p }\OperatorTok{*}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{p))}
-    
-    \CommentTok{# berechne die Änderung von Beta (siehe Gleichung 17)}
-\NormalTok{    betaChange <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{M }\OperatorTok{%*%}\StringTok{ }\NormalTok{X) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{(y }\OperatorTok{-}\StringTok{ }\NormalTok{p)}
-    
-    \CommentTok{# aktualisiere Beta}
-\NormalTok{    beta <-}\StringTok{ }\NormalTok{beta }\OperatorTok{+}\StringTok{ }\NormalTok{betaChange}
-    
-    \CommentTok{# berechne die totale Änderung von Beta}
-\NormalTok{    diff <-}\StringTok{ }\KeywordTok{sum}\NormalTok{(}\KeywordTok{abs}\NormalTok{(betaChange))}
-    
-    \CommentTok{# nächste Iteration}
-\NormalTok{    i <-}\StringTok{ }\NormalTok{i }\OperatorTok{+}\StringTok{ }\DecValTok{1}
-    
-    \ControlFlowTok{if}\NormalTok{ (i }\OperatorTok{>}\StringTok{ }\NormalTok{maxIteration) \{}
-        \KeywordTok{stop}\NormalTok{(}\StringTok{"Die Funktion konvergiert nicht!"}\NormalTok{)}
-\NormalTok{    \}}
-\NormalTok{\}}
-\end{Highlighting}
-\end{Shaded}
+\begin{itemize}
+\item
+  \textbf{Maximum Likelihood}: Um den Maximumwert der
+  Log-Likelihood-Funktion zu erhalten, muss lediglich der erhaltene
+  ML-Schätzer aus der Newton-Raphson-Methode in Gleichung 11 eingesetzt
+  werden. Bei der Berechnung der Devianzen sowie des AICs findet dieser
+  Wert Einsatz. Aus der Newton-Raphson-Methode wird ebenfalls die Anzahl
+  der Iterationen zurückgegeben, welche der Anzahl der
+  Fisher-Scoring-Iterationen entspricht.
+\item
+  \textbf{Deviance Residuals}: Die Devianzresiduen lassen sich anhand
+  der folgenden Formel\footnote{Diese Formel wird aus der
+    Vorlesungsfolie Advanced Regression im Frühlingssemester 2013 der
+    Kentucky Universität
+    \url{https://web.as.uky.edu/statistics/users/pbreheny/760/S11/notes/4-12.pdf}.}
+  berechnet: \[
+  d_i = s_i.\sqrt{-2[y_i.\ln(\pi_i) + (1 - y_i).\ln(1 - \pi_i)]}
+  \] mit \(s_i = 1\) wenn \(y_i = 1\) und \(s_i = -1\) wenn \(y_i = 0\).
+  Dieses gehört zu der Methode \emph{summary()}
+\end{itemize}
 
-Als Output der Funktion maxLikeEst werden folgende Parameter in ein
-Objekt gespeichert, um mit den Werten aus dem R-Standard-Modell zu
-vergleichen.
+\begin{itemize}
+\item
+  \textbf{Degree of freedom}: Die Freiheitsgrade ist die Differenz
+  zwischen der Anzahl an Beobachtungen (entspricht Zeilenanzahl von der
+  Designmatrix) und der Anzahl an Parameter (entspricht Spaltenanzahl
+  von der Designmatrix). Da das Null-Modell nur den Interzept enthält,
+  ist hat die Designmatrix nur eine Spalte. Die Freiheitsgrade taucht
+  bei \emph{print()} und \emph{summary()} auf.
+\item
+  \textbf{angepasste Wahrscheinlichkeit}: entspricht die
+  Eintrittswahrscheinlichkeit der einzelnen Beobachtungen, welche durch
+  das Modell angepasst wird (siehe Gleichung \ldots{} für die
+  Berechnung)
+\item
+  \textbf{Kovarianzmatrix}: die Kovarianzmatrix lässt wie folgt
+  berechnen:
+\end{itemize}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Freiheitsgrad = Anzahl an Beobachtungen - Anzahl an Parameter}
-\NormalTok{dfRes <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(X) }\OperatorTok{-}\StringTok{ }\KeywordTok{ncol}\NormalTok{(X)  }\CommentTok{# ResiduensFreiheitsgrad }
-\NormalTok{dfNull <-}\StringTok{ }\KeywordTok{nrow}\NormalTok{(X) }\OperatorTok{-}\StringTok{ }\DecValTok{1}       \CommentTok{# Nullmodell Freiheitsgrad}
+\$\$
 
-\CommentTok{# Devianz Residual}
-\NormalTok{s <-}\StringTok{ }\NormalTok{y}
-\NormalTok{s[s }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{] =}\StringTok{ }\OperatorTok{-}\DecValTok{1}
-\NormalTok{devianceResiduals =}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(s }\OperatorTok{*}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\OperatorTok{-}\DecValTok{2}\OperatorTok{*}\NormalTok{((y }\OperatorTok{*}\StringTok{ }\NormalTok{eta) }\OperatorTok{-}\StringTok{ }\NormalTok{(}\KeywordTok{log}\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{exp}\NormalTok{(eta))))))}
-    
-\CommentTok{# Kovarianzmatrix}
-\NormalTok{vcov <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{t}\NormalTok{(X) }\OperatorTok{%*%}\StringTok{ }\NormalTok{M }\OperatorTok{%*%}\StringTok{ }\NormalTok{X) }
+\$\$
 
-\CommentTok{# Maximumwert der Log Likelihood Funktion}
-\NormalTok{maxLogLikeValue <-}\StringTok{ }\NormalTok{(}\KeywordTok{sum}\NormalTok{((y }\OperatorTok{*}\StringTok{ }\NormalTok{X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta) }\OperatorTok{-}\StringTok{ }\NormalTok{(}\KeywordTok{log}\NormalTok{(}\DecValTok{1} \OperatorTok{+}\StringTok{ }\KeywordTok{exp}\NormalTok{(X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta)))))}
-\end{Highlighting}
-\end{Shaded}
-
-Um anschließend die Print-Methode zu definieren, werden hierbei die
-Freiheitsgrade, das Devianz-Residual und das Maximal-Likelihood
-bestimmt. Die Freiheitsgrade ist die Differenz zwischen der Anzahl an
-Beobachtungen (entspricht Zeilenanzahl von der Designmatrix) und der
-Anzahl an Parameter (entspricht Spaltenanzahl von der Designmatrix). Da
-das Null-Modell nur den Interzept enthält, ist hat die Designmatrix nur
-eine Spalte. Die Devianzresiduen lassen sich anhand der folgenden
-Formel\footnote{Diese Formel wird aus der Vorlesungsfolie Advanced
-  Regression im Frühlingssemester 2013 der Kentucky Universität
-  \url{https://web.as.uky.edu/statistics/users/pbreheny/760/S11/notes/4-12.pdf}.}
-berechnet: \[
-d_i = s_i.\sqrt{-2[y_i.\ln(\pi_i) + (1 - y_i).\ln(1 - \pi_i)]}
-\] mit \(s_i = 1\) wenn \(y_i = 1\) und \(s_i = -1\) wenn \(y_i = 0\)
-
-Um den Maximumwert der Log-Likelihood-Funktion zu erhalten, muss
-lediglich der erhaltene ML-Schätzer in Gleichung \ldots{} eingesetzt
-werden.
-
-Zum Vergleich der Ergebnisse der Funktion \emph{maxLikeEst} mit dem
-Standardmodell werden die geschätzen Koeffizienten \(\beta\) und die
-Kovarianzmatrix zurückgegeben, wobei sich die Kovarianzmatrix wie folgt
-berechnen lässt:
+Alle der eben berechneten Werte werden in einem Objekt gespeichert,
+welches zu der Klasse ``logitMod'' zugeordnet wird.
 
 \subsection{\texorpdfstring{Definiere Klasse
 ``logitMod''}{Definiere Klasse logitMod}}\label{definiere-klasse-logitmod}
@@ -802,32 +738,98 @@ werden, welche die Objekte aus der Funktion \emph{maxLikeEst} umfasst.
 Diese Klasse wird als ``logitMod''. Da sich die Objekte von der Klasse
 ``logitMod'' ähnlich wie Objekte von \emph{glm(\ldots{},family =
 ``binomial'')} verhalten sollen, werden dementsprechend als Input ein
-Formula und ein Datensatz erwartet. Daraus werden die Zielvariable y
-sowie die Designmatrix \(\mathbf{X}\) entnommen und anschließend in die
-Funktion maxLikeEst eingesetzt. Darüber hinaus wird das Null-Modell
-erstellt und ebenfalls in das ``Hauptobjekt'' gespeichert, um die
-Null-Devianz vom Logit-Modell einfacher aufzurufen. Das Null-Modell
-besteht lediglich aus der Zielvariable und dem Interzept \(\beta_0\),
-das heißt es besteht keine Abhängigkeit von den Kovariaten.
+Formula und ein Datensatz erwartet. Daraus erfolgt Folgendes:
+
+\begin{itemize}
+\item
+  Ein Modellframe wird definiert, welcher alle gegebenen Daten anhand
+  einem Dataframe widergibt.
+\item
+  Die Zielvariable y wird als \emph{model.response()} aus diesem
+  Modellframe entnommen.
+\item
+  Die Designmatrix \(\mathbf{X}\) wird als \emph{model.matrix()} aus
+  diesem Modellframe entnommen. Die Eins-Spalte für den Interzept wird
+  automatisch erzeugt. Ebenfalls werden alle n-kategorialen Variablen
+  als (n-1) Dummies-Variablen transformiert.
+\item
+  y und \(\mathbf{X}\) werden in die Funktion maxLikeEst eingesetzt. Das
+  Objekt mit allen definierten Werten wird erzeugt.
+\item
+  Zusätlich werden folgende Werte in das Objekt gespeichert:
+\item
+  Der eingegebene Formula \& der Call
+\item
+  Das Null-Modell, welches lediglich aus der Zielvariable und dem
+  Interzept \(\beta_0\) besteht, das heißt es existiert dabei keine
+  Abhängigkeit von den Kovariaten. Dieses wird bei der Berechnung der
+  Null-Devianz gebraucht.
+\item
+  \textbf{Null Deviance}: da das Null-Modell durch die Funktion
+  maxLikeEst bestimmt wird und somit auch den maximalen Wert des
+  Log-Likelihood enthält, gilt: Null-Devianz von dem angepassten
+  Logit-Modell = Residuen-Devianz vom Null-Modell = -2 *
+  Log-Likelihood(Null-Modell) .
+\item
+  \textbf{Residual Deviance}: entspricht analog dazu -2 *
+  Log-Likelihood(angepasstes Modell)
+\item
+  \textbf{AIC}: \(AIC = (-2.\ell + 2.p)\)
+\end{itemize}
 
 \subsection{Definiere S3-Methoden}\label{definiere-s3-methoden}
 
-Alle in Folgenden definierten S3-Methoden sorgen dafür, dass das
+Alle in Folgenden definierten S3-Methoden sollen dafür sorgen, dass das
 manuelle Logit-Modell die exakten Ergebnissen zurückgibt wie beim
 Standardmodell in R, wenn die Methoden \emph{print, summary und plot}
 aufgerufen werden. Es werden hierbei kein Code für bessere
 Übersichtlichkeit beigefügt sondern nur die restlichen notwendigen
-Berechnungen zusammengefasst.
+Berechnungen zusammengefasst. Die Formel der Berechnugnen stammen aus
+Kapitel 4.1 der Vorlesungsfolien vom Modul \emph{Statistische
+Modellierung} im Wintersemester 2016/2017 an der Freie Universität
+Berlin.
 
 \subsubsection{Print-Methode}\label{print-methode}
 
-Der Output von der Print-Methode enthält folgende Parameter: *
-\textbf{Call} * \textbf{Coefficients} * \textbf{Degrees of freedom} *
-\textbf{null deviance \& residual deviance} * \textbf{AIC}
+Alle hierbei nötigen Werte werden bereit in das Objekt der Klasse
+``logitMod'' gespeichert. Es geht bei der Print-Methode lediglich um die
+Einordnung der Werte in passendem Format. \emph{cat()} verknüpft der
+betroffenen berechneten Werte mit den entsprechenden Begriffen, welche
+in der Konsole angezeigt werden sollen. \emph{print.default()} sorgt
+dafür, dass die Werte der Koeffizienten exakt wie bei dem Standardmodell
+dargestellt werden. \emph{invisible()} wird schließlich ausgeführt, um
+einen verdoppelten Output zu vermeiden, weil ansonsten extra
+\emph{print()} ausgeführt werden muss.
 
 \subsubsection{Summary-Methode}\label{summary-methode}
 
+In der Summary-Methode werden zunächst lediglich bisher noch fehlende
+Werte berechnet: * \textbf{Standard Error} der Koeffizienten *
+\textbf{z-Stat} * \textbf{p-Value} *
+
+Bisher gibt die Summary-Methode eine Liste von allen dazugehörigen
+Werten in einer Liste zurück, was extrem unübersichtlich wäre.
+Demzufolge sorgt die Funktion \emph{print.summary()} für die richtige
+Einordnung der jeweiligen Werten.
+
+\emph{print.summaryDefault }printCoefmat *invisible
+
 \subsubsection{Plot-Methode}\label{plot-methode}
+
+Es werden hierbei insgesamt 4 Grafiken erwartet:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Residuals vs Fitted}
+\item
+  \textbf{Normal Q-Q}
+\item
+  \textbf{Scale Location}
+\item
+  \textbf{Residual vs Leverage}
+\end{enumerate}
 
 \section*{Literaturverzeichnis}\label{literaturverzeichnis}
 \addcontentsline{toc}{section}{Literaturverzeichnis}

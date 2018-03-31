@@ -74,9 +74,6 @@ maxLikeEst <- function(y, X) {
     # Maximumwert der Log Likelihood Funktion
     maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
     
-    # fittedWerte
-    fittedWerte <- exp(X %*% beta) / (1 + exp(X %*% beta))
-    
     # Liste der zurückgegebenen Werte
     result <- list(coefficients = beta,
                    vcov = vcov,
@@ -85,7 +82,7 @@ maxLikeEst <- function(y, X) {
                    dfNull = dfNull,
                    maxLogLikeValue = maxLogLikeValue,
                    anzahlIteration = i,
-                   fittedWerte = fittedWerte,
+                   p = p,
                    M = M) 
     
     return(result)
@@ -133,6 +130,14 @@ logitMod <- function(formula, data) {
     result$X <- X
     result$y <- y
     
+    # Berechnung von nullDeviance, residualDeviance & aic
+    nullDeviance <- -2 * result$nullModell$maxLogLikeValue
+    result$nullDeviance <- nullDeviance
+    residualDeviance <- -2 * result$maxLogLikeValue
+    result$residualDeviance <- residualDeviance
+    x_AIC <- (-2*result$maxLogLikeValue + 2*ncol(result$X))
+    result$AIC <- x_AIC
+    
     # ordne die Ergebnisliste der Klasse "logitMod" zu
     class(result) <- "logitMod"
     
@@ -168,17 +173,9 @@ print.logitMod <- function(x, ...){
     cat("\nDegrees of Freedom: ", x$dfNull, " Total (i.e. Null); ",
         x$dfRes, " Residual")
     
-    # Berechnung von null deviance, residual deviance & aic
-    nullDeviance <- -2 * x$nullModell$maxLogLikeValue
-    x$nullDeviance <- nullDeviance
-    residualDeviance <- -2 * x$maxLogLikeValue
-    x$residualDeviance <- residualDeviance
-    x_AIC <- (-2*x$maxLogLikeValue + 2*ncol(x$X))
-    x$AIC <- x_AIC
-    
-    cat("\nNull Deviance:\t", round(nullDeviance,1))
-    cat("\nResidual Deviance:", round(residualDeviance,1), "\t", 
-        "AIC: ", round(x_AIC,1), "\n") 
+    cat("\nNull Deviance:\t", round(x$nullDeviance,1))
+    cat("\nResidual Deviance:", round(x$residualDeviance,1), "\t", 
+        "AIC: ", round(x$AIC,1), "\n") 
     
     # invisibly return linMod object
     invisible(x)
@@ -220,14 +217,6 @@ summary.logitMod <- function(object, ...) {
                             "Std. error" = object$betaStandardError[,],
                             "z value" = object$zStat[,],
                             "Pr(>|z|)" = object$pValue[,])
-    
-    # Berechnung von nullDeviance, residualDeviance & aic
-    nullDeviance <- -2 * object$nullModell$maxLogLikeValue
-    object$nullDeviance <- nullDeviance
-    residualDeviance <- -2 * object$maxLogLikeValue
-    object$residualDeviance <- residualDeviance
-    x_AIC <- (-2*object$maxLogLikeValue + 2*ncol(object$X))
-    object$AIC <- x_AIC
     
     class(object) <- "summary.logitMod"
     
@@ -317,11 +306,13 @@ plot.logitMod <- function(x, ...) {
     
     
     #4
-    pearsonResidual <-
-        (x$y - x$fittedWerte)/sqrt(x$fittedWerte*(1 - x$fittedWerte))
+    pearsonResidual <- (x$y - x$p)/sqrt(x$p*(1 - x$p))
     leverage <- diag(sqrt(x$M) %*% x$X %*% (solve(t(x$X) %*% x$M %*% x$X)) %*% t(x$X) %*% sqrt(x$M))
     plot(y = pearsonResidual, 
-         x = leverage)
+         x = leverage,
+         main = "Residual vs Leverage",
+         ylab = "Std. Pearson resid.",
+         xlab = paste("Leverage\n", deparse(x$call)))
 
 }
 
