@@ -22,7 +22,7 @@ maxLikeEst <- function(y, X) {
     beta <- rep(0, times = ncol(X))
     
     # initialisiere ...
-    M <- diag(nrow = nrow(X))
+    W <- diag(nrow = nrow(X))
     
     # setze Abbruchskriterien
     tolerance <- exp(-6)
@@ -39,10 +39,10 @@ maxLikeEst <- function(y, X) {
         p <- as.vector(exp_eta / (1 + exp_eta))
         
         # aktualisiere ...
-        M <- diag(p * (1 - p))
+        W <- diag(p * (1 - p))
         
         # berechne die Änderung von Beta
-        betaChange <- solve(t(X) %*% M %*% X) %*% t(X) %*% (y - p)
+        betaChange <- solve(t(X) %*% W %*% X) %*% t(X) %*% (y - p)
         
         # aktualisiere Beta
         beta <- beta + betaChange
@@ -69,7 +69,7 @@ maxLikeEst <- function(y, X) {
     #devianceResiduals = -2 * as.numeric(crossprod(y,eta) - sum(log(1 + exp(eta))))    
     
     # Kovarianzmatrix
-    vcov <- solve(t(X) %*% M %*% X) 
+    vcov <- solve(t(X) %*% W %*% X) 
     
     # Maximumwert der Log Likelihood Funktion
     maxLogLikeValue <- (sum((y * X %*% beta) - (log(1 + exp(X %*% beta)))))
@@ -83,7 +83,7 @@ maxLikeEst <- function(y, X) {
                    maxLogLikeValue = maxLogLikeValue,
                    anzahlIteration = i,
                    p = p,
-                   M = M) 
+                   W = W) 
     
     return(result)
     
@@ -131,11 +131,11 @@ logitMod <- function(formula, data) {
     result$y <- y
     
     # Berechnung von nullDeviance, residualDeviance & aic
-    nullDeviance <- -2 * result$nullModell$maxLogLikeValue
+    nullDeviance <- -2 * result$nullModell$WaxLogLikeValue
     result$nullDeviance <- nullDeviance
-    residualDeviance <- -2 * result$maxLogLikeValue
+    residualDeviance <- -2 * result$WaxLogLikeValue
     result$residualDeviance <- residualDeviance
-    x_AIC <- (-2*result$maxLogLikeValue + 2*ncol(result$X))
+    x_AIC <- (-2*result$WaxLogLikeValue + 2*ncol(result$X))
     result$AIC <- x_AIC
     
     # ordne die Ergebnisliste der Klasse "logitMod" zu
@@ -307,7 +307,7 @@ plot.logitMod <- function(x, ...) {
     
     #4
     pearsonResidual <- (x$y - x$p)/sqrt(x$p*(1 - x$p))
-    leverage <- diag(sqrt(x$M) %*% x$X %*% (solve(t(x$X) %*% x$M %*% x$X)) %*% t(x$X) %*% sqrt(x$M))
+    leverage <- diag(sqrt(x$W) %*% x$X %*% (solve(t(x$X) %*% x$W %*% x$X)) %*% t(x$X) %*% sqrt(x$W))
     plot(y = pearsonResidual, 
          x = leverage,
          main = "Residual vs Leverage",

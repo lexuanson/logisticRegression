@@ -13,6 +13,7 @@ output:
 link-citations: yes
 fontsize: 12pt
 bibliography: verzeichnis.bib
+csl: new.csl
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.pos = 'h', 
@@ -50,7 +51,9 @@ Im Unterschied zu der klassischen linearen Regression, welche den wahren Wert ei
 Das Logit-Modell ist eine Methode aus der Algorithmenklasse namens *Generalisierte Lineare Modelle* (engl. generalized linear model, kurz GLM), welche eine Verallgemeinerung des klassischen linearen Regressionsmodells anstrebt. Dazu gehören noch die klassische lineare Regression, Probitmodell und Poisson-Regression. Der grundliegende Ansatz von GLM ist die Transformation der linearen Regressionsgleichung, so dass der Wertebereich der vorhergesagten Zielvariable dem gewünschten entspricht. Die Theorie von GLMs wurde von Nelder und Wedderburn entwickelt. In Anlehnung an @schlittgen2013regressionsanalysen, S.238 können Modelle zu GLMs zugeordnet werden, wenn:  
 
 1. der bedingte Erwartungswert von der abhängigen Variable $y_i$, $\mu_i = E(y_i|x_i)$, kann über eine Linkfunktion $\mathbf{g}(\mu_i)$ in eine lineare Kombination der unabhängigen Variablen transformiert werden: $$\mathbf{g}(\mu_i) = \eta_i = x_i.\beta$$
- Wird die Umkehrfunktion gebildet, ergibt sich die Responsefunktion, welche die Abhängigkeit der Erwartungswerte von einer Funktion des linearen Prädikators darstellt: $$\mu_i = \mathbf{g}^{-1}(\eta_i) = \mathbf{h}(\eta_i) =  \mathbf{h}(\mathbf{g}(\mu_i))$$
+ Wird die Umkehrfunktion gebildet, ergibt sich die Responsefunktion, welche die Abhängigkeit der Erwartungswerte von einer Funktion des linearen Prädikators darstellt: 
+$$\mu_i = \mathbf{g}^{-1}(\eta_i) = \mathbf{h}(\eta_i) =  \mathbf{h}(\mathbf{g}(\mu_i))
+$$
 2. Die abhängige Variable gehört zu einer Exponentialfamilie mit der Dichtefunktion:
 $$
 f(y_i;\theta_i) = \exp \Bigg( \frac{y_i.\theta_i + b(\theta_i)}{a_i(\phi)} + c(y,\phi) \Bigg)
@@ -88,7 +91,7 @@ $$
 
 Da durch die Responsefunktion die Eintrittwahrscheinlichkeit $\pi_i$ modelliert werden soll, ergibt sich die Gleichung für das binäre Logit-Modell wie folgt:
 $$
-\pi_i = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})}{1 + \exp(\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip})} = \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \quad (3)
+\pi_i = h(\eta_i) = \frac{\exp(\eta_i)}{1 + \exp(\eta_i)} = \frac{\exp(\mathbf{x'}_i.\beta)}{1+\exp(\mathbf{x'}_i.\beta)} \quad (3)
 $$
 
 Dabei kann $\pi_i$ maximal den Wert 1 nehmen, wenn $\exp(\eta_i)$ sehr groß ist und minimal den Wert 0, wenn $\exp(\eta_i)$ sehr nah rechts von 0 liegt. $\exp(\eta_i)$ kann nicht negativ sein. Diese Gleichung erfüllt somit die Anforderung bezüglich dem Wertebereich von Wahrscheinlichkeiten.
@@ -105,14 +108,11 @@ $$
 \end{aligned} 
 $$
 
-Es gilt nämlich:
-$$
-\beta_0 + \beta_1.x_{i2} + \beta_2.x_{i3} + ... + \beta_p.x_{ip} = \ln(\frac{\pi_i}{1-\pi_i}) \quad (5)
-$$
+@schlittgen2013regressionsanalysen, S.236-237 zeigt, dass die Wahrscheinlichkeitsfunktion vom binären Logit-Modell sich mit der Exponentialfunktion schreiben lässt. Somit erfüllt das binäre Logit-Modell alle Anforderungen für ein GLM.
 
 ## Maximum Likelihood Schätzung
 
-Ähnlich wie bei der linearen Regression müssen bei dem binären Logit-Modell die unbekannten Parameter $\beta_i$ (i = 0,1,2,...,k) ebenfalls geschätzt werden. Bei der klassischen linearen Regression wird die Methode der Kleinsten Quadrate (engl. *method of least squares*, kurz KQ-Methode) genutzt, um eine Regressionslinie zu bestimmen, welche die Summe der quadratischen Abweichungen von den beobachteten Punkten minimiert. Da bei dem binären Logit-Modell nicht der wahre Wert der Zielvariable sondern die Eintrittswahrscheinlichkeit geschätzt wird, ist die Abweichung zwischen dem wahren Wert und dem geschätzten Wert nicht mehr aussagekräftig wie bei der linearen Regression. Die Koeffizienten müssen anders geschätzt werden. Dementsprechend wird bei dem binären Logit-Modell die sogenannte Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung 2 zeigt ein Beispiel mit zwei mögliche binäre logistiche Regressionskurven, die durch das Maximum Likelihood optimiert werden sollen. Es gibt unendlich viele solche Kurven. Das Ziel ist es, die Kurve mit dem höchsten Maximum Likelihood herauszufinden. 
+Ähnlich wie bei der linearen Regression müssen bei dem binären Logit-Modell die unbekannten Parameter $\beta_i$ (i = 0,1,2,...,k) ebenfalls geschätzt werden. Bei der klassischen linearen Regression wird die Methode der Kleinsten Quadrate (engl. *method of least squares*, kurz KQ-Methode) genutzt, um eine Regressionslinie zu bestimmen, welche die Summe der quadratischen Abweichungen von den beobachteten Punkten minimiert. Da bei dem binären Logit-Modell nicht der wahre Wert der Zielvariable sondern die Eintrittswahrscheinlichkeit geschätzt wird, ist die direkte Abweichung zwischen dem wahren Wert (0/1-Variable) und dem geschätzten Wert (Wahrscheinlichkeit) nicht mehr aussagekräftig wie bei der linearen Regression. Die Koeffizienten müssen anders geschätzt werden. Dementsprechend wird bei dem binären Logit-Modell die sogenannte Maximum Likelihood Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung 2 zeigt ein Beispiel mit zwei mögliche binäre logistiche Regressionskurven, die durch das Maximum Likelihood optimiert werden sollen. Es gibt unendlich viele solche Kurven. Das Ziel ist es, die Kurve mit dem höchsten Maximum Likelihood herauszufinden. 
 
 ```{r echo=FALSE, fig.cap = "Beispielshafte logistische Regressionskurve"}
 library(ggplot2)
@@ -232,9 +232,9 @@ $$
 \end{aligned}
 $$
 
-Sei M eine nxn-Matrix mit dem i-ten diagonalen Element $\mathbf{M}_{ii} = \pi_i.(1-\pi_i)$ mit $i \in (1,2,...,n)$, ergibt sich: 
+Sei M eine nxn-Matrix mit dem i-ten diagonalen Element $\mathbf{W}_{ii} = \pi_i.(1-\pi_i)$ mit $i \in (1,2,...,n)$, ergibt sich: 
 $$
-s'(\beta) = H(\beta) = - \sum_{i = 1}^{n} \mathbf{x'}_i.\mathbf{x}_i . \mathbf{M}_{ii} = - \mathbf{X}'\mathbf{M}\mathbf{X} \quad (16)
+s'(\beta) = H(\beta) = - \sum_{i = 1}^{n} \mathbf{x'}_i.\mathbf{x}_i . \mathbf{W}_{ii} = - \mathbf{X}'\mathbf{W}\mathbf{X} \quad (16)
 $$
 
 
@@ -256,8 +256,8 @@ $\mathbf{f}(x)$ repräsentiert für diese Arbeit die Score-Funktion $s(\beta)$, 
 $$
 \begin{aligned}
 \beta_{n+1}\quad  = \qquad &\beta_n - \frac{s(\beta)}{s'(\beta)} \\
-\mathrel{\overset{(15),(16)}{=}} \quad &\beta_n - \frac{\ \  \mathbf{X}'.(y-\pi)}{- \mathbf{X}'\mathbf{M}\mathbf{X}} \\ \\
-= \qquad &\beta_n + (\mathbf{X}'\mathbf{M}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi) \quad (17)
+\mathrel{\overset{(15),(16)}{=}} \quad &\beta_n - \frac{\ \  \mathbf{X}'.(y-\pi)}{- \mathbf{X}'\mathbf{W}\mathbf{X}} \\ \\
+= \qquad &\beta_n + (\mathbf{X}'\mathbf{W}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi) \quad (17)
 \end{aligned} 
 $$
 
@@ -267,7 +267,7 @@ $$
 &1 \quad \mathbf{function}(X, y): \\
 &2 \qquad \quad   \mathbf{initialisiere} \ \ \beta_0,\ maxIteration,\ i,\ tolerance,\ diff,\ M \\
 &3 \qquad \quad  \mathbf{while} \ (diff > tolerance) \\
-&4 \qquad \qquad \quad betaChange = (\mathbf{X}'\mathbf{M}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi) \\
+&4 \qquad \qquad \quad betaChange = (\mathbf{X}'\mathbf{W}\mathbf{X})^{-1}.\mathbf{X}'.(y-\pi) \\
 &5 \qquad \qquad \quad diff = | betaChange| \\
 &6 \qquad \qquad \quad      i = i + 1 \\
 &7 \qquad \qquad \quad      \mathbf{if} \ (i > maxIteration): \\
@@ -349,13 +349,11 @@ Nachdem der ML-Schätzer bestimmt wird, werden folgende Parameter berechnet. Die
   
 * **Maximum Likelihood**: Um den Maximumwert der Log-Likelihood-Funktion zu erhalten, muss lediglich der erhaltene ML-Schätzer aus der Newton-Raphson-Methode in Gleichung 11 eingesetzt werden. Bei der Berechnung der Devianzen sowie des AICs findet dieser Wert Einsatz. Aus der Newton-Raphson-Methode wird ebenfalls die Anzahl der Iterationen zurückgegeben, welche der Anzahl der Fisher-Scoring-Iterationen entspricht.
 
-* **Deviance Residuals**: Die Devianzresiduen lassen sich anhand der folgenden Formel[^cite01] berechnet:
+* **Deviance Residuals**: Die Devianzresiduen lassen sich anhand der folgenden Formel berechnet (vgl. @breheny11):
 $$
 d_i = s_i.\sqrt{-2[y_i.\ln(\pi_i) + (1 - y_i).\ln(1 - \pi_i)]}
 $$
 mit $s_i = 1$ wenn $y_i = 1$ und $s_i = -1$ wenn $y_i = 0$. Dieses gehört zu der Methode `summary()`
-
-[^cite01]: Diese Formel wird aus der Vorlesungsfolie Advanced Regression im Frühlingssemester 2013 der Kentucky Universität https://web.as.uky.edu/statistics/users/pbreheny/760/S11/notes/4-12.pdf.
 
 * **Degree of freedom**: Die Freiheitsgrade ist die Differenz zwischen der Anzahl an Beobachtungen (entspricht Zeilenanzahl von der Designmatrix) und der Anzahl an Parameter (entspricht Spaltenanzahl von der Designmatrix). Da das Null-Modell nur den Interzept enthält, ist hat die Designmatrix nur eine Spalte. Die Freiheitsgrade taucht bei `print()` und `summary()` auf.
 
@@ -382,8 +380,8 @@ Um anschließend mit S3-Methoden zu arbeiten, muss eine Klasse definiert werden,
 + Der eingegebene Formula & der Call
 + Das Null-Modell, welches lediglich aus der Zielvariable und dem Interzept $\beta_0$ besteht, das heißt es existiert dabei keine Abhängigkeit von den Kovariaten. Dieses wird bei der Berechnung der Null-Devianz gebraucht. 
 + **Null Deviance**: da das Null-Modell durch die Funktion maxLikeEst bestimmt wird und somit auch den maximalen Wert des Log-Likelihood enthält, gilt: Null-Devianz von dem angepassten Logit-Modell = Residuen-Devianz vom Null-Modell = -2 * Log-Likelihood(Null-Modell) . 
-+ **Residual Deviance**: entspricht analog dazu -2 * Log-Likelihood(angepasstes Modell)
-+ **AIC**: $AIC = (-2.\ell + 2.p)$
++ **Residual Deviance**: entspricht analog dazu -2 * Log-Likelihood(angepasstes Modell). Eine geringe Devianz spricht für eine gute Anpassung des Modells. Anhand Null- und Residuendevianz und dem Chi-Quadrat-Test kann weiterhin sichergestellt werden, ob eine Reduktion der Devianz statistisch signifikant ist (vgl. @zumel2014practical, S.169-171)
++ **AIC**: $\mathbf{AIC} = (-2.\ell + 2.p)$ wobei ${\ell}$ dem maximalen Log-Likelihood und p der Koeffizientenanzahl entspricht. 
 
 ## Definiere S3-Methoden
 
@@ -399,7 +397,7 @@ In der Summary-Methode werden zunächst die bisher noch fehlende Werte berechnet
 
 * **Standard Error** der Koeffizienten: entspricht der Wurzel von dem Diagonalen aus der Kovarianzmatrix. Der Standardfehler gibt an, inwieweit der geschätzte Koeffizient sich durchschnittlich schwankt, wenn die Stichprobe unendlich mal gezogen wird.
 * **z-Stat**: entspricht die Bruchrechnung der einzelnen Koeffizienten durch der betroffenen Standardabweichung, welche sich annährend über eine Normalverteilung verteilen sollte, wenn die Stichprobenumfang groß genug ist.  
-* **p-Value**: anhand dem p-Wert kann festgestellt werden, ob sich der geschätzte Koeffizient mit einem bestimmten Konfidenzniveau von Null unterscheidet. Die Formel für den p-Wert lautet: $  $
+* **p-Value**: anhand dem p-Wert kann festgestellt werden, ob sich der geschätzte Koeffizient mit einem bestimmten Konfidenzniveau von Null unterscheidet. Die Formel für den p-Wert bei einem zweiseitigen Test (mit $H_0: \beta_i = 0$ und $H_1: \beta_i \neq 0$) lautet: $2 * P(x < -|zStat|)$. Ein kleiner p-Wert erfolgt die Ablehnung von $H_0$ und besagt, dass sich $\beta_i$ signifikant von Null unterscheidet.
 
 Bisher gibt die Summary-Methode eine Liste von allen dazugehörigen Werten in einer Liste zurück, was extrem unübersichtlich wäre. Demzufolge sorgt die Funktion `print.summary()` für die richtige Einordnung der jeweiligen Werten. Die meisten Werte müssen lediglich mit dem passenden Begriffen anhand `cat()` verknüpft werden. Für die Devianz-Residuen und Koeffiziententabelle werden zusätzlich folgende Standardfunktionen verwendet:
 
@@ -412,9 +410,14 @@ Schließlich wird ebenfalls `invisible()` aufgerufen, um eine Verdoppelung des O
 
 Es werden hierbei insgesamt 4 Grafiken erwartet:
 
-1. **Residuals vs Fitted**
-2. **Normal Q-Q**
-3. **Scale Location**
-4. **Residual vs Leverage**
+1. **Residuals vs Fitted**: stellt graphisch den Zusammenhang zwischen Devianzresiduen und den vorhergesagten wahren Wert dar, welcher der Multiplikation $\mathbf{X}.\beta$ entspricht.
+2. **Normal Q-Q**: dient zum Testen, ob die Residuenstandardfehler eine Normalverteilung folgen. Wenn es der Fall ist, soll die Punkte aus `qqnorm()` sehr gut mit der Gerade `qqline()` übereinstimmen.
+3. **Scale Location**: zeigt, ob Devianzresiduen sich gleichmäßig über die Spannweite der geschätzen Werten verteilen. 
+4. **Residual vs Leverage**: identifiziert einflussreiche Beobachtungen. Hierbei werden zwei neue Kennwerte ermittelt [^cite02].
+    + Standardisierte Pearson-Residuen: $r_i = \frac{y_i-\hat{\pi}_i}{\sqrt{\hat{\pi}_i.(1-\hat{\pi}_i)}}$  
+         
+    + Leverage: Diagonale von $\mathbf{H} = \mathbf{W}^{1/2} \mathbf{X}(\mathbf{X'}\mathbf{M}\mathbf{X})^{{-1}}\mathbf{X'}\mathbf{W}^{1/2}$
+
+[^cite02]: vgl. https://web.as.uky.edu/statistics/users/pbreheny/760/S11/notes/4-12.pdf 
 
 # Literaturverzeichnis
