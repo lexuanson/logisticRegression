@@ -23,6 +23,7 @@ testModelFrame <- model.frame(admit ~ gre + gpa + rank, testData)
 fittedLogModell <- logitMod(formula = testFormula, data = testData)
 standardModell <- glm(formula = testFormula, data = testData, family = "binomial")
 
+## ----echo = FALSE--------------------------------------------------------
 all(all.equal(standardModell$coefficients,
               as.numeric(fittedLogModell$coefficients),
               check.attributes = FALSE),
@@ -41,7 +42,6 @@ print(fittedLogModell)
 ## ----Summary method------------------------------------------------------
 summary(fittedLogModell)
 
-## ----Plot method---------------------------------------------------------
+## ----Plot method, fig.width = 4, fig.height = 3, fig.align = "center"----
 plot(fittedLogModell)
-plot(glm(formula = testFormula, data = testData, family = "binomial"))
 
