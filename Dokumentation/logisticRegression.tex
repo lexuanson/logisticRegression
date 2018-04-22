@@ -146,7 +146,8 @@ Implementierungsteil alle Funktionen vom R-Paket schrittweise
 vorgestellt.
 
 \textbf{Keywords:} \emph{Logit-Modell, logistische Regression, R-Paket,
-Maximum Likelihood}
+Maximum Likelihood}\\
+\textbf{Wortanzahl:} 2926
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -356,13 +357,12 @@ Logit-Modell nicht der wahre Wert der Zielvariable sondern die
 Eintrittswahrscheinlichkeit geschätzt wird, ist die direkte Abweichung
 zwischen dem wahren Wert (0/1-Variable) und dem geschätzten Wert
 (Wahrscheinlichkeit) nicht mehr aussagekräftig wie bei der linearen
-Regression. Die Koeffizienten müssen anders geschätzt werden.
-Dementsprechend wird bei dem binären Logit-Modell die sogenannte
-Maximum-Likelihood-Schätzung (kurz ML-Schätzung) eingesetzt. Abbildung 2
-zeigt ein Beispiel mit zwei möglichen binären logistichen
+Regression. Dementsprechend wird bei dem binären Logit-Modell die
+sogenannte Maximum-Likelihood-Schätzung (kurz ML-Schätzung) eingesetzt.
+Abbildung 2 zeigt ein Beispiel mit zwei möglichen binären logistichen
 Regressionskurven, die durch das Maximum Likelihood optimiert werden
 sollen. Es gibt unendlich viele solche Kurven. Das Ziel ist es, die
-Kurve mit dem höchsten Maximum Likelihood herauszufinden, und somit die
+Kurve mit dem höchsten Maximum Likelihood herauszufinden und somit die
 Eintrittswahrscheinlichkeit der empirischen Beobachtungswerte zu
 maximieren.
 
@@ -431,7 +431,7 @@ Vorzeichenvoraussetzungen für den Logarithmus erfüllt): \[
 (10) \quad &\ln(\frac{x}{y}) = \ln(x) - \ln(y)
 \end{aligned} 
 \] Dementsprechend lässt die Log-Likelihood-Funktion wie folgt
-logarithmisieren: \[
+logarithmieren: \[
 \begin{aligned}
 \ell(\beta) = \ln(\mathcal{L}(\beta)) = \quad &\ln \Bigg( \prod_{i=1}^{n} \pi_i^{y_i}.(1-\pi_i)^{1-y_i} \Bigg) \\
 \mathrel{\overset{(8)}{=}} \quad &\sum_{i = 1}^{n} \ln \Big(\pi_i^{y_i}.(1-\pi_i)^{1-y_i}\Big) \\
@@ -649,8 +649,8 @@ Extra-Vignette wird demnächst in der Help-Seite angezeigt:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{devtools}\OperatorTok{::}\KeywordTok{install}\NormalTok{(}\StringTok{"~/Desktop/Uni/Studium/Master/WS1718/ProgR/}
-\StringTok{                  Abschlussarbeit/logisticRegression/Code/logitModell/"}\NormalTok{, }
+\CommentTok{# Pfad zu dem Paket muss angepasst werden}
+\NormalTok{devtools}\OperatorTok{::}\KeywordTok{install}\NormalTok{(}\StringTok{"~/logitModell/"}\NormalTok{, }
                   \DataTypeTok{type =} \StringTok{"source"}\NormalTok{, }\DataTypeTok{build_vignettes =} \OtherTok{TRUE}\NormalTok{)}
 \KeywordTok{vignette}\NormalTok{(}\DataTypeTok{topic =} \StringTok{"vignetteLogitModell"}\NormalTok{)}
 \end{Highlighting}
@@ -878,9 +878,9 @@ berechnet:
 Bisher gibt die Summary-Methode eine Liste von allen dazugehörigen
 Werten in einer Liste zurück, was extrem unübersichtlich wäre.
 Demzufolge sorgt die Funktion \texttt{print.summary()} für die richtige
-Einordnung der jeweiligen Werten. Die meisten Werte müssen lediglich mit
-dem passenden Begriffen anhand \texttt{cat()} verknüpft werden. Für die
-Devianz-Residuen und Koeffiziententabelle werden zusätzlich folgende
+Einordnung der jeweiligen Werten. Die meisten Parameter müssen lediglich
+mit dem passenden Begriffen anhand \texttt{cat()} verknüpft werden. Für
+die Devianz-Residuen und Koeffiziententabelle werden zusätzlich folgende
 Standardfunktionen verwendet:
 
 \begin{itemize}
@@ -896,8 +896,8 @@ Standardfunktionen verwendet:
   Signifikanzniveaus anzuzeigen.
 \end{itemize}
 
-Schließlich wird ebenfalls \texttt{invisible()} aufgerufen, um eine
-Verdoppelung des Outputs zu vermeiden.
+Schließlich wird \texttt{invisible()} aufgerufen, um eine Verdoppelung
+des Outputs zu vermeiden.
 
 \subsubsection{Plot-Methode}\label{plot-methode}
 
