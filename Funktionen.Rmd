@@ -155,4 +155,4 @@ llNull <- loglike(X_Null,
 
 nullDeviance <- 2*abs(llSaturated - llNull)
 ```
-
+ 
