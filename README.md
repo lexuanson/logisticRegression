@@ -1,1 +1,1 @@
-# logisticRegression
+# Rebuild logistic regression from Scratch
