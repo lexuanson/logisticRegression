@@ -305,7 +305,7 @@ plot.logitMod <- function(x, ...) {
 plot(logitModell)
 
 
-```
+``` 
 
 
 
